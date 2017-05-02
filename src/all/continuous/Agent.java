@@ -25,4 +25,10 @@ public class Agent extends Cube {
         } else throw new InvalidMoveException("Tried to move an agent that has already moved this turn!");
 
     }
+
+    public boolean hasMoved(){return moved;};
+
+    public void setLocation(Point3D location){
+        this.location = location;
+    }
 }
