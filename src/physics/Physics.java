@@ -1,13 +1,14 @@
-package all.continuous;
+package physics;
 
 import java.util.ArrayList;
 
+import all.continuous.*;
 import javafx.geometry.Point3D;
 
 public class Physics
 {
-	static final double  TIMESHOT = 0.1; 
-	static final double  GRAVITY = 9.81;
+	static final double TIMESHOT = 0.1; 
+	static final double GRAVITY = 9.81;
 	static final double STATFRICTION = 0.2; 
 	static final double KINFRICTION = 0.3; 
 	
@@ -24,6 +25,7 @@ public class Physics
 			}
 		}
 	}
+	
 	/*This method is called when a block is "flying"
 	 * ie, there is no block supporting it*/
 	public static void fall(Agent agent, Configuration config, Terrain terrain)
@@ -44,17 +46,18 @@ public class Physics
 
 	}
 	
-
-	
-	/*
-	public static moveWithFriction()
+	//THIS METHOD SHOULD KNOW WHICH SIDE TO RETURN (or return all of them in a list)
+	public static Point3D returnFinalFallPos(Point3D pos, Configuration config, Terrain terrain)
 	{
-		double impulse = robot.calculateImpulse();
-		
-		
 		
 	}
-	*/
+	
+	//THIS METHOD SHOULD KNOW WHICH SIDE TO RETURN (or return all of them in a list)
+	public static ArrayList<Point3D> returnFinal4FallPos(Point3D pos, Configuration config, Terrain terrain)
+	{
+		
+	}
+	
 	public static double calculateStaticFriction(Agent agent, Configuration config, Terrain terrain)
 	{
 		double staticF = 0 ; 
@@ -102,6 +105,7 @@ public class Physics
 	}
 	
 	public static double calculateImpulse(Agent agent, Configuration config, Terrain terrain)
+
 	{
 		double staticF = calculateStaticFriction(agent, config, terrain);
 		double kineticF = calculateKineticFriction(agent, config, terrain); 
@@ -111,4 +115,6 @@ public class Physics
 		return impulse;    
 		
 	}
+
+	
 }

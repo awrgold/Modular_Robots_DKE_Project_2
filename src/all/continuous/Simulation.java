@@ -2,6 +2,8 @@ package all.continuous;
 
 import java.util.ArrayList;
 
+import physics.Physics;
+
 import static all.continuous.Main.VALIDATE_EVERYTHING;
 
 public class Simulation {
