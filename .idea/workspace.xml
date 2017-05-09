@@ -24,8 +24,8 @@
       <file leaf-file-name="Simulation.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/all/continuous/Simulation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="853">
-              <caret line="94" column="0" lean-forward="false" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+            <state relative-caret-position="1848">
+              <caret line="112" column="0" lean-forward="false" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -44,7 +44,7 @@
       <file leaf-file-name="PQ.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ai/PQ.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
+            <state relative-caret-position="198">
               <caret line="11" column="16" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -67,11 +67,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Movement.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ObstacleHeightComparator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ai/ObstacleHeightComparator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="88">
+              <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Movement.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ai/Movement.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1623">
-              <caret line="91" column="52" lean-forward="false" selection-start-line="91" selection-start-column="52" selection-end-line="91" selection-end-column="52" />
+            <state relative-caret-position="286">
+              <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -82,15 +92,15 @@
       <file leaf-file-name="Agent.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/all/continuous/Agent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="53" column="5" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
+            <state relative-caret-position="726">
+              <caret line="58" column="5" lean-forward="false" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
               <folding>
                 <element signature="method#copy#0;class#Agent#0" expanded="false" />
                 <element signature="method#move#0;class#Agent#0" expanded="false" />
-                <element signature="e#1111#1112#0" expanded="true" />
-                <element signature="e#1144#1145#0" expanded="true" />
-                <element signature="e#1193#1194#0" expanded="true" />
                 <element signature="e#1226#1227#0" expanded="true" />
+                <element signature="e#1259#1260#0" expanded="true" />
+                <element signature="e#1308#1309#0" expanded="true" />
+                <element signature="e#1341#1342#0" expanded="true" />
                 <element signature="method#isSupportedFromBottom#0;class#Agent#0" expanded="false" />
                 <element signature="method#isSupportedFromTop#0;class#Agent#0" expanded="false" />
                 <element signature="method#getBottomCubes#0;class#Agent#0" expanded="false" />
@@ -101,36 +111,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CooperativeAStar.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CooperativeAStar.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ai/CooperativeAStar.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1386">
-              <caret line="69" column="4" lean-forward="true" selection-start-line="69" selection-start-column="4" selection-end-line="69" selection-end-column="4" />
+              <caret line="69" column="4" lean-forward="false" selection-start-line="69" selection-start-column="4" selection-end-line="69" selection-end-column="4" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestCases.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/all/continuous/TestCases.java">
+      <file leaf-file-name="Terrain.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/all/continuous/Terrain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="27" column="55" lean-forward="false" selection-start-line="27" selection-start-column="55" selection-end-line="27" selection-end-column="55" />
+            <state relative-caret-position="44">
+              <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
               <folding>
-                <element signature="method#basicTestAgentMovement#0;class#TestCases#0" expanded="false" />
-                <element signature="method#basicTestAutomaticStateValidation#0;class#TestCases#0" expanded="false" />
-                <element signature="method#basicTestCopyingAndData#0;class#TestCases#0" expanded="false" />
+                <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/all/continuous/Main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="10" column="10" lean-forward="false" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -138,18 +136,13 @@
       <file leaf-file-name="Configuration.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/all/continuous/Configuration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="616">
-              <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+            <state relative-caret-position="1122">
+              <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#apply#0;class#Configuration#0" expanded="false" />
-                <element signature="method#getAllValidActions#0;class#Configuration#0" expanded="false" />
-                <element signature="method#getAllCollisions#0;class#Configuration#0" expanded="false" />
-                <element signature="method#getAllCollisions#1;class#Configuration#0" expanded="false" />
-                <element signature="method#getPotentialCollisions#0;class#Configuration#0" expanded="false" />
-                <element signature="method#getAttachedAgentsInDirections#0;class#Configuration#0" expanded="false" />
                 <element signature="method#validate#0;class#Configuration#0" expanded="false" />
                 <element signature="method#copy#0;class#Configuration#0" expanded="false" />
+                <marker date="1494344663672" expanded="true" signature="32:92" ph="..." />
+                <marker date="1494344663672" expanded="false" signature="6208:6215" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -222,6 +215,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -288,7 +282,6 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -314,19 +307,17 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Action.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Agent.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Configuration.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Cube.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/CubeCouple.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Main.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Obstacle.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Simulation.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Terrain.class</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/TestCases.class</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Action.java</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Obstacle.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Agent.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Configuration.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Cube.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Direction.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/InvalidMoveException.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/InvalidStateException.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Main.java</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Simulation.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Terrain.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/World.java</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Created" />
@@ -334,11 +325,78 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="CREATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/.gitignore</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/ai/AStarNode.java</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/ai/CooperativeAStar.java</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/ai/ObstacleHeightComparator.java</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/physics/Physics.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.gitignore</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/FiraSans-Book.ttf</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/frag.glsl</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/LICENSE</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/build.txt</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/dyncall_license.txt</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/glfw_license.txt</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/jemalloc_license.txt</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/joml-1.9.3.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/khronos_license.txt</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-glfw-natives-linux.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-glfw-natives-macos.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-glfw-natives-windows.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-glfw.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-jemalloc-natives-linux.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-jemalloc-natives-macos.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-jemalloc-natives-windows.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-jemalloc.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-natives-linux.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-natives-macos.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-natives-windows.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-nuklear-natives-linux.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-nuklear-natives-macos.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-nuklear-natives-windows.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-nuklear.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-openal-natives-linux.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-openal-natives-macos.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-openal-natives-windows.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-openal.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-opengl-natives-linux.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-opengl-natives-macos.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-opengl-natives-windows.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-opengl.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-stb-natives-linux.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-stb-natives-macos.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-stb-natives-windows.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl-stb.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/lwjgl.jar</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/lib/openal_soft_license.txt</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/phong_frag.glsl</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/phong_vert.glsl</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/CollisionUtil.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/GreedyAlgorithm.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/IOUtil.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/ModuleAlgorithm.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/PositionUtil.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/RandomAlgorithm.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Ray.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/exceptions/DisplayInitException.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/exceptions/InvalidStateException.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/exceptions/MoveException.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/exceptions/ShaderException.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/Camera.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/Display.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/Font.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/MVP.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/Mesh.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/PlayerWindow.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/ShaderManager.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/ShaderProgram.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/ShapeFactory.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/Transform.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/UIContext.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/UIWindow.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/VoxelRenderer.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/WorldObject.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/gfx/WorldRenderer.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/globjects/Texture.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/globjects/VAO.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/globjects/VBO.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/test/TestMovement.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/vert.glsl</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Deleted" />
@@ -346,7 +404,21 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="true" />
           <option name="myId" value="REMOVED_FROM_REPOSITORY" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/all/continuous/Physics.java</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.classpath</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/.project</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Action.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Agent.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Configuration.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Cube.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/CubeCouple.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/InvalidMoveException.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/InvalidStateException.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Main.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Obstacle.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Simulation.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/Terrain.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/TestCases.class</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/out/production/project.1-2.all-continuous/all/continuous/World.class</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Restored" />
@@ -692,7 +764,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="2149" height="1176" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -754,40 +826,15 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/all/continuous/Agent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="25" column="51" lean-forward="false" selection-start-line="25" selection-start-column="51" selection-end-line="25" selection-end-column="51" />
-          <folding>
-            <element signature="method#copy#0;class#Agent#0" expanded="false" />
-            <element signature="method#move#0;class#Agent#0" expanded="false" />
-            <element signature="e#1111#1112#0" expanded="true" />
-            <element signature="e#1144#1145#0" expanded="true" />
-            <element signature="e#1193#1194#0" expanded="true" />
-            <element signature="e#1226#1227#0" expanded="true" />
-            <element signature="method#isSupportedFromBottom#0;class#Agent#0" expanded="false" />
-            <element signature="method#isSupportedFromTop#0;class#Agent#0" expanded="false" />
-            <element signature="method#getBottomCubes#0;class#Agent#0" expanded="false" />
-            <element signature="method#getTopCubes#0;class#Agent#0" expanded="false" />
-            <element signature="method#getAlignedAgents#0;class#Agent#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/all/continuous/Configuration.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1023">
           <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#apply#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllValidActions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#1;class#Configuration#0" expanded="false" />
-            <element signature="method#getPotentialCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAttachedAgentsInDirections#0;class#Configuration#0" expanded="false" />
             <element signature="method#validate#0;class#Configuration#0" expanded="false" />
             <element signature="method#copy#0;class#Configuration#0" expanded="false" />
+            <marker date="1494344663672" expanded="true" signature="32:92" ph="..." />
+            <marker date="1494344663672" expanded="false" signature="6208:6215" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -825,15 +872,10 @@
         <state relative-caret-position="957">
           <caret line="30" column="16" lean-forward="false" selection-start-line="30" selection-start-column="16" selection-end-line="30" selection-end-column="16" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#apply#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllValidActions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#1;class#Configuration#0" expanded="false" />
-            <element signature="method#getPotentialCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAttachedAgentsInDirections#0;class#Configuration#0" expanded="false" />
             <element signature="method#validate#0;class#Configuration#0" expanded="false" />
             <element signature="method#copy#0;class#Configuration#0" expanded="false" />
+            <marker date="1494344663672" expanded="true" signature="32:92" ph="..." />
+            <marker date="1494344663672" expanded="false" signature="6208:6215" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -845,10 +887,10 @@
           <folding>
             <element signature="method#copy#0;class#Agent#0" expanded="false" />
             <element signature="method#move#0;class#Agent#0" expanded="false" />
-            <element signature="e#1111#1112#0" expanded="true" />
-            <element signature="e#1144#1145#0" expanded="true" />
-            <element signature="e#1193#1194#0" expanded="true" />
             <element signature="e#1226#1227#0" expanded="true" />
+            <element signature="e#1259#1260#0" expanded="true" />
+            <element signature="e#1308#1309#0" expanded="true" />
+            <element signature="e#1341#1342#0" expanded="true" />
             <element signature="method#isSupportedFromBottom#0;class#Agent#0" expanded="false" />
             <element signature="method#isSupportedFromTop#0;class#Agent#0" expanded="false" />
             <element signature="method#getBottomCubes#0;class#Agent#0" expanded="false" />
@@ -878,8 +920,6 @@
           <caret line="5" column="19" lean-forward="false" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1120#1121#0" expanded="true" />
-            <element signature="e#1196#1197#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -917,15 +957,10 @@
         <state relative-caret-position="957">
           <caret line="30" column="16" lean-forward="false" selection-start-line="30" selection-start-column="16" selection-end-line="30" selection-end-column="16" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#apply#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllValidActions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#1;class#Configuration#0" expanded="false" />
-            <element signature="method#getPotentialCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAttachedAgentsInDirections#0;class#Configuration#0" expanded="false" />
             <element signature="method#validate#0;class#Configuration#0" expanded="false" />
             <element signature="method#copy#0;class#Configuration#0" expanded="false" />
+            <marker date="1494344663672" expanded="true" signature="32:92" ph="..." />
+            <marker date="1494344663672" expanded="false" signature="6208:6215" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -937,10 +972,10 @@
           <folding>
             <element signature="method#copy#0;class#Agent#0" expanded="false" />
             <element signature="method#move#0;class#Agent#0" expanded="false" />
-            <element signature="e#1111#1112#0" expanded="true" />
-            <element signature="e#1144#1145#0" expanded="true" />
-            <element signature="e#1193#1194#0" expanded="true" />
             <element signature="e#1226#1227#0" expanded="true" />
+            <element signature="e#1259#1260#0" expanded="true" />
+            <element signature="e#1308#1309#0" expanded="true" />
+            <element signature="e#1341#1342#0" expanded="true" />
             <element signature="method#isSupportedFromBottom#0;class#Agent#0" expanded="false" />
             <element signature="method#isSupportedFromTop#0;class#Agent#0" expanded="false" />
             <element signature="method#getBottomCubes#0;class#Agent#0" expanded="false" />
@@ -970,8 +1005,6 @@
           <caret line="5" column="19" lean-forward="false" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1120#1121#0" expanded="true" />
-            <element signature="e#1196#1197#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1004,15 +1037,10 @@
         <state relative-caret-position="165">
           <caret line="5" column="16" lean-forward="true" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#apply#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllValidActions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#1;class#Configuration#0" expanded="false" />
-            <element signature="method#getPotentialCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAttachedAgentsInDirections#0;class#Configuration#0" expanded="false" />
             <element signature="method#validate#0;class#Configuration#0" expanded="false" />
             <element signature="method#copy#0;class#Configuration#0" expanded="false" />
+            <marker date="1494344663672" expanded="true" signature="32:92" ph="..." />
+            <marker date="1494344663672" expanded="false" signature="6208:6215" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -1024,10 +1052,10 @@
           <folding>
             <element signature="method#copy#0;class#Agent#0" expanded="false" />
             <element signature="method#move#0;class#Agent#0" expanded="false" />
-            <element signature="e#1111#1112#0" expanded="true" />
-            <element signature="e#1144#1145#0" expanded="true" />
-            <element signature="e#1193#1194#0" expanded="true" />
             <element signature="e#1226#1227#0" expanded="true" />
+            <element signature="e#1259#1260#0" expanded="true" />
+            <element signature="e#1308#1309#0" expanded="true" />
+            <element signature="e#1341#1342#0" expanded="true" />
             <element signature="method#isSupportedFromBottom#0;class#Agent#0" expanded="false" />
             <element signature="method#isSupportedFromTop#0;class#Agent#0" expanded="false" />
             <element signature="method#getBottomCubes#0;class#Agent#0" expanded="false" />
@@ -1057,8 +1085,6 @@
           <caret line="8" column="8" lean-forward="false" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1120#1121#0" expanded="true" />
-            <element signature="e#1196#1197#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1098,8 +1124,6 @@
           <caret line="8" column="8" lean-forward="false" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1120#1121#0" expanded="true" />
-            <element signature="e#1196#1197#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1118,13 +1142,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/all/continuous/Terrain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/all/continuous/CubePriorityQueue.java" />
     <entry file="file://$PROJECT_DIR$/src/all/continuous/Cube.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1132,8 +1149,6 @@
           <caret line="6" column="9" lean-forward="false" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1120#1121#0" expanded="true" />
-            <element signature="e#1196#1197#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1174,14 +1189,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/all/continuous/Physics.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/all/continuous/Physics.java" />
     <entry file="file://$PROJECT_DIR$/src/all/continuous/World.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
@@ -1206,30 +1214,55 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ai/CooperativeAStar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1386">
-          <caret line="69" column="4" lean-forward="true" selection-start-line="69" selection-start-column="4" selection-end-line="69" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/all/continuous/Agent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="53" column="5" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
+        <state relative-caret-position="726">
+          <caret line="58" column="5" lean-forward="false" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
           <folding>
             <element signature="method#copy#0;class#Agent#0" expanded="false" />
             <element signature="method#move#0;class#Agent#0" expanded="false" />
-            <element signature="e#1111#1112#0" expanded="true" />
-            <element signature="e#1144#1145#0" expanded="true" />
-            <element signature="e#1193#1194#0" expanded="true" />
             <element signature="e#1226#1227#0" expanded="true" />
+            <element signature="e#1259#1260#0" expanded="true" />
+            <element signature="e#1308#1309#0" expanded="true" />
+            <element signature="e#1341#1342#0" expanded="true" />
             <element signature="method#isSupportedFromBottom#0;class#Agent#0" expanded="false" />
             <element signature="method#isSupportedFromTop#0;class#Agent#0" expanded="false" />
             <element signature="method#getBottomCubes#0;class#Agent#0" expanded="false" />
             <element signature="method#getTopCubes#0;class#Agent#0" expanded="false" />
             <element signature="method#getAlignedAgents#0;class#Agent#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/all/continuous/Configuration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+          <folding>
+            <element signature="method#validate#0;class#Configuration#0" expanded="false" />
+            <element signature="method#copy#0;class#Configuration#0" expanded="false" />
+            <marker date="1494344663672" expanded="true" signature="32:92" ph="..." />
+            <marker date="1494344663672" expanded="false" signature="6208:6215" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/all/continuous/Simulation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1848">
+          <caret line="112" column="0" lean-forward="false" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ai/PQ.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="16" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1370#1371#0" expanded="true" />
+            <element signature="e#1401#1402#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1244,51 +1277,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/all/continuous/Configuration.java">
+    <entry file="file://$PROJECT_DIR$/src/ai/ObstacleHeightComparator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="616">
-          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#apply#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllValidActions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAllCollisions#1;class#Configuration#0" expanded="false" />
-            <element signature="method#getPotentialCollisions#0;class#Configuration#0" expanded="false" />
-            <element signature="method#getAttachedAgentsInDirections#0;class#Configuration#0" expanded="false" />
-            <element signature="method#validate#0;class#Configuration#0" expanded="false" />
-            <element signature="method#copy#0;class#Configuration#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/all/continuous/Simulation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="853">
-          <caret line="94" column="0" lean-forward="false" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+        <state relative-caret-position="88">
+          <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ai/PQ.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="11" column="16" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1370#1371#0" expanded="true" />
-            <element signature="e#1401#1402#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ai/Movement.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1623">
-          <caret line="91" column="52" lean-forward="false" selection-start-line="91" selection-start-column="52" selection-end-line="91" selection-end-column="52" />
+        <state relative-caret-position="286">
+          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/all/continuous/Terrain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ai/CooperativeAStar.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1386">
+          <caret line="69" column="4" lean-forward="false" selection-start-line="69" selection-start-column="4" selection-end-line="69" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
