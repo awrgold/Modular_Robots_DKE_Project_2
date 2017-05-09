@@ -139,7 +139,6 @@ public class Agent extends Cube {
   					alignedAgents.add(agents.get(i));
   			}
   		}
-  		
   		return alignedAgents; 
   	}
   	
@@ -219,4 +218,10 @@ public class Agent extends Cube {
   		else 
   			return 0; 
     }
+
+    //TODO: Turn this into a real method. Class *aStar* should have a Point3D location to pass as a goal.
+    public int getManhattanDistanceTo(Point3D goal){
+  		int distance = 0;
+  		return distance;
+	}
 }

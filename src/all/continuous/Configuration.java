@@ -1,16 +1,14 @@
 package all.continuous;
 
 import javafx.geometry.Point3D;
-
 import java.util.ArrayList;
-
 import static all.continuous.Direction.NONE;
 
 public class Configuration {
     Simulation simulation;
     ArrayList<Agent> agents;
 
-    public Configuration(ArrayList<Agent> agents){
+    public Configuration(ArrayList<Agent> agents) {
         this.agents = agents;
 
         for (int i = 0; i < agents.size(); i++) {
@@ -43,11 +41,11 @@ public class Configuration {
 
         boolean[] allowedDirections = getAllowedDirections(attachedAgents);
 
-        double[] maxDistance = getMaxDistance(agent, allowedDirections, attachedAgents);
+        double[] maxDistance = getMaxDistances(agent, allowedDirections, attachedAgents);
 
-        foreach direction: determineMaxDistance;
+        // foreach direction: determineMaxDistance;
 
-        create actions out of directions and distances;
+        // create actions out of directions and distances;
 
         //TODO: implement
 
@@ -103,18 +101,8 @@ public class Configuration {
                     } while (allCollisions.size()!=0);
                 }
 
-
-
-
-
-
-
-
                 switch(i) {
                     case 0: { //LEFT
-
-
-
 
                         break;
                     }
@@ -136,11 +124,11 @@ public class Configuration {
                 }
 
 
-
-
-                while(allCollisions.size() != 0){
+                /*
+                while(getAllCollisions.size() != 0){
 
                 }
+                */
 
             }
             else maxDistances[i] = 0;
