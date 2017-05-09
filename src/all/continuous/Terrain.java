@@ -1,12 +1,13 @@
 package all.continuous;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Terrain {
     Simulation simulation;
-    ArrayList<Obstacle> obstacles;
+    List<Obstacle> obstacles;
 
-    public Terrain(ArrayList<Obstacle> obstacles){
+    public Terrain(List<Obstacle> obstacles){
         this.obstacles = obstacles;
 
         for (int i = 0; i < obstacles.size(); i++) {
@@ -14,7 +15,7 @@ public class Terrain {
         }
     }
 
-    public ArrayList<Obstacle> getObstacles(){
+    public List<Obstacle> getObstacles(){
         return obstacles;
     }
 

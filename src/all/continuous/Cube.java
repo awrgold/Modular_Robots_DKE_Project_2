@@ -4,7 +4,9 @@ import javafx.geometry.Point3D;
 
 public abstract class Cube {
     protected float id;
-    protected int index;
+    public float getId() { return id; }
+
+	protected int index;
     protected Point3D location;
 
     public boolean isCollidingWith(Cube cube){

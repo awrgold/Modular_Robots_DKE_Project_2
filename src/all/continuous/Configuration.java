@@ -1,6 +1,10 @@
 package all.continuous;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import all.continuous.CollisionUtil.Collision;
+import javafx.geometry.Point3D;
 
 public class Configuration {
     Simulation simulation;
@@ -15,32 +19,88 @@ public class Configuration {
     }
 
     public void apply(Action action){
-        //TODO: implement
+    	Agent agent = agents.get(action.agentIndex);
+    	agent.move(agent.location.add(action.movement));
     }
 
     public ArrayList<Action> getAllValidActions(){
         ArrayList<Action> actions = new ArrayList<>();
 
         for (Agent agent: this.getAgents()) {
-            for (Action action: getAllValidActions(agent)) {
-                actions.add(action);
-            }
+            actions.addAll(getAllValidActions(agent));
         }
 
         return actions;
     }
 
-
-
+    // TODO: Separate grounded method to simplify code
     public ArrayList<Action> getAllValidActions(Agent agent){
         ArrayList<Action> actions = new ArrayList<>();
-
-        //TODO: implement
+        
+        // Attempt movement in all directions
+        for (Point3D dir : Direction.DIRECTIONS) {
+        	// Determine the perpendicular directions (needed to determine groundedness)
+        	Point3D[] perpDirs = Direction.getPerpDirs(dir);
+        	
+        	// Determine whether the agent is grounded for the current direction
+        	List<Point3D> groundedDirs = new ArrayList<>();
+        	for (Point3D perpDir : perpDirs) {
+        		Collision c =  CollisionUtil.castRay(simulation, new Ray(PositionUtil.center(agent.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent);
+        		if (c.type == CollisionType.AGENT) {
+        			groundedDirs.add(perpDir);
+        			break;
+        		}
+        	}
+        	
+        	// If the agent is grounded, attempt movement in the current direction
+        	if (groundedDirs.size() > 0) {
+        		// Determine the maximum new position
+        		Collision max = CollisionUtil.castRayCube(simulation, new Ray(agent.location, dir), agent);
+        		
+        		if (max.location.distance(agent.location) < 0.01) continue; // If the agent can't move in this direction, try the next one
+        		
+        		// Determine whether the agent remains grounded after the movement
+        		boolean remainsGrounded = false;
+        		for (Point3D perpDir : groundedDirs) {
+            		Collision c =  CollisionUtil.castRay(simulation, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
+            		if (c.type == CollisionType.AGENT) {
+            			remainsGrounded = true;
+            		} else {
+            			// Not grounded here, but it might be possible to move diagonally
+            			determineDiagAction(actions, agent, max.location, perpDir);
+            		}
+            	}
+        		
+        		// If the agent remains grounded, it can move in the current direction
+        		if (remainsGrounded) {
+        			actions.add(new Action(agent.index, max.location.subtract(agent.location)));
+        		}
+        	}
+        }
 
         return actions;
     }
 
-    public ArrayList<Action> getAllValidActions(int agentIndex){
+	private void determineDiagAction(ArrayList<Action> actions, Agent agent, Point3D location, Point3D dir) {
+		Collision max = CollisionUtil.castRayCube(simulation, new Ray(location, dir), agent);
+		
+		Point3D[] perpDirs = Direction.getPerpDirs(dir);
+  		boolean grounded = false;
+		for (Point3D perpDir : perpDirs) {
+    		Collision c =  CollisionUtil.castRay(simulation, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
+    		if (c.type == CollisionType.AGENT) {
+    			grounded = true;
+    			break;
+    		}
+    	}
+		
+		// If the agent remains grounded after this diagonal movement, add it to the actions list
+		if (grounded) {
+			actions.add(new Action(agent.index, max.location.subtract(agent.location)));
+		}
+	}
+
+	public ArrayList<Action> getAllValidActions(int agentIndex){
         return getAllValidActions(getAgent(agentIndex));
     }
 

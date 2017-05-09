@@ -1,8 +1,8 @@
 package all.continuous;
 
-import java.util.ArrayList;
-
 import static all.continuous.Main.VALIDATE_EVERYTHING;
+
+import java.util.ArrayList;
 
 public class Simulation {
     private Terrain terrain;
@@ -11,11 +11,15 @@ public class Simulation {
 
     private boolean complete = false;
 
-    //private Algorithm algorithm;
+    private ModuleAlgorithm algorithm;
 
     private ArrayList<Configuration> timeStep;
 
-    public Simulation(Terrain terrain, Configuration start, Configuration goal){
+    public ArrayList<Configuration> getTimeStep() {
+		return timeStep;
+	}
+
+	public Simulation(Terrain terrain, Configuration start, Configuration goal){
         this.terrain = terrain;
         this.start = start;
         this.goal = goal;
@@ -60,26 +64,38 @@ public class Simulation {
         return getCurrentConfiguration().getAllValidActions();
     }
 
-    /*
-
-    TODO: decide what to do with this shit
-
     public ArrayList<Configuration> run(){
+    	if (this.algorithm == null)
+    		throw new IllegalStateException("No algorithm has been set");
+    	endTurn();
         while(!complete){
-            simulate(algorithm.getNextAction());
+            algorithm.takeTurn();
+            endTurn();
+            if (hasGoalBeenReached()) finish();
         }
         return timeStep;
-    }*/
+    }
 
-    public Terrain getTerrain(){
+    private boolean hasGoalBeenReached() {
+		for (Agent a : goal.agents) {
+			if (getCurrentConfiguration().agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))) return false;
+		}
+		return true;
+	}
+
+	public Terrain getTerrain(){
         return terrain;
     }
 
     public Configuration getCurrentConfiguration(){
         return timeStep.get(timeStep.size()-1);
     }
+    
+    public Configuration getGoalConfiguration() {
+    	return this.goal;
+    }
 
-    public void endTurn() throws InvalidStateException {
+    public void endTurn() {
         if(VALIDATE_EVERYTHING) timeStep.get(timeStep.size()-1).validate();
 
         Configuration newTimeStep = timeStep.get(timeStep.size()-1).copy();
@@ -88,4 +104,12 @@ public class Simulation {
 
         //TODO: make falling always get calculated first
     }
+
+	public void finish() {
+		this.complete = true;
+	}
+
+	public void setAlgorithm(ModuleAlgorithm algorithm) {
+		this.algorithm = algorithm;
+	}
 }

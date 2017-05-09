@@ -25,4 +25,9 @@ public class Agent extends Cube {
         } else throw new InvalidMoveException("Tried to move an agent that has already moved this turn!");
 
     }
+    
+    @Override
+    public String toString() {
+    	return String.format("Agent %s at %s", id, location);
+    }
 }
