@@ -6,11 +6,13 @@ import java.util.ArrayList;
 
 public class Agent extends Cube {
     private boolean moved = false;
-    private double speed; 
+    private double speed;
+    private Point3D intermediateGoal;
 
     public Agent(float id, Point3D location){
         this.id = id;
         this.location = location;
+        this.intermediateGoal = null;
     }
 
     public Agent copy(){
@@ -47,7 +49,14 @@ public class Agent extends Cube {
     {
     	this.speed=speed; 
     }
-    
+
+    public Point3D getIntermediateGoal(){
+    	return intermediateGoal;
+	}
+
+	public void setIntermediateGoal(Point3D goal){
+    	intermediateGoal = goal;
+	}
     
     /*THE NEXT 6 METHODS ARE USED FOR THE GRAVITY FALL //see physics class*/
   	
@@ -224,9 +233,18 @@ public class Agent extends Cube {
   			return 0; 
     }
 
+
+
     //TODO: Turn this into a real method. Class *aStar* should have a Point3D location to pass as a goal.
-    public int getManhattanDistanceTo(Point3D goal){
-  		int distance = 0;
+    public double getManhattanDistanceTo(Point3D goal){
+  		double distance = 0;
+
+  		double xDiff = Math.abs(goal.getX()-this.location.getX());
+  		double yDiff = Math.abs(goal.getY()-this.location.getY());
+  		double zDiff = Math.abs(goal.getZ()-this.location.getZ());
+
+  		distance += (xDiff + yDiff + zDiff);
+
   		return distance;
 	}
 }

@@ -94,7 +94,7 @@ public class Simulation {
     public Configuration getCurrentConfiguration(){
         return timeStep.get(timeStep.size()-1);
     }
-    
+
     public Configuration getGoalConfiguration() {
     	return this.goal;
     }
