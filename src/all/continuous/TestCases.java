@@ -18,6 +18,32 @@ public class TestCases {
         System.out.print(agent2.isCollidingWith(agent3) + " "); //true
     }
 
+    public static void collisionDetectionTest2(){
+        Agent agent1 = new Agent(0, new Point3D(0,0,0));
+        Agent agent2 = new Agent(1, new Point3D(1,0,0));
+        Agent agent3 = new Agent(2, new Point3D(1.- 1000*Double.MIN_VALUE, 0, 0));
+
+        double test = 1- Double.MIN_NORMAL;
+
+        System.out.printf("%.200f", Double.MIN_NORMAL);
+
+        System.out.println();
+
+        System.out.printf("%.200f", 1000000*Double.MIN_NORMAL);
+
+        System.out.println();
+
+        System.out.printf("%.200f", 1000000*Double.MIN_VALUE);
+
+        System.out.println();
+
+        System.out.printf("%.100f", test);
+
+        System.out.println();
+
+        System.out.print(agent1.isCollidingWith(agent3) + " "); //false
+    }
+
     public static void basicTestAgentMovement() throws InvalidMoveException, InvalidStateException {
 
         /* EXPECTED OUTPUT:

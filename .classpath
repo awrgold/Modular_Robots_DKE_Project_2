@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+<<<<<<< HEAD
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/lwjgl-glfw-natives-linux.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-glfw-natives-macos.jar"/>
@@ -32,4 +33,8 @@
 	<classpathentry kind="lib" path="lib/lwjgl.jar"/>
 	<classpathentry kind="lib" path="lib/joml-1.9.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
+=======
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="out/production/project.1-2.all-continuous"/>
+>>>>>>> 5c6a106b0cbbe45413aafebb31bdbaa4e59137b7
 </classpath>

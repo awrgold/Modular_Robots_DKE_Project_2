@@ -8,6 +8,8 @@ public class Main {
 
     public static void main(String[] args) throws InvalidMoveException, InvalidStateException {
         //TestCases.basicTestCopyingAndData();
-        TestCases.basicTestAutomaticStateValidation();
+        //TestCases.basicTestAutomaticStateValidation();
+
+        TestCases.collisionDetectionTest2();
     }
 }

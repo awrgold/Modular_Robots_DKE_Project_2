@@ -2,6 +2,8 @@ package all.continuous;
 
 import javafx.geometry.Point3D;
 
+import static all.continuous.Direction.*;
+
 public abstract class Cube {
     protected float id;
     public float getId() { return id; }
@@ -10,15 +12,34 @@ public abstract class Cube {
     protected Point3D location;
 
     public boolean isCollidingWith(Cube cube){
-        Point3D center1 = new Point3D(this.getLocation().getX()+0.5, this.getLocation().getY(), this.getLocation().getZ());
-        Point3D center2 = new Point3D(cube.getLocation().getX()+0.5, cube.getLocation().getY(), cube.getLocation().getZ());
-
-        double xDist = Math.abs(center1.getX() - center2.getX());
-        double yDist = Math.abs(center1.getY() - center2.getY());
-        double zDist = Math.abs(center1.getZ() - center2.getZ());
-
-        return (xDist < 1 && yDist <1 && zDist <1);
+        return (Math.abs(getXDist(cube))<1 && Math.abs(getYDist(cube))<1 && Math.abs(getZDist(cube))<1);
     }
+
+    public Direction isAttachedTo(Cube cube){
+        if(getXDist(cube)==1 && Math.abs(getYDist(cube))<1 && Math.abs(getZDist(cube))<1) return LEFT;
+        if(getXDist(cube)==-1 && Math.abs(getYDist(cube))<1 && Math.abs(getZDist(cube))<1) return RIGHT;
+
+        if(Math.abs(getXDist(cube))<1 && getYDist(cube)==1 && Math.abs(getZDist(cube))<1) return BACKWARD;
+        if(Math.abs(getXDist(cube))<1 && getYDist(cube)==-1 && Math.abs(getZDist(cube))<1) return FORWARD;
+
+        if(Math.abs(getXDist(cube))<1 && Math.abs(getYDist(cube))<1 && getZDist(cube)==1) return DOWNWARD;
+        if(Math.abs(getXDist(cube))<1 && Math.abs(getYDist(cube))<1 && getZDist(cube)==-1) return UPWARD;
+
+        return null;
+    }
+
+    public double getXDist(Cube cube){
+        return (this.location.getX()+0.5 - cube.location.getX()+0.5);
+    }
+
+    public double getYDist(Cube cube){
+        return (this.location.getY()+0.5 - cube.location.getY()+0.5);
+    }
+
+    public double getZDist(Cube cube){
+        return (this.location.getZ()+0.5 - cube.location.getZ()+0.5);
+    }
+
 
     public void setIndex(int index){
         this.index = index;

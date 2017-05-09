@@ -1,5 +1,9 @@
 package all.continuous;
 
+import java.util.ArrayList;
+
+import physics.Physics;
+
 import static all.continuous.Main.VALIDATE_EVERYTHING;
 
 import java.util.ArrayList;
@@ -101,6 +105,8 @@ public class Simulation {
         Configuration newTimeStep = timeStep.get(timeStep.size()-1).copy();
         newTimeStep.setSimulation(this);
         timeStep.add(newTimeStep);
+        
+        Physics.allAgentsFall(newTimeStep, terrain);
 
         //TODO: make falling always get calculated first
     }
