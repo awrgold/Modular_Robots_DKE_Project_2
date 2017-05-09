@@ -5,6 +5,8 @@ import javafx.geometry.Point3D;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import ai.CooperativeAStar;
+
 public class TestCases {
     public static void basicTestCollisionDetection(){
         //EXPECTED OUTPUT: true false true
@@ -144,5 +146,48 @@ public class TestCases {
         sim.endTurn();
 
         System.out.println("kekeke");
+    }
+    
+    public static void AStar() throws InvalidMoveException, InvalidStateException
+    {
+    	Agent agent1 = new Agent(0, new Point3D(2,2,0));
+
+        ArrayList<Agent> agents = new ArrayList<>();
+        agents.add(agent1);
+        agent1 = null;
+
+        Agent agent2 = new Agent((float) 2.5, new Point3D(4,5,0));
+        agents.add(agent2);
+        agent2 = null;
+
+        Obstacle obstacle = new Obstacle(0, new Point3D(2,5,0));
+        Obstacle obstacle1 = new Obstacle(0, new Point3D(2,5,1));
+        Obstacle obstacle2 = new Obstacle(0, new Point3D(4,2,0));
+        ArrayList<Obstacle> obstacles = new ArrayList<>();
+        obstacles.add(obstacle);
+        obstacles.add(obstacle1);
+        obstacles.add(obstacle2);
+        obstacle = null;
+
+        Agent goalAgent = new Agent(0, new Point3D(2,8,0));
+        Point3D goal = goalAgent.getLocation();
+        ArrayList<Agent> agentsGoal = new ArrayList<>();
+        agentsGoal.add(goalAgent);
+        goalAgent = null;
+
+        Configuration startConfig = new Configuration(agents);
+        Terrain terrain = new Terrain(obstacles);
+        
+        Simulation sim = new Simulation(terrain, startConfig, new Configuration(agentsGoal));
+        CooperativeAStar.analyseObstacles(10, startConfig, terrain);
+        CooperativeAStar.aStarSearch(agents.get(0), goal, startConfig, terrain);
+        
+        obstacles = null;
+        agents = null;
+        agentsGoal = null;
+
+        
+        //sim.getCurrentConfiguration().getAgent(0).move(new Point3D(4,5,6));
+        sim.endTurn();
     }
 }
