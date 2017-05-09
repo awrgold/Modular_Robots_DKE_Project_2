@@ -106,7 +106,7 @@ public class Simulation {
         newTimeStep.setSimulation(this);
         timeStep.add(newTimeStep);
         
-        Physics.allAgentsFall(newTimeStep, terrain);
+        //Physics.allAgentsFall(newTimeStep, terrain);
 
         //TODO: make falling always get calculated first
     }

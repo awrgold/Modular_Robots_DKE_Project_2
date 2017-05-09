@@ -404,6 +404,7 @@ public class Display {
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
 				} catch (Exception e) {
+					e.printStackTrace();
 					error = e.getClass().getName() + ": " + e.getMessage();
 				} finally {
 					computing = false;

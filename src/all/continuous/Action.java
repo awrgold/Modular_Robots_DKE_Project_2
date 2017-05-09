@@ -5,11 +5,15 @@ import javafx.geometry.Point3D;
 public class Action {
     @Override
     public String toString() {
-    	return String.format("Agent %s: moving %s", agentIndex, movement);
+    	return String.format("Agent %s: moving to %s", agent, destination);
     }
     
     private int agent;
-    private Point3D destination;
+    public int getAgent() {
+		return agent;
+	}
+
+	private Point3D destination;
     private Direction secondaryDirection;
     //in an upward climb, the direction in which the robot moves after the climb needs to be specified
     
@@ -17,6 +21,14 @@ public class Action {
     //Will be updates during A Star for the obstacle climbing. 
     //Will be used in A* as GScore
     private int weight; 
+    
+    public Action(int agent, Point3D destination){
+        this.agent = agent;
+        this.destination = destination;
+        this.secondaryDirection = null;
+        //by default, we assume the action has a weight of 1 
+        weight=1;
+    }
 
     public Action(int agent, Point3D destination, Direction secondaryDirection){
         this.agent = agent;

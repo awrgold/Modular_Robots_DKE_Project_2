@@ -28,13 +28,13 @@ public class GreedyAlgorithm extends ModuleAlgorithm {
 		double score = 0.0;
 		boolean shouldDouble = false;
 		for (Agent agent : sim.getCurrentConfiguration().agents) {
-			final Point3D current = action.agentIndex == agent.index ? agent.getLocation().add(action.movement) : agent.getLocation();
+			final Point3D current = action.getAgent() == agent.index ? action.getDestination() : agent.getLocation();
 			Agent goalAgent = sim.getGoalConfiguration().agents.stream().reduce((a, b) -> agentDist(current, a) < agentDist(current, b) ? a : b).get();
 			
 			double dist = agentDist(current, goalAgent);
 			score += dist;
 			
-			if (action.agentIndex == agent.index && explored.get(agent.id).contains(current)) {
+			if (action.getAgent() == agent.index && explored.get(agent.id).contains(current)) {
 				shouldDouble = true;
 			}
 		}

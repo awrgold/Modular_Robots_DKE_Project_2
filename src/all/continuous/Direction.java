@@ -1,6 +1,5 @@
 package all.continuous;
 
-<<<<<<< HEAD
 import javafx.geometry.Point3D;
 
 public class Direction {

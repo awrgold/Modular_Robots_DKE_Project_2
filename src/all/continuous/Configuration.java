@@ -20,8 +20,8 @@ public class Configuration {
     }
 
     public void apply(Action action){
-    	Agent agent = agents.get(action.agentIndex);
-    	agent.move(agent.location.add(action.movement));
+    	Agent agent = agents.get(action.getAgent());
+    	agent.move(action.getDestination());
     }
 
     public ArrayList<Action> getAllValidActions(){
@@ -74,10 +74,11 @@ public class Configuration {
         		
         		// If the agent remains grounded, it can move in the current direction
         		if (remainsGrounded) {
-        			actions.add(new Action(agent.index, max.location.subtract(agent.location)));
+        			actions.add(new Action(agent.index, max.location));
         		}
         	}
         }
+        return actions;
     }
 
 	private void determineDiagAction(ArrayList<Action> actions, Agent agent, Point3D location, Point3D dir) {
@@ -95,7 +96,7 @@ public class Configuration {
 		
 		// If the agent remains grounded after this diagonal movement, add it to the actions list
 		if (grounded) {
-			actions.add(new Action(agent.index, max.location.subtract(agent.location)));
+			actions.add(new Action(agent.index, max.location));
 		}
 	}
 
