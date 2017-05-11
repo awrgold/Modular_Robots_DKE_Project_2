@@ -1,6 +1,7 @@
 package ai;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import all.continuous.*;
 import javafx.geometry.Point3D;
@@ -58,7 +59,7 @@ public class AStarNode
 	/*For the purpose of testing, I'm just returning the 4 nodes on the sides of this one*/
 	public ArrayList<Action> computeLegalAction(Configuration config, Terrain terrain)
 	{
-		ArrayList<Obstacle> obstacles = terrain.getObstacles();
+		List<Obstacle> obstacles = terrain.getObstacles();
 		
 		Point3D left = new Point3D(this.getLocation().getX()-1, this.getLocation().getY(), 0);
 		Point3D right = new Point3D(this.getLocation().getX()+1, this.getLocation().getY(), 0);
@@ -132,7 +133,7 @@ public class AStarNode
 	
 	//IMPORTANT : HAS NOTHING TO DO HERE, SHOULD BE PUT IN ANOTHER CLASS, only thre for the purpose of testing
 	//Check if a certain location is an obstacle
-	public boolean isObstacle(Point3D location, ArrayList<Obstacle> obstacles)
+	public boolean isObstacle(Point3D location, List<Obstacle> obstacles)
 	{
 		for(int i=0; i<obstacles.size(); i++)
 		{

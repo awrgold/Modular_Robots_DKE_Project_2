@@ -10,12 +10,20 @@ import javafx.geometry.Point3D;
 
 /**
  * Created by God on the 8th day, and it was good...
+ * 
+ * authors : sander, andrew and marion
+ * 
+ * This class is the first part of our general AI called CooperativeAStar
+ * Once the best path has been computed, this class is called. 
+ * Indeed, it will move all the agents together towards that path by setting as goal the next position in the path
+ * and using a greedy approximation to move each of the agents closer to that goal, until the goal is met by
+ * on of them, and has to be updated to the next position.
  */
-public class Movement {
+public class CooperativeModulesMovement {
 
-    private Simulation simulation;
+    private static Simulation simulation;
 
-    public void moveAlongPath(ArrayList<Point3D> path, ArrayList<Agent> agents) throws InvalidMoveException, InvalidStateException{
+    public static void moveAlongPath(ArrayList<Point3D> path, ArrayList<Agent> agents) throws InvalidMoveException, InvalidStateException{
         Comparator<Agent> compare = new PQComparator();
         PriorityQueue<Agent> PQ = new PriorityQueue<>(agents.size(), compare);
 
@@ -65,7 +73,7 @@ public class Movement {
     }
 
     // method to check whether the valid move chosen reduces distance to the intermediate goal
-    public Action isCloser(Agent agent){
+    public static Action isCloser(Agent agent){
         ArrayList<Action> moves = simulation.getCurrentConfiguration().getAllValidActions(agent);
         double minDistance = agent.getManhattanDistanceTo(agent.getIntermediateGoal());
         Action best = null;
@@ -83,14 +91,14 @@ public class Movement {
     }
 
     // priority queue filler
-    public void fillPQ(ArrayList<Agent> agents, PriorityQueue<Agent> PQ){
+    public static void fillPQ(ArrayList<Agent> agents, PriorityQueue<Agent> PQ){
         for(int i = 0; i < agents.size(); i++){
             PQ.add(agents.get(i));
         }
     }
 
     // method to check whether goal has been reached
-    public boolean isGoalReached(ArrayList<Agent> agents, Point3D intermediateGoal){
+    public static boolean isGoalReached(ArrayList<Agent> agents, Point3D intermediateGoal){
          for(int i = 0; i < agents.size(); i++){
              if(agents.get(i).getLocation() == intermediateGoal){
                  return true;

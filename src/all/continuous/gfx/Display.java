@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
 
+import ai.CooperativeAStar;
 import all.continuous.Agent;
 import all.continuous.Configuration;
 import all.continuous.GreedyAlgorithm;

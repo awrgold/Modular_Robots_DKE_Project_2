@@ -3,6 +3,7 @@ package all.continuous;
 import javafx.geometry.Point3D;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Agent extends Cube {
     private boolean moved = false;
@@ -157,16 +158,16 @@ public class Agent extends Cube {
   	}
   	
   	//From all obstacles in the current configuration, return the ones that are aligned (same x and y)
-  	public ArrayList<Obstacle> getAlignedObstacles(ArrayList<Obstacle> obstacles)
+  	public ArrayList<Obstacle> getAlignedObstacles(List<Obstacle> list)
   	{
   		ArrayList<Obstacle> alignedObstacles = new ArrayList<Obstacle>();
   		
-  		for(int i=0 ; i<obstacles.size(); i++)
+  		for(int i=0 ; i<list.size(); i++)
   		{
-  			if(obstacles.get(i).getLocation().getX() == this.getLocation().getX())
+  			if(list.get(i).getLocation().getX() == this.getLocation().getX())
   			{
-  				if(obstacles.get(i).getLocation().getY() == this.getLocation().getY())
-  					alignedObstacles.add(obstacles.get(i));
+  				if(list.get(i).getLocation().getY() == this.getLocation().getY())
+  					alignedObstacles.add(list.get(i));
   			}
   		}
   		
