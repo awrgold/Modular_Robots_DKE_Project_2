@@ -105,10 +105,8 @@ public class Simulation {
         Configuration newTimeStep = timeStep.get(timeStep.size()-1).copy();
         newTimeStep.setSimulation(this);
         timeStep.add(newTimeStep);
-        
-        //Physics.allAgentsFall(newTimeStep, terrain);
 
-        //TODO: make falling always get calculated first
+        newTimeStep.resolveFalling();
     }
 
 	public void finish() {

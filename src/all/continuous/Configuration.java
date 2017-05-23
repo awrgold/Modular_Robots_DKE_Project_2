@@ -3,9 +3,12 @@ package all.continuous;
 import javafx.geometry.Point3D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import all.continuous.CollisionUtil.Collision;
 import javafx.geometry.Point3D;
+
+import static all.continuous.CollisionUtil.castRayCube;
 
 public class Configuration {
     Simulation simulation;
@@ -56,7 +59,7 @@ public class Configuration {
         	// If the agent is grounded, attempt movement in the current direction
         	if (groundedDirs.size() > 0) {
         		// Determine the maximum new position
-        		Collision max = CollisionUtil.castRayCube(simulation, new Ray(agent.location, dir), agent);
+        		Collision max = castRayCube(simulation, new Ray(agent.location, dir), agent);
         		
         		if (max.location.distance(agent.location) < 0.01) continue; // If the agent can't move in this direction, try the next one
         		
@@ -82,7 +85,7 @@ public class Configuration {
     }
 
 	private void determineDiagAction(ArrayList<Action> actions, Agent agent, Point3D location, Point3D dir) {
-		Collision max = CollisionUtil.castRayCube(simulation, new Ray(location, dir), agent);
+		Collision max = castRayCube(simulation, new Ray(location, dir), agent);
 		
 		Point3D[] perpDirs = Direction.getPerpDirs(dir);
   		boolean grounded = false;
@@ -233,5 +236,26 @@ public class Configuration {
 
     public Simulation getSimulation(){
         return simulation;
+    }
+
+    public void resolveFalling() {
+        PriorityQueue<Agent> queue = new PriorityQueue<>(agents.size(), new RobotHeightComparator());
+        for (Agent agent: agents) {
+            queue.add(agent);
+        }
+
+        while(!queue.isEmpty()){
+            Agent agent = queue.poll();
+            resolveFalling(agent);
+        }
+    }
+
+    public void resolveFalling(Agent agent){
+        double maxDist = 1;
+        Collision coll = castRayCube(simulation, new Ray(agent.getLocation(), Direction.DOWN), 0.1, maxDist, 0, agent);
+
+        if(coll.location != agent.getLocation()){
+            agent.move(coll.location);
+        }
     }
 }
