@@ -3,8 +3,6 @@ package all.continuous;
 import javafx.geometry.Point3D;
 
 public class Ray {
-
-	
 	private Point3D origin;
 	private Point3D direction;
 	

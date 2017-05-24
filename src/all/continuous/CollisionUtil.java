@@ -53,13 +53,6 @@ public class CollisionUtil {
 	public static Collision isColliding(Simulation sim, Point3D point, Agent exclude) {
 		double vSize = World.VOXEL_SIZE;
 		
-		// Check obstacle collision
-//		for (Obstacle obs : sim.getTerrain().obstacles) {
-//			Point3D min = obs.location;
-//			Point3D max = min.add(vSize, vSize, vSize);
-//			if (isColliding(min, max, point)) return new Collision(CollisionType.OBSTACLE, point);
-//		}
-		
 		// Check agent collision
 		for (Agent agent : sim.getCurrentConfiguration().agents) {
 			if (agent == exclude) continue;
@@ -74,13 +67,6 @@ public class CollisionUtil {
 	
 	private static Collision isCollidingCube(Simulation sim, Point3D point, Agent exclude) {
 		double vSize = World.VOXEL_SIZE;
-		
-		// Check obstacle collision
-//		for (Obstacle obs : sim.getTerrain().obstacles) {
-//			Point3D min = obs.location;
-//			Point3D max = min.add(vSize, vSize, vSize);
-//			if (isColliding(min, max, point)) return new Collision(CollisionType.OBSTACLE, point);
-//		}
 		
 		Point3D minB = point;
 		Point3D maxB = minB.add(vSize, vSize, vSize);

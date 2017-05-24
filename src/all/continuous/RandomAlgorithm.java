@@ -18,7 +18,7 @@ public class RandomAlgorithm extends ModuleAlgorithm {
 		List<Action> actions = this.sim.getAllValidActions();
 		int actionCount = actions.size();
 		if (actionCount <= 0) {
-			sim.finish();
+			//sim.finish();
 			return;
 		}
 		sim.apply(actions.get(rand.nextInt(actionCount)));
