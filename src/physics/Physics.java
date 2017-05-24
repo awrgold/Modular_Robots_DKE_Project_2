@@ -52,9 +52,23 @@ public class Physics
 		
 	}
 	
-	//THIS METHOD SHOULD KNOW WHICH SIDE TO RETURN (or return all of them in a list)
+	//This method should return, from the top of an obstacle, the 4 positions where it can fall
+	//ATTENTION : for the moment, I'm assuming the falling positions are just on "the ground", but still needs to be changed
+	//by the physics
 	public static ArrayList<Point3D> returnFinal4FallPos(Point3D pos, Configuration config, Terrain terrain)
 	{
+		Point3D left = new Point3D(pos.getX()-1, pos.getY(), 0);
+		Point3D right = new Point3D(pos.getX()+1, pos.getY(), 0);
+		Point3D front = new Point3D(pos.getX(), pos.getY()+1, 0);
+		Point3D behind = new Point3D(pos.getX(), pos.getY()-1, 0);
+		
+		ArrayList<Point3D> pos4 = new ArrayList<Point3D>();
+		pos4.add(left);
+		pos4.add(right);
+		pos4.add(front);
+		pos4.add(behind);
+		
+		return pos4; 
 		
 	}
 	

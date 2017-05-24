@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.2.0" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="src.ai.Movement" project="project.1-2.all-continuous" 
+    file="/project.1-2.all-continuous/src/ai/Movement.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="171" width="314" x="19" y="-126"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="src.ai.CooperativeAStar" project="project.1-2.all-continuous" 
+    file="/project.1-2.all-continuous/src/ai/CooperativeAStar.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="369" width="483" x="373" y="-126"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="src.ai.PQ" project="project.1-2.all-continuous" 
+    file="/project.1-2.all-continuous/src/ai/PQ.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="243" width="239" x="896" y="-126"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="src.ai.ObstacleHeightComparator" project="project.1-2.all-continuous" 
+    file="/project.1-2.all-continuous/src/ai/ObstacleHeightComparator.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="99" width="179" x="1175" y="-126"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="src.ai.AStarNode" project="project.1-2.all-continuous" 
+    file="/project.1-2.all-continuous/src/ai/AStarNode.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="459" width="323" x="1394" y="-126"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="src.ai.PQComparator" project="project.1-2.all-continuous" 
+    file="/project.1-2.all-continuous/src/ai/PQComparator.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="99" width="151" x="1767" y="-126"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <association id="7">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="8" name="parent"/>      
+      <multiplicity id="9" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

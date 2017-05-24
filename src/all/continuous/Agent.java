@@ -3,14 +3,17 @@ package all.continuous;
 import javafx.geometry.Point3D;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Agent extends Cube {
     private boolean moved = false;
-    private double speed; 
+    private double speed;
+    private Point3D intermediateGoal;
 
     public Agent(float id, Point3D location){
         this.id = id;
         this.location = location;
+        this.intermediateGoal = null;
     }
 
     public Agent copy(){
@@ -47,7 +50,14 @@ public class Agent extends Cube {
     {
     	this.speed=speed; 
     }
-    
+
+    public Point3D getIntermediateGoal(){
+    	return intermediateGoal;
+	}
+
+	public void setIntermediateGoal(Point3D goal){
+    	intermediateGoal = goal;
+	}
     
     /*THE NEXT 6 METHODS ARE USED FOR THE GRAVITY FALL //see physics class*/
   	
@@ -148,16 +158,16 @@ public class Agent extends Cube {
   	}
   	
   	//From all obstacles in the current configuration, return the ones that are aligned (same x and y)
-  	public ArrayList<Obstacle> getAlignedObstacles(ArrayList<Obstacle> obstacles)
+  	public ArrayList<Obstacle> getAlignedObstacles(List<Obstacle> list)
   	{
   		ArrayList<Obstacle> alignedObstacles = new ArrayList<Obstacle>();
   		
-  		for(int i=0 ; i<obstacles.size(); i++)
+  		for(int i=0 ; i<list.size(); i++)
   		{
-  			if(obstacles.get(i).getLocation().getX() == this.getLocation().getX())
+  			if(list.get(i).getLocation().getX() == this.getLocation().getX())
   			{
-  				if(obstacles.get(i).getLocation().getY() == this.getLocation().getY())
-  					alignedObstacles.add(obstacles.get(i));
+  				if(list.get(i).getLocation().getY() == this.getLocation().getY())
+  					alignedObstacles.add(list.get(i));
   			}
   		}
   		
@@ -224,9 +234,18 @@ public class Agent extends Cube {
   			return 0; 
     }
 
+
+
     //TODO: Turn this into a real method. Class *aStar* should have a Point3D location to pass as a goal.
-    public int getManhattanDistanceTo(Point3D goal){
-  		int distance = 0;
+    public double getManhattanDistanceTo(Point3D goal){
+  		double distance = 0;
+
+  		double xDiff = Math.abs(goal.getX()-this.location.getX());
+  		double yDiff = Math.abs(goal.getY()-this.location.getY());
+  		double zDiff = Math.abs(goal.getZ()-this.location.getZ());
+
+  		distance += (xDiff + yDiff + zDiff);
+
   		return distance;
 	}
 }

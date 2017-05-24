@@ -22,4 +22,5 @@ public class Terrain {
     public void setSimulation(Simulation sim){
         this.simulation = sim;
     }
+    
 }

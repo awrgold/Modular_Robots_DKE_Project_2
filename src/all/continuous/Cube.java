@@ -29,9 +29,9 @@ public abstract class Cube {
     }
 
     public double getXDist(Cube cube){
-        return (this.location.getX()+0.5 - cube.location.getX()+0.5);
+        return (this..getX()+0.5 - cube.location.getX()+0.5);
     }
-
+location
     public double getYDist(Cube cube){
         return (this.location.getY()+0.5 - cube.location.getY()+0.5);
     }
