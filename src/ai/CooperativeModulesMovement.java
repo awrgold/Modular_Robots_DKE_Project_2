@@ -21,10 +21,15 @@ import javafx.geometry.Point3D;
  */
 public class CooperativeModulesMovement {
 
-    private static Simulation simulation;
+	private final static boolean DEBUG = true;
+ 
 
-    public static void moveAlongPath(ArrayList<Point3D> path, ArrayList<Agent> agents) throws InvalidMoveException, InvalidStateException{
-        Comparator<Agent> compare = new PQComparator();
+    public static void moveAlongPath(ArrayList<Point3D> path, ArrayList<Agent> agents, Simulation simulation) throws InvalidMoveException, InvalidStateException{
+       
+    	if(DEBUG)
+    		System.out.println("cooperative movement has started");
+    	
+    	Comparator<Agent> compare = new PQComparator();
         PriorityQueue<Agent> PQ = new PriorityQueue<>(agents.size(), compare);
 
 
@@ -33,18 +38,34 @@ public class CooperativeModulesMovement {
         }
 
         fillPQ(agents, PQ);
+        
+        if(DEBUG)
+        	System.out.println("PQ size : "+PQ.size());
 
         Point3D currentGoal = agents.get(0).getIntermediateGoal();
         boolean goalReached = false;
         int pathCounter = 0;
-        while(!goalReached){
-
+        int counter=0;
+        while(!goalReached && counter<15){
+        	
             // moving agent if possible and distance to goal is reduced
             for(int i = 0; i < agents.size(); i++){
                 Agent first = PQ.poll();
-                if(isCloser(first) != null){
-                    Action action = isCloser(first);
-                    first.move(action.getDestination());
+                if(DEBUG)
+                {
+                	System.out.println("iteration  : "+i);
+                	System.out.println("agent number  : "+first.getId());
+                	System.out.println("PQ size  : "+PQ.size());
+                }
+                
+                if(isCloser(first, simulation) != null){
+                    Action action = isCloser(first, simulation);
+                    //first.move(action.getDestination());
+                    simulation.apply(action);
+                    if(DEBUG)
+                    	System.out.println("agent should have moved to  : "+AStarSearch.printPoint(action.getDestination()));
+                    if(DEBUG)
+                    	System.out.println("agent is at  : "+AStarSearch.printPoint(first.getLocation()));
                 }
             }
 
@@ -66,15 +87,34 @@ public class CooperativeModulesMovement {
             // place agents back into the priority queue
             for(int i = 0; i < agents.size(); i++){
                 PQ.add(agents.get(i));
+                if(DEBUG)
+                	System.out.println("refill PQ");
             }
 
             simulation.endTurn();
+            counter++;
         }
     }
 
-    // method to check whether the valid move chosen reduces distance to the intermediate goal
-    public static Action isCloser(Agent agent){
+    // method that reduces the valid move that reduces the distance to the intermediate goal the most, null if no such move
+    public static Action isCloser(Agent agent, Simulation simulation){
+    	
+    	if(simulation==null)
+    		System.out.println("null sim");
+    	
+    	if(DEBUG)
+    	{
+    		System.out.println("config agents size "+simulation.getCurrentConfiguration().getAgents().size());
+    		System.out.println("curent agent at pos : "+AStarSearch.printPoint(agent.getLocation()));
+    	}
+    	
         ArrayList<Action> moves = simulation.getCurrentConfiguration().getAllValidActions(agent);
+        for(int  i=0; i<moves.size();i++)
+        {
+        	System.out.println("possible move : "+AStarSearch.printPoint(moves.get(i).getDestination()));
+        }
+        if(DEBUG)
+        	System.out.println("valid moves size "+moves.size());
         double minDistance = agent.getManhattanDistanceTo(agent.getIntermediateGoal());
         Action best = null;
 

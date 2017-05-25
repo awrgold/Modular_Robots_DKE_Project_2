@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
 
 import ai.CooperativeAStar;
+import ai.SimpleAI;
 import all.continuous.Agent;
 import all.continuous.Configuration;
 import all.continuous.GreedyAlgorithm;
@@ -400,7 +401,7 @@ public class Display {
 			Runnable simCalcFunc = () -> {
 				try {
 					sim = wr.createSimulation();
-					sim.setAlgorithm(new GreedyAlgorithm(sim));
+					sim.setAlgorithm(new CooperativeAStar(sim));
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));

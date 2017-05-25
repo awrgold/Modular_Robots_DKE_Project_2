@@ -25,10 +25,12 @@ public class AStarSearch
 	//MAIN A* SEARCH, return the path from start to goal (works for one agent only)
 		public static ArrayList<Point3D> aStarSearch(Agent agent,Point3D goal, Configuration config, Terrain terrain)
 	    {
-			
+			if(terrain==null)
+				System.out.println("terrain is null");
 			//GOAL 
 			AStarNode AStarGoal = new AStarNode(goal, config, terrain); 
-			
+			if(DEBUG)
+				System.out.println("goal : "+printPoint(AStarGoal.getLocation()));
 			//OPENSET : 
 	        ArrayList<AStarNode> openSet = new ArrayList<AStarNode>();
 	        //CLOSED SET
@@ -45,10 +47,13 @@ public class AStarSearch
 	        openSet.add(node1);
 	        CooperativeAStar.aStarNodes.add(node1);
 	        
-	       
+	       int counter =0; 
 	        //While all nodes haven't been analysed yet
-	        while(!openSet.isEmpty())       
+	        while(!openSet.isEmpty() && counter<100)       
 	        {
+	        	if(DEBUG)
+	        		System.out.println("goal : "+printPoint(AStarGoal.getLocation()));
+	        	
 	        	if(DEBUG)
 	        	{
 	        		System.out.println("open set values : ");
@@ -107,13 +112,13 @@ public class AStarSearch
 	                	currentPosition.setParent(minPos);
 	                	minPos = currentPosition; 
 	                	
-	            	   System.out.println("final path from start to goal");
+	            	  // System.out.println("final path from start to goal");
 	                   path = getAStarPath(node1, currentPosition);
 	                  
-	                   for(int j=path.size()-1; j>=0; j--)
+	                  /* for(int j=path.size()-1; j>=0; j--)
 	                   {
 	                   	System.out.println(path.get(j));
-	                   }
+	                   }*/
 	                    return path;
 	                }
 	                
@@ -183,7 +188,7 @@ public class AStarSearch
 	                openSet.add(currentPosition);
 	            }
 	            
-	            
+	            counter++;
 	        }
 	        return path;
 	      
@@ -237,7 +242,13 @@ public class AStarSearch
 	    	}
 	    	path.add(start.getLocation());
 	    	
-	    	return path;
+	    	ArrayList<Point3D> startGoalPath = new ArrayList<Point3D>();
+	    	for(int i=(path.size()-1); i>=0; i--)
+	    	{
+	    		startGoalPath.add(path.get(i));
+	    	}
+	    	
+	    	return startGoalPath;
 	    }
 	    
 	    
