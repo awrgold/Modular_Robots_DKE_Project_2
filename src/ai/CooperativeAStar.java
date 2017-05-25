@@ -115,6 +115,7 @@ public class CooperativeAStar extends ModuleAlgorithm
 	            // moving agent if possible and distance to goal is reduced
 	            for(int i = 0; i < agents.size(); i++){
 	                Agent first = PQ.poll();
+	                if(first.hasMoved()) continue;
 	                if(DEBUG)
 	                {
 	                	//System.out.println("iteration  : "+i);
