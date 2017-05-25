@@ -1,6 +1,7 @@
 package all.continuous;
 
 import javafx.geometry.Point3D;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class Agent extends Cube {
     }
 
     public void move(Point3D location) throws InvalidMoveException{
+    	if(location == null) throw new InvalidMoveException("Moving into 'null', somehow");
         if(!moved){
             this.location = location;
             this.moved = true;
