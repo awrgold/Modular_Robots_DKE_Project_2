@@ -3,6 +3,8 @@ package all.continuous;
 import all.continuous.CollisionUtil.Collision;
 import javafx.geometry.Point3D;
 
+import java.util.ArrayList;
+
 enum CollisionType {
 	NONE, 
 	OBSTACLE, 
@@ -44,6 +46,20 @@ public class CollisionUtil {
 			Point3D p = ray.getPoint(dist);
 			Collision c = isCollidingCube(sim, p, exclude);
 			if (c.type != CollisionType.NONE) return c;
+		}
+		return new Collision(CollisionType.NONE, ray.getPoint(maxDist));
+	}
+
+	public static Collision castRayCubeFalling(Simulation sim, Ray ray, double delta, double maxDist, double minDist, Agent exclude) {
+		ArrayList<Collision> list = new ArrayList<>();
+		for (double dist=minDist; dist<=maxDist; dist+=delta) {
+			Point3D p = ray.getPoint(dist);
+			Collision c = isCollidingCube(sim, p, exclude);
+			list.add(c);
+			if (c.type != CollisionType.NONE){
+				if(list.size() > 2) return list.get(list.size() - 2);
+				else return list.get(0);
+			}
 		}
 		return new Collision(CollisionType.NONE, ray.getPoint(maxDist));
 	}
