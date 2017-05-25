@@ -179,8 +179,8 @@ public class TestCases {
         Terrain terrain = new Terrain(obstacles);
         
         Simulation sim = new Simulation(terrain, startConfig, new Configuration(agentsGoal));
-        CooperativeAStar.analyseObstacles(10, startConfig, terrain);
-        CooperativeAStar.aStarSearch(agents.get(0), goal, startConfig, terrain);
+        //CooperativeAStar.analyseObstacles(10, startConfig, terrain);
+        //CooperativeAStar.aStarSearch(agents.get(0), goal, startConfig, terrain);
         
         obstacles = null;
         agents = null;
