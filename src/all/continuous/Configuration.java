@@ -9,6 +9,7 @@ import all.continuous.CollisionUtil.Collision;
 import javafx.geometry.Point3D;
 
 import static all.continuous.CollisionUtil.castRayCube;
+import static all.continuous.CollisionUtil.castRayCubeFalling;
 
 public class Configuration {
     Simulation simulation;
@@ -252,9 +253,9 @@ public class Configuration {
 
     public void resolveFalling(Agent agent){
         double maxDist = 1;
-        Collision coll = castRayCube(simulation, new Ray(agent.getLocation(), Direction.DOWN), 0.1, maxDist, 0, agent);
+        Collision coll = castRayCubeFalling(simulation, new Ray(agent.getLocation(), Direction.DOWN), 0.1, maxDist, 0, agent);
 
-        if(coll.location != agent.getLocation()){
+        if(coll.location != agent.getLocation() && coll.location != null){
             agent.move(coll.location);
         }
     }
