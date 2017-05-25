@@ -13,7 +13,8 @@ import javafx.geometry.Point3D;
 public class SimpleAI extends ModuleAlgorithm
 {
 	private static final boolean DEBUG = true;
-	
+
+	private static ArrayList<Point3D> reachedGoals = new ArrayList<>();
 	private static ArrayList<Point3D> visited = new ArrayList<Point3D>();
 	private static float currentAgentID;
 	
@@ -21,7 +22,9 @@ public class SimpleAI extends ModuleAlgorithm
 	
 	private int iterations=0;
 	
-	ArrayList<Agent> agents; 
+	ArrayList<Agent> agents;
+
+	private Point3D origin;
 
 	public SimpleAI(Simulation sim)
 	{
@@ -37,9 +40,22 @@ public class SimpleAI extends ModuleAlgorithm
 		agents=sim.getCurrentConfiguration().getAgents();
 		
 		//set their respective intermediate goals
-		for(int i=0; i<agents.size(); i++)
-		{agents.get(i).setIntermediateGoal(sim.getGoalConfiguration().getAgent(i).getLocation());}
+		/*for(int i=0; i<agents.size(); i++)
+		{agents.get(i).setIntermediateGoal(sim.getGoalConfiguration().getAgent(i).getLocation());}*/
 		
+
+		if(iterations==0)
+		{
+			origin = agents.get(0).getLocation();
+			for(int i=0; i<agents.size(); i++)
+			{
+				agents.get(i).setIntermediateGoal(getFurthestGoal(agents.get(0), sim));
+			}
+
+
+		}
+
+
 		//FILL THE PQ WITH AGENTS, BASED ON THEIR DISTANCE TO RESPECTIVE GOAL
 		Comparator<Agent> compare = new PQComparator();
         PQ = new PriorityQueue<>(agents.size(), compare);
@@ -53,11 +69,19 @@ public class SimpleAI extends ModuleAlgorithm
         //This keeps track of the ID of the agent we're currently moving
        
         //if it's the first iteration, fill the PQ entirely and store the id of the furthest agent
+		//set their respective intermediate goals
+		/*
+		Once the furthest goal is occupied by an agent (call it agent0), that agent's movements become EXPENSIVE.
+		- From this point, the next furthest available goal becomes the new target for agent1
+		- Once agent1 finds its goal, agent2 searches for the NEXT furthest goal, and so on until all goals are occupied.
+		 */
         if(iterations==0)
         {
         	fillPQ(agents, PQ);
         	currentAgentID = PQ.poll().getId();
-        }
+        	if(DEBUG)
+        		System.out.println("furthest agent : "+currentAgentID);
+		}
         //if it's not the first, add all the new agents to the PQ, except the one we're working with
         else
         {
@@ -112,22 +136,43 @@ public class SimpleAI extends ModuleAlgorithm
     		System.out.println("iterations : "+iterations);
     	
     	//this is just for stopping my infinite for loop
-    	if(iterations>40)
+    	if(iterations>200)
     		sim.finish();
     	
     	//if the agent we're working with finds its goal, we stop the simulation
-    	if(currentAgent.getLocation().equals(currentAgent.getIntermediateGoal()))
-    			sim.finish();
-        
+    	if(currentAgent.getLocation().equals(currentAgent.getIntermediateGoal())){
+    		reachedGoals.add(currentAgent.getLocation());
+    		for (int i = 0; i < agents.size(); i++){
+    			agents.get(i).setIntermediateGoal(getFurthestGoal(agents.get(0), sim));
+			}
+		}
         
 		
 	}
-	
+
+
+	public Point3D getFurthestGoal(Agent agent, Simulation sim){
+		double maxDist = -1;
+		Point3D pos = null;
+
+		for(int i = 0; i < sim.getGoalConfiguration().getAgents().size(); i++){
+			Agent currentGoal = sim.getGoalConfiguration().getAgent(i);
+			if (!reachedGoals.contains(currentGoal) && (currentGoal.getManhattanDistanceTo(origin) > maxDist)){
+				maxDist = currentGoal.getManhattanDistanceTo(agent.getLocation());
+				pos = currentGoal.getLocation();
+			}
+		}
+		return pos;
+	}
+
+
 	// priority queue filler
     public static void fillPQ(ArrayList<Agent> agents, PriorityQueue<Agent> PQ){
         for(int i = 0; i < agents.size(); i++){
-        	if(DEBUG)
-        		System.out.println("intermediate goal : "+agents.get(i).getIntermediateGoal());
+        	if(DEBUG) {
+        		System.out.println("PQ intermediate goal : "+agents.get(i).getIntermediateGoal());
+        		System.out.println("dist to goql : "+agents.get(i).getManhattanDistanceTo(agents.get(i).getIntermediateGoal()));
+			}
             PQ.add(agents.get(i));
         }
     }
