@@ -401,7 +401,7 @@ public class Display {
 			Runnable simCalcFunc = () -> {
 				try {
 					sim = wr.createSimulation();
-					sim.setAlgorithm(new SimpleAI(sim));
+					sim.setAlgorithm(new CooperativeAStar(sim));
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));

@@ -102,10 +102,12 @@ public class SimpleAI extends ModuleAlgorithm
         //Get the agent we were moving at the previous turn
         Agent currentAgent = findAgentWithID(currentAgentID, agents);
     	
-        //Check if there is an action that would bring it closer to its goal
+        
+    	//Check if there is an action that would bring it closer to its goal
+    
         Action best = isCloser(currentAgent, sim);
     	//if there is an action that brings the agent closer to the goal
-    	if(best != null)
+    	if(!currentAgent.hasMoved() && best != null)
     	{
     		if(DEBUG)
     			System.out.println("agent moves to "+best.getDestination());
@@ -114,6 +116,7 @@ public class SimpleAI extends ModuleAlgorithm
     		//add the position to the list of visited positions, so we can later update the weight of that move
     		//visited.add(best.getDestination());
     	}
+        
     	//if there is NO action that brings the agent closer to the goal --> change agent
     	else
     	{
