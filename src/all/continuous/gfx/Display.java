@@ -14,7 +14,10 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
 
+import ai.AStarAlgorithm;
+import ai.AStarGreedyAlgorithm;
 import ai.CooperativeAStar;
+import ai.SimpleAI;
 import all.continuous.Agent;
 import all.continuous.Configuration;
 import all.continuous.GreedyAlgorithm;
@@ -400,7 +403,7 @@ public class Display {
 			Runnable simCalcFunc = () -> {
 				try {
 					sim = wr.createSimulation();
-					sim.setAlgorithm(new GreedyAlgorithm(sim));
+					sim.setAlgorithm(new AStarAlgorithm(sim));
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
@@ -477,6 +480,8 @@ public class Display {
         	if (currentThread != null) currentThread.interrupt();
             // Destroy the display if necessary
             if (disp != null) disp.destroy();
+            
+            System.exit(0);
         }
     }
 

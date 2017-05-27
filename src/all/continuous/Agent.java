@@ -248,4 +248,12 @@ public class Agent extends Cube {
 
   		return distance;
 	}
+
+	public boolean isConnected(Configuration conf) {
+		for (Point3D dir : Direction.DIRECTIONS) {
+			CollisionUtil.Collision c = CollisionUtil.castRayCube(conf, new Ray(this.location, dir), this);
+			if (c.type == CollisionType.AGENT) return true;
+		}
+		return false;
+	}
 }

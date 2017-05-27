@@ -22,24 +22,24 @@ public class CollisionUtil {
 
 	private static final double DEFAULT_DELTA = 0.05;
 	
-	public static Collision castRay(Simulation sim, Ray ray, Agent exclude) {
-		return castRay(sim, ray, DEFAULT_DELTA, 1.0, 0.0, exclude);
+	public static Collision castRay(Configuration conf, Ray ray, Agent exclude) {
+		return castRay(conf, ray, DEFAULT_DELTA, 1.0, 0.0, exclude);
 	}
 	
-	public static Collision castRay(Simulation sim, Ray ray, double delta, double maxDist, double minDist, Agent exclude) {
+	public static Collision castRay(Configuration conf, Ray ray, double delta, double maxDist, double minDist, Agent exclude) {
 		for (double dist=minDist; dist<=maxDist; dist+=delta) {
 			Point3D p = ray.getPoint(dist);
-			Collision c = isColliding(sim, p, exclude);
+			Collision c = isColliding(conf, p, exclude);
 			if (c.type != CollisionType.NONE) return c;
 		}
 		return new Collision(CollisionType.NONE, ray.getPoint(maxDist));
 	}
 	
-	public static Collision castRayCube(Simulation sim, Ray ray, Agent exclude) {
+	public static Collision castRayCube(Configuration sim, Ray ray, Agent exclude) {
 		return castRayCube(sim, ray, DEFAULT_DELTA*0.1, 1.0, 0.0, exclude);
 	}
 	
-	public static Collision castRayCube(Simulation sim, Ray ray, double delta, double maxDist, double minDist, Agent exclude) {
+	public static Collision castRayCube(Configuration sim, Ray ray, double delta, double maxDist, double minDist, Agent exclude) {
 		for (double dist=minDist; dist<=maxDist; dist+=delta) {
 			Point3D p = ray.getPoint(dist);
 			Collision c = isCollidingCube(sim, p, exclude);
@@ -50,11 +50,11 @@ public class CollisionUtil {
 	
 	private static final double epsilon = 0.000;
 
-	public static Collision isColliding(Simulation sim, Point3D point, Agent exclude) {
+	public static Collision isColliding(Configuration conf, Point3D point, Agent exclude) {
 		double vSize = World.VOXEL_SIZE;
 		
 		// Check agent collision
-		for (Agent agent : sim.getCurrentConfiguration().agents) {
+		for (Agent agent : conf.agents) {
 			if (agent == exclude) continue;
 			
 			Point3D min = agent.location;
@@ -65,7 +65,7 @@ public class CollisionUtil {
 		return new Collision(CollisionType.NONE, null);
 	}
 	
-	private static Collision isCollidingCube(Simulation sim, Point3D point, Agent exclude) {
+	private static Collision isCollidingCube(Configuration conf, Point3D point, Agent exclude) {
 		double vSize = World.VOXEL_SIZE;
 		
 		Point3D minB = point;
@@ -76,8 +76,8 @@ public class CollisionUtil {
 		if (minB.getY() < 0) return new Collision(CollisionType.OBSTACLE, point);
 		
 		// Check agent collision
-		for (Agent agent : sim.getCurrentConfiguration().agents) {
-			if (agent == exclude) continue;
+		for (Agent agent : conf.agents) {
+			if (agent.equals(exclude)) continue;
 			
 			Point3D minA = agent.location;
 			Point3D maxA = minA.add(vSize, vSize, vSize);
@@ -85,10 +85,11 @@ public class CollisionUtil {
 			minA.add(epsilon, epsilon, epsilon);
 			maxA.subtract(epsilon, epsilon, epsilon);
 			
-			if (isColliding(minA, maxA, minB, maxB)) return new Collision(CollisionType.AGENT, point);
+			if (isColliding(minA, maxA, minB, maxB))
+				return new Collision(CollisionType.AGENT, point);
 		}
 		
-		for (Obstacle obs : sim.getTerrain().obstacles) {
+		for (Obstacle obs : conf.getSimulation().getTerrain().obstacles) {
 			Point3D minA = obs.location;
 			Point3D maxA = minA.add(vSize, vSize, vSize);
 			

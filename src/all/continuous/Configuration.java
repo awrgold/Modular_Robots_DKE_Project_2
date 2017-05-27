@@ -2,6 +2,7 @@ package all.continuous;
 
 import javafx.geometry.Point3D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import all.continuous.CollisionUtil.Collision;
@@ -46,24 +47,24 @@ public class Configuration {
         	// Determine whether the agent is grounded for the current direction
         	List<Point3D> groundedDirs = new ArrayList<>();
         	for (Point3D perpDir : perpDirs) {
-        		Collision c =  CollisionUtil.castRay(simulation, new Ray(PositionUtil.center(agent.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent);
+        		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent);
         		if (c.type == CollisionType.AGENT) {
         			groundedDirs.add(perpDir);
-        			break;
+        			break; // ???
         		}
         	}
         	
         	// If the agent is grounded, attempt movement in the current direction
         	if (groundedDirs.size() > 0) {
         		// Determine the maximum new position
-        		Collision max = CollisionUtil.castRayCube(simulation, new Ray(agent.location, dir), agent);
+        		Collision max = CollisionUtil.castRayCube(this, new Ray(agent.location, dir), agent);
         		
         		if (max.location.distance(agent.location) < 0.01) continue; // If the agent can't move in this direction, try the next one
         		
         		// Determine whether the agent remains grounded after the movement
         		boolean remainsGrounded = false;
         		for (Point3D perpDir : groundedDirs) {
-            		Collision c =  CollisionUtil.castRay(simulation, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
+            		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
             		if (c.type == CollisionType.AGENT) {
             			remainsGrounded = true;
             		} else {
@@ -82,12 +83,12 @@ public class Configuration {
     }
 
 	private void determineDiagAction(ArrayList<Action> actions, Agent agent, Point3D location, Point3D dir) {
-		Collision max = CollisionUtil.castRayCube(simulation, new Ray(location, dir), agent);
+		Collision max = CollisionUtil.castRayCube(this, new Ray(location, dir), agent);
 		
 		Point3D[] perpDirs = Direction.getPerpDirs(dir);
   		boolean grounded = false;
 		for (Point3D perpDir : perpDirs) {
-    		Collision c =  CollisionUtil.castRay(simulation, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
+    		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
     		if (c.type == CollisionType.AGENT) {
     			grounded = true;
     			break;
@@ -233,5 +234,37 @@ public class Configuration {
 
     public Simulation getSimulation(){
         return simulation;
+    }
+    
+    private int hash;
+    
+    @Override
+    public int hashCode() {
+    	if (hash == 0) {
+	    	int[] hashes = new int[agents.size()];
+	    	for (int i=0; i<agents.size(); i++) {
+	    		Agent a = agents.get(i);
+	    		Point3D loc = a.getLocation();
+	    		hashes[i] = loc.hashCode();
+	    	}
+	    	hash = Arrays.hashCode(hashes);
+    	}
+    	return hash;
+    }
+    
+    private float manhattan(Point3D a, Point3D b) {
+    	return (float) (Math.abs(a.getX()-b.getX()) + Math.abs(a.getY()-b.getY()) + Math.abs(a.getZ()-b.getZ()));
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if (!(obj instanceof Configuration)) return false;
+    	Configuration b = (Configuration) obj;
+    	if (b.agents.size() != this.agents.size()) return false;
+    	for (Agent agent : agents) {
+    		if (manhattan(b.getAgent(agent.getIndex()).getLocation(), agent.getLocation()) > 0.1) return false;
+    		//if (b.getAgent(agent.getIndex()).getLocation().distance(agent.getLocation()) > 0.05) return false;
+    	}
+    	return true;
     }
 }
