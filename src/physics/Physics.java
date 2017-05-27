@@ -49,6 +49,7 @@ public class Physics
 	//THIS METHOD SHOULD KNOW WHICH SIDE TO RETURN (or return all of them in a list)
 	public static Point3D returnFinalFallPos(Point3D pos, Configuration config, Terrain terrain)
 	{
+		return null;
 		
 	}
 	

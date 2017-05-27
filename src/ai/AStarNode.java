@@ -8,6 +8,8 @@ import javafx.geometry.Point3D;
 
 public class AStarNode
 {
+	private final static boolean DEBUG=true; 
+	
 	private Point3D location; 
 	
 	//FSCORE : this is the HScore and Gscore combined
@@ -25,6 +27,8 @@ public class AStarNode
 	//list of legal moves from that position
 	private ArrayList<Action> legalActions;
 	
+	private ArrayList<Float> agentsVisited;  
+	
 	//A star node constructor
 	public AStarNode(Point3D location, Configuration config, Terrain terrain)
 	{
@@ -34,6 +38,8 @@ public class AStarNode
 		this.location=location;
 		
 		this.legalActions=computeLegalAction(config, terrain); 
+		
+		agentsVisited = new ArrayList<Float>();
 	}
 	
 	public void setFScore(double fScore){this.fScore=fScore;}
@@ -55,16 +61,31 @@ public class AStarNode
 	public void addLegalAction(Action a){legalActions.add(a);}
 	public ArrayList<Action> getLegalActions(){return legalActions;}
 	
+	public void addVisitedAgent(float ID)
+	{
+		agentsVisited.add(ID);
+	}
+	
+	public ArrayList<Float> getAgentsVisited()
+	{
+		return agentsVisited;
+	}
 	/*TO BE IMPLEMENTED*/
 	/*For the purpose of testing, I'm just returning the 4 nodes on the sides of this one*/
 	public ArrayList<Action> computeLegalAction(Configuration config, Terrain terrain)
 	{
 		List<Obstacle> obstacles = terrain.getObstacles();
 		
-		Point3D left = new Point3D(this.getLocation().getX()-1, this.getLocation().getY(), 0);
-		Point3D right = new Point3D(this.getLocation().getX()+1, this.getLocation().getY(), 0);
-		Point3D front = new Point3D(this.getLocation().getX(), this.getLocation().getY()+1, 0);
-		Point3D behind = new Point3D(this.getLocation().getX(), this.getLocation().getY()-1, 0);
+		if(DEBUG)
+		{
+			if(this.location==null)
+				System.out.println("location is null");
+		}
+			
+		Point3D left = new Point3D(this.location.getX()-1, 0, this.location.getZ());
+		Point3D right = new Point3D(this.location.getX()+1, 0, this.location.getZ());
+		Point3D front = new Point3D(this.location.getX(), 0, this.location.getZ()+1);
+		Point3D behind = new Point3D(this.location.getX(), 0, this.location.getZ()-1);
 		
 		ArrayList<Action> pos4 = new ArrayList<Action>();
 		
@@ -92,9 +113,9 @@ public class AStarNode
 	{
 		double dist=0; 
 		
-		double xDiff = Math.abs(goal.location.getX()-this.location.getX()); 
-		double yDiff = Math.abs(goal.location.getY()-this.location.getY()); 
-		double zDiff = Math.abs(goal.location.getZ()-this.location.getZ()); 
+		double xDiff = Math.abs(goal.getLocation().getX()-this.location.getX()); 
+		double yDiff = Math.abs(goal.getLocation().getY()-this.location.getY()); 
+		double zDiff = Math.abs(goal.getLocation().getZ()-this.location.getZ()); 
 		
 		dist+=(xDiff+yDiff+zDiff);
 		

@@ -4,9 +4,13 @@ import javafx.geometry.Point3D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import all.continuous.CollisionUtil.Collision;
 import javafx.geometry.Point3D;
+
+import static all.continuous.CollisionUtil.castRayCube;
+import static all.continuous.CollisionUtil.castRayCubeFalling;
 
 public class Configuration {
     Simulation simulation;
@@ -57,7 +61,7 @@ public class Configuration {
         	// If the agent is grounded, attempt movement in the current direction
         	if (groundedDirs.size() > 0) {
         		// Determine the maximum new position
-        		Collision max = CollisionUtil.castRayCube(this, new Ray(agent.location, dir), agent);
+        		Collision max = castRayCube(this, new Ray(agent.location, dir), agent);
         		
         		if (max.location.distance(agent.location) < 0.01) continue; // If the agent can't move in this direction, try the next one
         		
@@ -74,7 +78,7 @@ public class Configuration {
             	}
         		
         		// If the agent remains grounded, it can move in the current direction
-        		if (remainsGrounded) {
+        		if (dir != Direction.UP && remainsGrounded) {
         			actions.add(new Action(agent.index, max.location));
         		}
         	}
@@ -83,7 +87,7 @@ public class Configuration {
     }
 
 	private void determineDiagAction(ArrayList<Action> actions, Agent agent, Point3D location, Point3D dir) {
-		Collision max = CollisionUtil.castRayCube(this, new Ray(location, dir), agent);
+		Collision max = castRayCube(this, new Ray(location, dir), agent);
 		
 		Point3D[] perpDirs = Direction.getPerpDirs(dir);
   		boolean grounded = false;
@@ -262,9 +266,29 @@ public class Configuration {
     	Configuration b = (Configuration) obj;
     	if (b.agents.size() != this.agents.size()) return false;
     	for (Agent agent : agents) {
-    		if (manhattan(b.getAgent(agent.getIndex()).getLocation(), agent.getLocation()) > 0.1) return false;
-    		//if (b.getAgent(agent.getIndex()).getLocation().distance(agent.getLocation()) > 0.05) return false;
+    		if (manhattan(b.getAgent(agent.getIndex()).getLocation(), agent.getLocation()) > 0.01) return false;
     	}
     	return true;
+    }
+
+    public void resolveFalling() {
+        PriorityQueue<Agent> queue = new PriorityQueue<>(agents.size(), new RobotHeightComparator());
+        for (Agent agent: agents) {
+            queue.add(agent);
+        }
+
+        while(!queue.isEmpty()){
+            Agent agent = queue.poll();
+            resolveFalling(agent);
+        }
+    }
+
+    public void resolveFalling(Agent agent){
+        double maxDist = 1;
+        Collision coll = castRayCubeFalling(this, new Ray(agent.getLocation(), Direction.DOWN), 0.1, maxDist, 0, agent);
+
+        if(coll.location != agent.getLocation() && coll.location != null){
+            agent.move(coll.location);
+        }
     }
 }

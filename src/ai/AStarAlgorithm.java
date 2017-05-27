@@ -48,6 +48,10 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 
 		iter++;
 	}
+	
+    private float manhattan(Point3D a, Point3D b) {
+    	return (float) (Math.abs(a.getX()-b.getX()) + Math.abs(a.getY()-b.getY()) + Math.abs(a.getZ()-b.getZ()));
+    }
 
 	private float calculateAgentScore(int agentIndex, Configuration current, Configuration goal) {
 //		double dist = Double.MAX_VALUE;
@@ -58,8 +62,9 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 //			//if (current.getAllValidActions(a).size() == 0) lonelyAgent = true;
 //		}
 //		return (float) (dist + (lonelyAgent ? 20 : 0));
-		float score = (float) current.getAgent(agentIndex).getLocation().distance(goal.getAgent(agentIndex).getLocation()) * 1.8f;
-		score *= current.getAgent(agentIndex).isConnected(current) ? 1 : 2.5f;
+		float score = (float) manhattan(current.getAgent(agentIndex).getLocation(), goal.getAgent(agentIndex).getLocation()) * 1.6f;
+		if (score > 0.001f) score += 1.2f;
+		score += current.getAgent(agentIndex).isConnected(current) ? 0 : 8.5f;
 		return score;
 	}
 
@@ -76,9 +81,12 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 		List<AStar.Neighbour<Configuration>> neighbours = new ArrayList<>();
 		for (Action a : actions) {
 			// FIXME: This is veeeeeeeeeeeeeeeeery memory inefficient...
+			if (conf.getAgent(a.getAgent()).hasMoved()) continue;
 			Configuration neighbour = conf.copy();
-			neighbour.setSimulation(sim);
 			neighbour.apply(a);
+			neighbour = neighbour.copy();
+			neighbour.setSimulation(sim);
+			neighbour.resolveFalling();
 			neighbours.add(new AStar.Neighbour<Configuration>(neighbour, 1));
 		}
 		return neighbours;

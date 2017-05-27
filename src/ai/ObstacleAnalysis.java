@@ -97,7 +97,7 @@ public class ObstacleAnalysis
 							System.out.println("climb possible");
 						//create an "jump" action, with the right weight
 						Point3D topObstacle = new Point3D(ob.getLocation().getX(), ob.getLocation().getY(), ob.getLocation().getZ()+1);
-						Action a = new Action(topObstacle, null, getRequiredNumbAgents(deltaZ, numberAgents));
+						Action a = new Action(topObstacle, null, getRequiredNumbAgents(deltaZ));
 						//Add this action to the list of legal actions of that node
 						node.addLegalAction(a);
 						if(DEBUG)
@@ -142,7 +142,7 @@ public class ObstacleAnalysis
 	//Returns boolean value if it possible to climb a certain obstacle or not!u                                                                                       	k
 	public static boolean possibleClimb(double height, int numberAgents)
 	{
-		int requiredN = getRequiredNumbAgents(height, 0);
+		int requiredN = getRequiredNumbAgents(height);
 		if(DEBUG)
 			System.out.println("required number of agents : "+requiredN);
 		if(numberAgents>=requiredN)
@@ -152,21 +152,14 @@ public class ObstacleAnalysis
 	}
 	
 	//Given a certain obstacle height, returns the number of modules required in order to climb it
-	public static int getRequiredNumbAgents(double height, int numbAgents)
+	public static int getRequiredNumbAgents(double height)
 	{
-		if(height==0)
+		int sum=0;
+		for(int i=1; i<=height; i++)
 		{
-			//System.out.println("height is 0 ");
-			return numbAgents+2; 
+			sum+=i;
 		}
-			
 		
-		else
-		{
-			numbAgents +=height;
-			//System.out.println("numb agents : "+numbAgents);
-			height-=1;
-			return getRequiredNumbAgents(height, numbAgents);
-		}
+		return sum;
 	}
 }

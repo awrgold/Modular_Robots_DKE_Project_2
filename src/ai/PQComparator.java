@@ -11,7 +11,7 @@ public class PQComparator implements Comparator<Agent> {
     public int compare(Agent one, Agent two){
         double distOne = one.getManhattanDistanceTo(one.getIntermediateGoal());
         double distTwo = two.getManhattanDistanceTo(two.getIntermediateGoal());
-        if(distOne > distTwo){
+        if(distOne < distTwo){
             return 1;
         }
         else if(distOne == distTwo){
@@ -21,3 +21,4 @@ public class PQComparator implements Comparator<Agent> {
     }
 
 }
+

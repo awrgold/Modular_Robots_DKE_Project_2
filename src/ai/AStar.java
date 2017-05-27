@@ -52,6 +52,7 @@ public class AStar {
 				break;
 
 			visibleSet.remove(current);
+			visible.remove(current);
 			visited.add(current);
 
 			for (Neighbour<T> neighbour : neighFind.findNeighbours(current)) {
@@ -67,8 +68,10 @@ public class AStar {
 				gScore.put(neighbour.node, score);
 				fScore.put(neighbour.node, score + heuristic.calculate(neighbour.node, goal));
 				
-				visibleSet.remove(neighbour.node);
-				visible.add(neighbour.node);
+				if (!visibleSet.contains(neighbour.node)) {
+					visibleSet.add(neighbour.node);
+					visible.add(neighbour.node);
+				}
 			}
 
 //			Configuration conf = (Configuration) current;

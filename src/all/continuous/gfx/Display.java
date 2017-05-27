@@ -414,7 +414,6 @@ public class Display {
 					computing = false;
 				}
 			};
-			Thread current;
 			window.setCallback(() -> {
 				computing = true;
 				currentThread = new Thread(simCalcFunc);

@@ -1,6 +1,7 @@
 package all.continuous;
 
 import javafx.geometry.Point3D;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,20 +10,26 @@ public class Agent extends Cube {
     private boolean moved = false;
     private double speed;
     private Point3D intermediateGoal;
+    private ArrayList<Point3D> path;
 
     public Agent(float id, Point3D location){
         this.id = id;
         this.location = location;
         this.intermediateGoal = null;
+        this.path=new ArrayList<Point3D>();
+        path.add(location);
     }
 
     public Agent copy(){
         Agent newAgent = new Agent(this.id, this.location);
         newAgent.index = this.index;
+        newAgent.intermediateGoal = this.intermediateGoal;
+        newAgent.path = this.path;
         return newAgent;
     }
 
     public void move(Point3D location) throws InvalidMoveException{
+    	if(location == null) throw new InvalidMoveException("Moving into 'null', somehow");
         if(!moved){
             this.location = location;
             this.moved = true;
@@ -57,6 +64,16 @@ public class Agent extends Cube {
 
 	public void setIntermediateGoal(Point3D goal){
     	intermediateGoal = goal;
+	}
+	
+	public void addPath(Point3D location)
+	{
+		this.path.add(location);
+	}
+	
+	public ArrayList<Point3D> getPath()
+	{
+		return path;
 	}
     
     /*THE NEXT 6 METHODS ARE USED FOR THE GRAVITY FALL //see physics class*/
