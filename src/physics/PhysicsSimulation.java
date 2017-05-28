@@ -1,23 +1,10 @@
 package physics;
 
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Matrix3dc;
-import org.joml.Matrix3fc;
-import org.joml.Matrix3x2dc;
-import org.joml.Matrix3x2fc;
-import org.joml.Matrix4dc;
-import org.joml.Matrix4fc;
-import org.joml.Matrix4x3dc;
-import org.joml.Matrix4x3fc;
-import org.joml.Quaterniond;
-import org.joml.Quaterniondc;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
-import org.joml.Vector3fc;
 
 public class PhysicsSimulation {
 	private static final double STEP_SIZE = 0.01;
@@ -53,7 +40,8 @@ public class PhysicsSimulation {
 	private void update(double delta) {
 		for (int i=0; i<bodies.size(); i++) {
 			Body a = bodies.get(i);
-			for (int j=i+1; j<bodies.size(); j++) {
+			for (int j=0; j<bodies.size(); j++) {
+				if (i == j) continue;
 				Body b = bodies.get(j);
 				Manifold manifold = new Manifold(a, b);
 				
@@ -88,6 +76,7 @@ public class PhysicsSimulation {
 		
 		// Handle friction
 		Vector3d tangent = relVel.sub(manifold.normal.mul(relVel.dot(manifold.normal), new Vector3d()), new Vector3d());
+		if (tangent.length() < 0.00001) return;
 		tangent.normalize();
 		
 		double frictionImpulseMag = -(relVel.dot(tangent)); // FIXME: Could I not just not normalize the tangent...
@@ -104,6 +93,8 @@ public class PhysicsSimulation {
 			frictionImpulse = tangent.mul(-impulseMag * dynfric);
 		}
 		
+		
+		
 		a.getVelocity().sub(frictionImpulse.mul(a.getInvMass()));
 		b.getVelocity().sub(frictionImpulse.mul(b.getInvMass()));
 	}
@@ -114,7 +105,17 @@ public class PhysicsSimulation {
 		
 		Vector3d correction = manifold.normal.mul(Math.max(manifold.penetration - slop, 0.0) / (a.getInvMass() + b.getInvMass()) * percent, new Vector3d());
 		
-		a.setPosition(a.getPosition().sub(correction.mul(a.getInvMass(), new Vector3d()), new Vector3d()));
-		b.setPosition(b.getPosition().sub(correction.mul(b.getInvMass(), new Vector3d()), new Vector3d()));
+		if (a.getInvMass() > 0) a.setPosition(a.getPosition().sub(correction.mul(a.getInvMass(), new Vector3d()), new Vector3d()));
+		if (b.getInvMass() > 0) b.setPosition(b.getPosition().sub(correction.mul(b.getInvMass(), new Vector3d()), new Vector3d()));
+	}
+	
+	public static void main(String[] args) {
+		PhysicsSimulation sim = new PhysicsSimulation();
+		Body a = sim.addBody(new Body(1, new AABBGeometry(new Vector3d(-0.5, -0.5, -0.5), new Vector3d(0.5, 0.5, 0.5)))).setPosition(new Vector3d(0, 10, 0));
+		Body b = sim.addBody(new Body(0, new AABBGeometry(new Vector3d(-5, -0.5, -5), new Vector3d(5, 0.5, 5)))).setPosition(new Vector3d(0, 0, 0));
+		for (int i=0; i<2000; i++) {
+			sim.tick(0.02);
+			System.out.printf("%s, %s\n", 0.02*i, a.getPosition().y);
+		}
 	}
 }

@@ -10,7 +10,7 @@ public class Body {
 		return 1.0/this.mass;
 	}
 	
-	private double restitution = 0.5; // FIXME: Test value
+	private double restitution = 0.8; // FIXME: Test value
 	public double getRestitution() { return this.restitution; }
 	
 	private Geometry geometry;
@@ -18,9 +18,9 @@ public class Body {
 	
 	private Vector3d position;
 	public Vector3d getPosition() { return this.position; }
-	public void setPosition(Vector3d position) {
-		if (this.mass == 0) return;
+	public Body setPosition(Vector3d position) {
 		this.position = position;
+		return this;
 	}
 	private Vector3d velocity;
 	public Vector3d getVelocity() { return this.velocity; }
@@ -51,6 +51,8 @@ public class Body {
 		this.geometry = geometry;
 		
 		this.forces = new Vector3d();
+		this.position = new Vector3d();
+		this.velocity = new Vector3d();
 		
 		acc = new Vector3d();
 		posDelta = new Vector3d();
