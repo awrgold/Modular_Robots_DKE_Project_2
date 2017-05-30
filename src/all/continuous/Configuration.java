@@ -43,6 +43,10 @@ public class Configuration {
     public ArrayList<Action> getAllValidActions(Agent agent){
         ArrayList<Action> actions = new ArrayList<>();
         
+        if (CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), Direction.UP), 
+        		0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent).type == CollisionType.AGENT)
+        	return actions;
+        
         // Attempt movement in all directions
         for (Point3D dir : Direction.DIRECTIONS) {
         	// Determine the perpendicular directions (needed to determine groundedness)
@@ -51,6 +55,7 @@ public class Configuration {
         	// Determine whether the agent is grounded for the current direction
         	List<Point3D> groundedDirs = new ArrayList<>();
         	for (Point3D perpDir : perpDirs) {
+        		if (perpDir == Direction.UP) continue;
         		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent);
         		if (c.type == CollisionType.AGENT) {
         			groundedDirs.add(perpDir);

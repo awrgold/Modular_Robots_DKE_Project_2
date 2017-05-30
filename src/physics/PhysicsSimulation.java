@@ -93,8 +93,6 @@ public class PhysicsSimulation {
 			frictionImpulse = tangent.mul(-impulseMag * dynfric);
 		}
 		
-		
-		
 		a.getVelocity().sub(frictionImpulse.mul(a.getInvMass()));
 		b.getVelocity().sub(frictionImpulse.mul(b.getInvMass()));
 	}

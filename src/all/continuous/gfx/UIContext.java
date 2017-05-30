@@ -94,10 +94,8 @@ public class UIContext {
     }
 
     public void render(int AA, int max_vertex_buffer, int max_element_buffer) {
-
-
         for (UIWindow window : windows) {
-            window.layout(ctx, 20, 20);
+            window.layout(ctx);
         }
 
         /*

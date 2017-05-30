@@ -2,6 +2,8 @@ package all.continuous.globjects;
 
 import static org.lwjgl.opengl.GL30.*;
 
+import org.lwjgl.opengl.GL11;
+
 public class VAO {
 	private int vaoHandle;
 

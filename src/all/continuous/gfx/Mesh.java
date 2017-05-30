@@ -21,7 +21,7 @@ public class Mesh {
 
 		positionVBO = new VBO(positions);
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-
+		
 		vertexCount = positions.length / 3;
 	}
 

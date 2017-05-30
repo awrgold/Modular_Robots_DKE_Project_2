@@ -221,7 +221,7 @@ public class Display {
 		NkContext ctx = NkContext.create();
 		glfwSetScrollCallback(windowHandle, (window, xoffset, yoffset) -> {
 			if (!uiContext.isActive() && this.scrollCallback != null) this.scrollCallback.invoke(window, xoffset, yoffset);
-			nk_input_scroll(ctx, (float)yoffset);
+			if (uiContext.isActive()) nk_input_scroll(ctx, (float)yoffset);
 		});
 		glfwSetCharCallback(windowHandle, (window, codepoint) -> nk_input_unicode(ctx, codepoint));
 		glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
@@ -360,6 +360,7 @@ public class Display {
 	public static Simulation sim = null;
 	public static boolean computing = false;
 	public static PlayerWindow window;
+	public static UIContext cont;
 	
 	public static Thread currentThread;
 
@@ -380,7 +381,7 @@ public class Display {
             ShaderManager.getInstance().addShader("phong", "phong_vert.glsl", "phong_frag.glsl");
 
             // Initialize the ui context
-            UIContext cont = new UIContext();
+            cont = new UIContext();
 
             // Set the projection matrix to a perspective projection matrix
             MVP.perspective(60, 640.0f / 480.0f);
@@ -388,8 +389,6 @@ public class Display {
             // Randomly initialize the voxel renderer (which will render our voxel world)
             VoxelRenderer vr = new VoxelRenderer();
             //vr.randomizeData();
-
-            // Create a controllable camera
 
             // Set the clear colour to something that sort of resembles the sky
             glClearColor(0.1f, 0.6f, 0.9f, 1.0f);
@@ -454,8 +453,7 @@ public class Display {
                 //vr.render();
 				
 				
-				if (!cont.isActive())
-					wr.input();
+				wr.input(cont.isActive());
 				wr.update();
 				
 				glEnable(GL_BLEND);

@@ -14,12 +14,15 @@ import static java.util.Comparator.comparingInt;
 enum ObjectType {
 	OBSTACLE, 
 	MODULE, 
-	GOAL
+	GOAL, 
+	INIT
 }
 
 public class WorldObject {
 	public static final float OBJECT_SIZE = 1.0f;
 	private static final float MOVEMENT_SPEED = 10.4f;
+	
+	public boolean changed;
 	
 	private Transform transform = new Transform();
 	public Transform getTransform() { return transform; }
@@ -44,6 +47,10 @@ public class WorldObject {
 		
 		this.id = currentId;
 		currentId++;
+	}
+	
+	public void addMesh() {
+		if (this.mesh != null) return;
 		this.mesh = ShapeFactory.genBox(0, 0, 0, 
 				OBJECT_SIZE, OBJECT_SIZE, OBJECT_SIZE);
 	}
@@ -81,17 +88,22 @@ public class WorldObject {
 			colour = new Vector4f(1, 1, 1, 1);
 			break;
 		case OBSTACLE:
-			colour = new Vector4f(0.1f, 0.7f, 0.5f, 1);
+			colour = new Vector4f(0.1f, 0.7f, 0.5f, 0.5f);
 			break;
 		case GOAL:
 			colour = new Vector4f(1.0f, 0.0f, 0.0f, 0.4f);
+			break;
+		case INIT:
+			colour = new Vector4f(0.0f, 0.0f, 0.8f, 0.4f);
 			break;
 		}
 		return colour;
 	}
 	
+	public static final Vector4f RED = new Vector4f(1, 0, 0, 1);
+	
 	public void render() {
-		Vector4f colour = getColorForType(this.type);
+		Vector4f colour = changed ? RED : getColorForType(this.type);
 		ShaderManager.getInstance().getShader().setVector4("colour", colour);
 		MVP.pushTransform(transform.getMatrix());
 			this.mesh.draw();

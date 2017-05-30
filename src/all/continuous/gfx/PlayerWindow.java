@@ -46,8 +46,8 @@ public class PlayerWindow implements UIWindow {
 	}
 
 	@Override
-	public void layout(NkContext ctx, int x, int y) {
-		if (playing) { // TODO: Use delta time you fuckin' idiot
+	public void layout(NkContext ctx) {
+		if (playing) { // NOTHINGTODO: This is fine
 			t++;
 			if (t % (10/speed) == 0) {
 				if (slider < max) {
@@ -67,7 +67,7 @@ public class PlayerWindow implements UIWindow {
 			if ( nk_begin(
 					ctx,
 					title, 
-					nk_rect(x, y, 240, 280, rect),
+					nk_rect(20, 20, 240, 280, rect),
 					NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE | NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE
 					) ) {
 				

@@ -246,12 +246,9 @@ public class Agent extends Cube {
   			return area; 
   		
   		}
-  		
   		else 
   			return 0; 
     }
-
-
 
     //TODO: Turn this into a real method. Class *aStar* should have a Point3D location to pass as a goal.
     public double getManhattanDistanceTo(Point3D goal){
@@ -268,7 +265,7 @@ public class Agent extends Cube {
 
 	public boolean isConnected(Configuration conf) {
 		for (Point3D dir : Direction.DIRECTIONS) {
-			CollisionUtil.Collision c = CollisionUtil.castRayCube(conf, new Ray(this.location, dir), this);
+			CollisionUtil.Collision c = CollisionUtil.castRayCube(conf, new Ray(this.location, dir), 0.24, 1.0, 0.0, this);
 			if (c.type == CollisionType.AGENT) return true;
 		}
 		return false;
