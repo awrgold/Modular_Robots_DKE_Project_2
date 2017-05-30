@@ -113,9 +113,9 @@ public class CooperativeAStar extends ModuleAlgorithm
 	       // while(!goalReached && counter<15){
 	        	
 	            // moving agent if possible and distance to goal is reduced
-	            for(int i = 0; i < agents.size(); i++){
+	           // for(int i = 0; i < agents.size(); i++){
 	                Agent first = PQ.poll();
-	                if(first.hasMoved()) continue;
+	                
 	                if(DEBUG)
 	                {
 	                	//System.out.println("iteration  : "+i);
@@ -123,32 +123,35 @@ public class CooperativeAStar extends ModuleAlgorithm
 	                	System.out.println("PQ size  : "+PQ.size());
 	                }
 	                
-	                Action toBeEvaluated = isCloser(first, sim);
-	                if(toBeEvaluated != null){
-	                    Action action = toBeEvaluated;
-	                    //actions.add(action);
-	                    //first.move(action.getDestination());
-	                    if(isAlreadyAStar(action.getDestination()))
-	                    {
-	                    	AStarNode node = aStarNodes.get(indexAStar(action.getDestination(), aStarNodes));
-	                    	node.addVisitedAgent(first.getId());
-	                    }
-	                    else
-	                    {
-	                    	AStarNode node = new AStarNode(action.getDestination(), sim.getCurrentConfiguration(), sim.getTerrain());
-	                    	node.addVisitedAgent(first.getId());
-	                    }
-	                    
-	                    
-	                    sim.apply(action);
-	                    
-	                    if(DEBUG)
-	                    	System.out.println("agent should have moved to  : "+AStarSearch.printPoint(action.getDestination()));
-	                    if(DEBUG)
-	                    	System.out.println("agent is at  : "+AStarSearch.printPoint(first.getLocation()));
-	                    //break;
+	                if(!first.hasMoved())
+	                {
+		                Action toBeEvaluated = isCloser(first, sim);
+		                if(toBeEvaluated != null){
+		                    Action action = toBeEvaluated;
+		                    //actions.add(action);
+		                    //first.move(action.getDestination());
+		                    if(isAlreadyAStar(action.getDestination()))
+		                    {
+		                    	AStarNode node = aStarNodes.get(indexAStar(action.getDestination(), aStarNodes));
+		                    	node.addVisitedAgent(first.getId());
+		                    }
+		                    else
+		                    {
+		                    	AStarNode node = new AStarNode(action.getDestination(), sim.getCurrentConfiguration(), sim.getTerrain());
+		                    	node.addVisitedAgent(first.getId());
+		                    }
+		                    
+		                    
+		                    sim.apply(action);
+		                    
+		                    if(DEBUG)
+		                    	System.out.println("agent should have moved to  : "+AStarSearch.printPoint(action.getDestination()));
+		                    if(DEBUG)
+		                    	System.out.println("agent is at  : "+AStarSearch.printPoint(first.getLocation()));
+		                    //break;
+		                }
 	                }
-	           }
+	          // }
 
 	            iterations++;
 	            // check if the intermediate goal is reached, if so update intermediate goal for all agents
