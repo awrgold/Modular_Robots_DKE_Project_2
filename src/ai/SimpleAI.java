@@ -16,7 +16,7 @@ public class SimpleAI extends ModuleAlgorithm
 
 	private static ArrayList<Point3D> reachedGoals = new ArrayList<>();
 	private static ArrayList<Point3D> visited = new ArrayList<Point3D>();
-	private static float currentAgentID;
+	private static float currentAgentID=0;
 	
 	private static PriorityQueue<Agent> PQ; 
 	
@@ -120,6 +120,8 @@ public class SimpleAI extends ModuleAlgorithm
         		sim.apply(action);
         		currentAgent.addPath(action.getDestination());
             	unsuccessfulTurns=0;
+            	if(PQ.size()==0)
+            		sim.finish();
             	currentAgent = PQ.poll();
 	    		currentAgentID = currentAgent.getId();
 	    		//unsuccessfulTurns++;
