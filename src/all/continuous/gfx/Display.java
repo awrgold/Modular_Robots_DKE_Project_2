@@ -21,6 +21,7 @@ import ai.SimpleAI;
 import all.continuous.Agent;
 import all.continuous.Configuration;
 import all.continuous.GreedyAlgorithm;
+import all.continuous.ModuleAlgorithm;
 import all.continuous.RandomAlgorithm;
 import all.continuous.Simulation;
 import all.continuous.exceptions.DisplayInitException;
@@ -395,14 +396,17 @@ public class Display {
             
             WorldRenderer wr = new WorldRenderer();
             
-            
+            final AlgorithmWindow algWin = new AlgorithmWindow();
+            algWin.addAlgorithm(AStarAlgorithm.class);
+            algWin.addAlgorithm(AStarGreedyAlgorithm.class);
+            cont.addWindow(algWin);
             
             // Add a window to the ui
 			window = new PlayerWindow();
 			Runnable simCalcFunc = () -> {
 				try {
 					sim = wr.createSimulation();
-					sim.setAlgorithm(new AStarAlgorithm(sim));
+					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
@@ -423,6 +427,8 @@ public class Display {
 				computing = false;
 			});
             cont.addWindow(window);
+            
+           
             
             
 
