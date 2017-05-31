@@ -52,7 +52,7 @@ public class AStarGreedyAlgorithm extends ModuleAlgorithm {
 		currentPath.remove(0);
 		
 		iter++;
-		if (iter > 40) sim.finish();
+		if (iter > 200) sim.finish();
 	}
 	
 	private float calculateAgentScore(int agentIndex, Configuration current, Configuration goal) {
@@ -73,10 +73,19 @@ public class AStarGreedyAlgorithm extends ModuleAlgorithm {
 		List<AStar.Neighbour<Configuration>> neighbours = new ArrayList<>();
 		for (Action a : actions) {
 			// FIXME: This is veeeeeeeeeeeeeeeeery memory inefficient...
+			// FIXME: fALLING
+			if (conf.getAgent(a.getAgent()).hasMoved()) continue;
 			Configuration neighbour = conf.copy();
-			neighbour.setSimulation(sim);
 			neighbour.apply(a);
-			neighbours.add(new AStar.Neighbour<Configuration>(neighbour, 1));
+			neighbour = neighbour.copy();
+			neighbour.setSimulation(sim);
+	
+			//neighbour.resolveFalling();
+			boolean isConnected = true;
+			for (Agent agent : neighbour.getAgents()) {
+				if (!agent.isConnected(neighbour)) isConnected = false;
+			}
+			if (isConnected) neighbours.add(new AStar.Neighbour<Configuration>(neighbour, 1));
 		}
 		return neighbours;
 	}
