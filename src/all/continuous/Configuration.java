@@ -59,7 +59,6 @@ public class Configuration {
         		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent);
         		if (c.type == CollisionType.AGENT) {
         			groundedDirs.add(perpDir);
-        			break; // ???
         		}
         	}
         	
@@ -76,7 +75,7 @@ public class Configuration {
             		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
             		if (c.type == CollisionType.AGENT) {
             			remainsGrounded = true;
-            		} else {
+            		} else if (dir == Direction.UP || dir == Direction.DOWN || perpDir == Direction.UP || perpDir == Direction.DOWN) {
             			// Not grounded here, but it might be possible to move diagonally
             			determineDiagAction(actions, agent, max.location, perpDir);
             		}
