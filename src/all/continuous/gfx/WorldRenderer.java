@@ -182,11 +182,7 @@ public class WorldRenderer {
 				if (addInitial) {
 				// Add init
 					Vector3f trans = obj.getTransform().position;
-					try {
-						addObject(new WorldObject(ObjectType.INIT)).setPosition(trans.x, trans.y, trans.z);
-					} catch (Exception e) {
-						// I enraged a milion Java developers today
-					}
+					addObject(new WorldObject(ObjectType.INIT)).setPosition(trans.x, trans.y, trans.z);
 				}
 				break;
 			case OBSTACLE:

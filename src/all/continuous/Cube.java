@@ -7,11 +7,11 @@ import physics.Geometry;
 
 import static all.continuous.Direction.*;
 
-import org.joml.Vector3f;
+import org.joml.Vector3d;
 
 public abstract class Cube extends Body {
     public Cube() {
-		super(1, new AABBGeometry(new Vector3f(0, 0, 0).toImmutable(), new Vector3f(0, 0, 0).toImmutable()));
+		super(1, new AABBGeometry(new Vector3d(0, 0, 0), new Vector3d(0, 0, 0)));
 	}
 
 	protected float id;

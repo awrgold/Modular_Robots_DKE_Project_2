@@ -29,6 +29,7 @@ import all.continuous.exceptions.InvalidStateException;
 import all.continuous.exceptions.ShaderException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
@@ -406,8 +407,6 @@ public class Display {
 			window = new PlayerWindow();
 			Runnable simCalcFunc = () -> {
 				try {
-					sim = wr.createSimulation();
-					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
@@ -420,6 +419,14 @@ public class Display {
 			};
 			window.setCallback(() -> {
 				computing = true;
+				sim = wr.createSimulation();
+				try {
+					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+					error = e.getClass().getName() + ": " + e.getMessage();
+				}
 				currentThread = new Thread(simCalcFunc);
 				currentThread.start();
 			});
