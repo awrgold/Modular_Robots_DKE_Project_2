@@ -13,7 +13,8 @@ import static all.continuous.CollisionUtil.castRayCube;
 import static all.continuous.CollisionUtil.castRayCubeFalling;
 
 public class Configuration {
-    Simulation simulation;
+    private static final boolean DEBUG = true;
+	Simulation simulation;
     ArrayList<Agent> agents;
 
     public Configuration(ArrayList<Agent> agents) {
@@ -33,6 +34,14 @@ public class Configuration {
         ArrayList<Action> actions = new ArrayList<>();
 
         for (Agent agent: this.getAgents()) {
+        	if(DEBUG)
+        	{
+        		System.out.println("WE RE IN THE FOR LOOP");
+        		if(getAllValidActions(agent) == null)
+        			System.out.println("get all valid actions is null");
+        		
+        		//System.out.println("valid actions : "+getAllValidActions(agent).size());
+        	}
             actions.addAll(getAllValidActions(agent));
         }
 

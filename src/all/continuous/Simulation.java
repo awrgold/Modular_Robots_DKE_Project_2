@@ -80,7 +80,7 @@ public class Simulation {
         return timeStep;
     }
 
-    private boolean hasGoalBeenReached() {
+    public boolean hasGoalBeenReached() {
 		for (Agent a : goal.agents) {
 			if (getCurrentConfiguration().agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))) return false;
 		}

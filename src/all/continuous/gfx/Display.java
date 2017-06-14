@@ -17,6 +17,7 @@ import org.lwjgl.system.MemoryStack;
 import ai.AStarAlgorithm;
 import ai.AStarGreedyAlgorithm;
 import ai.CooperativeAStar;
+import ai.MCTS;
 import ai.SimpleAI;
 import all.continuous.Agent;
 import all.continuous.Configuration;
@@ -402,12 +403,16 @@ public class Display {
             algWin.addAlgorithm(AStarGreedyAlgorithm.class);
             algWin.addAlgorithm(SimpleAI.class);
             algWin.addAlgorithm(CooperativeAStar.class);
+            algWin.addAlgorithm(MCTS.class);
             cont.addWindow(algWin);
             
             // Add a window to the ui
 			window = new PlayerWindow();
 			Runnable simCalcFunc = () -> {
 				try {
+					sim = wr.createSimulation();
+					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
+				
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
