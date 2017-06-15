@@ -10,7 +10,7 @@ public class Body {
 		return 1.0/this.mass;
 	}
 	
-	private double restitution = 0.8; // FIXME: Test value
+	private double restitution = 0.5; // FIXME: Test value
 	public double getRestitution() { return this.restitution; }
 	
 	private Geometry geometry;
@@ -24,11 +24,12 @@ public class Body {
 	}
 	private Vector3d velocity;
 	public Vector3d getVelocity() { return this.velocity; }
+	public void setVelocity(Vector3d velocity) { this.velocity = velocity; }
 	
-	private double staticFrictionCoeff;
+	private double staticFrictionCoeff = 1;
 	public double getStaticFrictionCoeff() { return staticFrictionCoeff; }
 	public void setStaticFrictionCoeff(double staticFrictionCoeff) { this.staticFrictionCoeff = staticFrictionCoeff; }
-	private double dynamicFrictionCoeff;
+	private double dynamicFrictionCoeff = 1;
 	public double getDynamicFrictionCoeff() { return dynamicFrictionCoeff; }
 	public void setDynamicFrictionCoeff(double dynamicFrictionCoeff) { this.dynamicFrictionCoeff = dynamicFrictionCoeff; }
 	
@@ -58,12 +59,20 @@ public class Body {
 		posDelta = new Vector3d();
 	}
 	
+	private PhysicsSimulation simulation;
+	
+	public void attach(PhysicsSimulation simulation) {
+		this.simulation = simulation;
+	}
+	
 	/**
 	 * Update velocity and position
 	 * 
 	 * @param delta
 	 */
 	public void update(double delta) {
+		if (this.simulation == null)
+			throw new IllegalStateException("Body not attached to simulation");
 		if (this.mass == 0) return;
 		
 		acc = this.forces.mul(this.getInvMass(), acc);

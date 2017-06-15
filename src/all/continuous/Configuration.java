@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import org.joml.Vector3d;
+
 import all.continuous.CollisionUtil.Collision;
 import javafx.geometry.Point3D;
 
@@ -28,6 +30,10 @@ public class Configuration {
     	Agent agent = agents.get(action.getAgent());
     	agent.move(action.getDestination());
     }
+    
+    public void applyPhysical(AgentAction action) {
+    	action.apply();
+	}
 
     public ArrayList<Action> getAllValidActions(){
         ArrayList<Action> actions = new ArrayList<>();
@@ -37,6 +43,119 @@ public class Configuration {
         }
 
         return actions;
+    }
+    
+    public ArrayList<AgentAction> getAllPhysicalActions() {
+    	 ArrayList<AgentAction> actions = new ArrayList<>();
+
+         for (Agent agent: this.getAgents()) {
+             actions.addAll(getPhysicalActions(agent));
+         }
+
+         return actions;
+	}
+    
+    public ArrayList<AgentAction> getPhysicalActions(Agent agent) {
+    	ArrayList<AgentAction> actions = new ArrayList<>();
+    	
+    	 if (CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), Direction.UP), 
+         		0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent).type == CollisionType.AGENT)
+         	return actions;
+         
+         // Attempt movement in all directions
+         for (Point3D dir : Direction.DIRECTIONS) {
+         	// Determine the perpendicular directions (needed to determine groundedness)
+         	Point3D[] perpDirs = Direction.getPerpDirs(dir);
+         	
+         	// Determine whether the agent is grounded for the current direction
+         	List<Point3D> groundedDirs = new ArrayList<>();
+         	for (Point3D perpDir : perpDirs) {
+         		if (perpDir == Direction.UP) continue;
+         		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent);
+         		if (c.type == CollisionType.AGENT) {
+         			groundedDirs.add(perpDir);
+         		}
+         	}
+         	
+         	// If the agent is grounded, attempt movement in the current direction
+         	if (groundedDirs.size() > 0) {
+         		// Determine the maximum new position
+         		Collision max = castRayCube(this, new Ray(agent.location, dir), agent);
+         		
+         		if (max.location.distance(agent.location) < 0.01) continue; // If the agent can't move in this direction, try the next one
+         		
+         		// Determine whether the agent remains grounded after the movement
+         		boolean remainsGrounded = false;
+         		for (Point3D perpDir : groundedDirs) {
+             		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
+             		if (c.type == CollisionType.AGENT) {
+             			remainsGrounded = true;
+             		} else if (dir == Direction.UP || dir == Direction.DOWN || perpDir == Direction.UP || perpDir == Direction.DOWN) {
+             			// Not grounded here, but it might be possible to move diagonally
+             			determineDiagPhysicalAction(actions, agent, max.location, perpDir, dir);
+             		}
+             	}
+         		
+         		// If the agent remains grounded, it can move in the current direction
+         		if (dir != Direction.UP && remainsGrounded) {
+         			double impulseMag = calculateImpulseForDist(max.location.subtract(agent.getLocation()).magnitude());
+         			actions.add(new ImpulseAction(agent, new Vector3d(dir.getX(), dir.getY(), dir.getZ()).mul(impulseMag)));
+         		}
+         	}
+         }
+         return actions;
+    }
+    
+    private double calculateImpulseForDist(double dist) {
+    	return -0.0024955 * dist + 0.0360 * dist*dist;
+    }
+    
+    private void determineDiagPhysicalAction(ArrayList<AgentAction> actions, Agent agent, Point3D location, Point3D dir, Point3D primDir) {
+		Collision max = castRayCube(this, new Ray(location, dir), agent);
+		
+		Point3D[] perpDirs = Direction.getPerpDirs(dir);
+  		boolean grounded = false;
+		for (Point3D perpDir : perpDirs) {
+    		Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
+    		if (c.type == CollisionType.AGENT) {
+    			grounded = true;
+    			break;
+    		}
+    	}
+		
+		// If the agent remains grounded after this diagonal movement, add it to the actions list
+		if (grounded) {
+			actions.add(new ClimbAction(agent, primDir, dir));
+		}
+	}
+    
+    public static void main(String[] args) {
+    	ArrayList<Agent> agents = new ArrayList<>();
+    	agents.add(new Agent(0, new Point3D(World.VOXEL_SIZE, 0, 0)));
+    	//agents.add(new Agent(1, new Point3D(World.VOXEL_SIZE, World.VOXEL_SIZE, 0)));
+    	agents.add(new Agent(2, new Point3D(World.VOXEL_SIZE, World.VOXEL_SIZE*2, 0)));
+    	
+    	Configuration conf =  new Configuration(agents);
+    	
+    	Simulation sim = new Simulation(new Terrain(new ArrayList<>()), conf, new Configuration(agents));
+    	sim.setAlgorithm(new RandomAlgorithm(sim));
+    	
+//    	for (int i=0; i<1000; i++) {
+//    		sim.physSim.tick(0.1);
+//    		System.out.printf("%s\t%s\n", i*0.1, sim.getCurrentConfiguration().getAgent(2).getPosition().y);
+//    	}
+    	sim.endTurn();
+    	
+    	System.out.println(sim.getCurrentConfiguration().getAgents());
+    	System.out.println(sim.getCurrentConfiguration().getPhysicalActions(sim.getCurrentConfiguration().getAgent(1)));
+    	
+		sim.endTurn();
+		sim.endTurn();
+		sim.endTurn();
+    	
+    	System.out.println(sim.getCurrentConfiguration().getAgents());
+    	System.out.println(sim.getCurrentConfiguration().getPhysicalActions(sim.getCurrentConfiguration().getAgent(1)));
+    	//System.out.println(conf.getAllValidActions(agents.get(2)));
     }
     
     // TODO: Separate grounded method to simplify code
