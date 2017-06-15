@@ -117,6 +117,7 @@ public class Configuration {
         return agents.get(i);
     }
 
+
     public ArrayList<CubeCouple> getAllCollisions(Agent agent, boolean fast){
         ArrayList<CubeCouple> collisions = new ArrayList<>();
 

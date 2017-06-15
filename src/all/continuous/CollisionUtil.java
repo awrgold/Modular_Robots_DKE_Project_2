@@ -68,14 +68,16 @@ public class CollisionUtil {
 
 	public static Collision isColliding(Configuration conf, Point3D point, Agent exclude) {
 		double vSize = World.VOXEL_SIZE;
-		
+
 		// Check agent collision
 		for (Agent agent : conf.agents) {
 			if (agent == exclude) continue;
 			
 			Point3D min = agent.location;
 			Point3D max = min.add(vSize, vSize, vSize);
-			if (isColliding(min, max, point)) return new Collision(CollisionType.AGENT, point);
+			if (isColliding(min, max, point)){
+				return new Collision(CollisionType.AGENT, point);
+			}
 		}
 		
 		return new Collision(CollisionType.NONE, null);
