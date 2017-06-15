@@ -10,13 +10,14 @@ public class MCTSNode{
 	Configuration config;
 	MCTSNode parent;
 	ArrayList<MCTSNode> children;
-	int visits =0;
+	int visits;
 	int score=0;
 	Action fromParent;
 	
 	public MCTSNode(Configuration config){
 		this.config = config;
 		children = new ArrayList<MCTSNode>();
+		visits = 0;
 	}
 	
 	public MCTSNode getParent(){

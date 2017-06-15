@@ -9,11 +9,14 @@ public class MCTS extends ModuleAlgorithm
 
 	private boolean DEBUG = true;
 	ArrayList<Action> path = new ArrayList<Action>();
-	int counter=0;
+	private static int counter=0;
 	
 	public MCTS(Simulation sim) {
 		super(sim);
 		// TODO Auto-generated constructor stub
+		if(DEBUG)
+			System.out.println("CONSTRUCTION OF MCTS");
+		
 		mainMCTS(sim);
 	}
 
@@ -23,11 +26,18 @@ public class MCTS extends ModuleAlgorithm
 		root.addVisit();
 		expand(root);
 		
-		int counter = 0 ; 
+		int counter1 = 0 ; 
 		//TO BE LOOPED UNTIL GOAL IS FOUND
-		while(counter<400)
+		while(counter1<3)
 		{
+			System.out.println("counter : "+counter1);
+			
 			MCTSNode next = select(root);
+			while(next.getChildren().size()!=0)
+			{
+				MCTSNode next2 = select(next);
+				next = next2;
+			}
 			if(next == null)
 				System.out.println("next is nul!!");
 			//if it has already been visited
@@ -37,22 +47,34 @@ public class MCTS extends ModuleAlgorithm
 				
 				for(int i = 0; i < next.getChildren().size(); i++)
 				{
+					if(DEBUG)
+						System.out.println("simulate child numb "+i);
 					simulate(next.getChildren().get(i));
 				}
 			}
 			else
 			{
+				
 				simulate(next);
 			}
 			
 			backUp(next, next.getChildren());
 			
-			counter++;
+			counter1++;
 		}
 		
-		while(!sim.hasGoalBeenReached())
+		while(root.getChildren().size()!=0)
 		{
+			System.out.println("Start computing the path");
 			MCTSNode next = select(root);
+			if(DEBUG)
+			{
+				if(next == null)
+					System.out.println("next is null");
+				if(next.getAction() == null)
+					System.out.println("action is null");
+			}
+			
 			Action a = next.getAction();
 			path.add(a);
 			root = next;
@@ -63,14 +85,14 @@ public class MCTS extends ModuleAlgorithm
 	//SELECT
 	public double selectPolicy(MCTSNode node){
 		
-		if(DEBUG)
+		/*if(DEBUG)
 			System.out.println("node score : "+node.getScore() );
 		
 		if(DEBUG)
 			System.out.println("parent visits : "+node.getParent().getVisits() );
 		
 		if(DEBUG)
-			System.out.println("node visits : "+node.getVisits() );
+			System.out.println("node visits : "+node.getVisits() );*/
 		
 		if(node.getVisits()==0)
 			return Double.MAX_VALUE;
@@ -83,17 +105,25 @@ public class MCTS extends ModuleAlgorithm
 	
 	public MCTSNode select(MCTSNode origin){
 		
-		ArrayList<MCTSNode> children = origin.getChildren();
 		if(DEBUG)
-			System.out.println("children size "+children.size());
-		double max = Double.MIN_VALUE;
+			System.out.println("SELECT");
+		
+		ArrayList<MCTSNode> children = origin.getChildren();
+		/*if(DEBUG)
+			System.out.println("children size "+children.size());*/
+		double max = - (Double.MAX_VALUE);
 		MCTSNode maxNode = null;
 		
 		for(int i = 0; i < children.size(); i++){
 			double selectScore = selectPolicy(children.get(i));
 			if(DEBUG)
 				System.out.println("select policy : "+selectScore);
+			
+			if(DEBUG)
+				System.out.println("current max value"+ max);
 			if(selectScore > max){
+				if(DEBUG)
+					System.out.println("update the max");
 				max = selectScore;
 				maxNode = children.get(i);
 			}
@@ -103,6 +133,8 @@ public class MCTS extends ModuleAlgorithm
 	
 	//EXPAND
 	public void expand(MCTSNode origin){
+		if(DEBUG)
+			System.out.println("EXPAND");
 		
 		ArrayList<Action> validActions = origin.getConfiguration().getAllValidActions();
 		
@@ -110,25 +142,35 @@ public class MCTS extends ModuleAlgorithm
 			
 			Configuration configCopy = origin.getConfiguration().copy();
 			configCopy.apply(validActions.get(i));
+		
 			MCTSNode child = new MCTSNode(configCopy);
 			child.setAction(validActions.get(i));
 			
 			origin.addChild(child);
 			
 		}	
+		
+		System.out.println("origin now has "+origin.getChildren().size()+ " children");
 	}
 	
 	//SIMULATE
 	public void simulate(MCTSNode origin){
+		if(DEBUG)
+			System.out.println("SIMULATE");
 		
 		origin.addVisit();
+		Configuration currentConfig = origin.getConfiguration();
+		
 		
 		long t = System.nanoTime();
-		long end = t + 10000000;
+		long end = t + 1000000000;
 		
 		while(System.nanoTime() < end){
 			
-			if(DEBUG)
+			Configuration nextConfig = currentConfig.copy();
+			currentConfig = nextConfig;
+			
+			/*if(DEBUG)
 			{
 				if(origin == null)
 					System.out.println("node is null");
@@ -136,27 +178,28 @@ public class MCTS extends ModuleAlgorithm
 					System.out.println("config is null");
 				System.out.println("number of agents : "+origin.getConfiguration().getAgents().size());
 				System.out.println(origin.getConfiguration().getAgent(0).getLocation() + " "+ origin.getConfiguration().getAgent(1).getLocation());
-			}
-			ArrayList<Action> validActions = origin.getConfiguration().getAllValidActions();
+			}*/
+			ArrayList<Action> validActions = currentConfig.getAllValidActions();
 			int size = validActions.size();
 			int random = (int) Math.random()*size;
 			
-			origin.getConfiguration().apply(validActions.get(random));
+			currentConfig.apply(validActions.get(random));
 			
 		}
 		
-		int score = estimateScore(origin);
+		int score = estimateScore(currentConfig);
 		origin.setScore(score);
 	}
 	
-	public int estimateScore(MCTSNode node){
+	public int estimateScore(Configuration config){
 		
-		ArrayList<Agent> agents = node.getConfiguration().getAgents();
+		ArrayList<Agent> agents = config.getAgents();
+		ArrayList<Agent> goals = config.getSimulation().getGoalConfiguration().getAgents();
 		int totalManhattanDistance = 0;
 		
 		for(int i = 0; i < agents.size() ; i++){
 			
-			totalManhattanDistance += agents.get(i).getManhattanDistanceTo(agents.get(i).getIntermediateGoal());
+			totalManhattanDistance += agents.get(i).getManhattanDistanceTo(goals.get(i).getLocation());
 		}
 		
 		totalManhattanDistance = (int) -(totalManhattanDistance/agents.size());
@@ -165,14 +208,20 @@ public class MCTS extends ModuleAlgorithm
 	}
 	//BACK UP 
 	public void backUp(MCTSNode start, ArrayList<MCTSNode> ends){
-		
+		if(DEBUG)
+			System.out.println("BACKUP");
 		for(int i = 0; i < ends.size(); i++){
 			start.addScore(ends.get(i).getScore());
 		}
 		
+		if(DEBUG)
+			System.out.println("start score : "+start.getScore());
+		
 		while(start.getParent() != null){
 			start.getParent().addScore(start.getScore());
 			start = start.getParent();
+			if(DEBUG)
+				System.out.println("backed up score parent "+start.getScore());
 		}
 	}
 	
@@ -181,8 +230,16 @@ public class MCTS extends ModuleAlgorithm
 	@Override
 	public void takeTurn() {
 		// TODO Auto-generated method stub
-		sim.apply(path.get(counter));
-		counter++;
+		if(counter<path.size())
+		{
+			sim.apply(path.get(counter));
+			counter++;
+		}
+		else
+		{
+			sim.finish();
+		}
+		
 		
 	}
 }
