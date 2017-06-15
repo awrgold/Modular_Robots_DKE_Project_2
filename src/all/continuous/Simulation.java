@@ -41,7 +41,6 @@ public class Simulation {
         configuration.apply(action);
     }
 
-
     public void apply(Configuration configuration, ArrayList<Action> actions){
         //applies a set of actions to a given configuration in the given order (WITHOUT ENDING THE TURN!)
         for (Action action: actions) {
@@ -81,11 +80,9 @@ public class Simulation {
         return timeStep;
     }
 
-    public boolean hasGoalBeenReached() {
+    private boolean hasGoalBeenReached() {
 		for (Agent a : goal.agents) {
-			if (getCurrentConfiguration().agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))){
-			    return false;
-            }
+			if (getCurrentConfiguration().agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))) return false;
 		}
 		return true;
 	}

@@ -34,6 +34,7 @@ public class Agent extends Cube {
             this.location = location;
             this.moved = true;
         } else throw new InvalidMoveException("Tried to move an agent that has already moved this turn!");
+
     }
     
     @Override
@@ -265,10 +266,8 @@ public class Agent extends Cube {
 	public boolean isConnected(Configuration conf) {
 		for (Point3D dir : Direction.DIRECTIONS) {
 			CollisionUtil.Collision c = CollisionUtil.castRayCube(conf, new Ray(this.location, dir), 0.24, 1.0, 0.0, this);
-			if (c.type == CollisionType.AGENT)
-				return true;
+			if (c.type == CollisionType.AGENT) return true;
 		}
 		return false;
 	}
-
 }

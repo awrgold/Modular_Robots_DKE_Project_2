@@ -52,6 +52,4 @@ public abstract class Cube {
     public Point3D getLocation(){
         return location;
     }
-
-
 }
