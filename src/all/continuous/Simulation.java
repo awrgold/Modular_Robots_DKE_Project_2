@@ -81,8 +81,10 @@ public class Simulation {
     }
 
     public boolean hasGoalBeenReached() {
-    	return getCurrentConfiguration().hasGoalBeenReached();
-	
+		for (Agent a : goal.agents) {
+			if (getCurrentConfiguration().agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))) return false;
+		}
+		return true;
 	}
 
 	public Terrain getTerrain(){
