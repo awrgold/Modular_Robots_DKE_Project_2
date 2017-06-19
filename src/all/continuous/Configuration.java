@@ -48,6 +48,13 @@ public class Configuration {
         return actions;
     }
     
+    public boolean hasGoalBeenReached() {
+		for (Agent a : simulation.getGoalConfiguration().getAgents()) {
+			if (this.agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))) return false;
+		}
+		return true;
+	}
+    
     // TODO: Separate grounded method to simplify code
     public ArrayList<Action> getAllValidActions(Agent agent){
         ArrayList<Action> actions = new ArrayList<>();

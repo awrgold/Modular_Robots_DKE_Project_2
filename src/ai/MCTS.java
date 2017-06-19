@@ -45,7 +45,7 @@ public class MCTS extends ModuleAlgorithm
 		
 		int counter1 = 0 ; 
 		//TO BE LOOPED UNTIL GOAL IS FOUND
-		while(counter1<4000)
+		while(counter1<10000)
 		{
 			root.addVisit();
 			//if(DEBUG)
@@ -314,6 +314,10 @@ public class MCTS extends ModuleAlgorithm
 		}
 		
 		int score = estimateScore(currentConfig);
+		if(isSameAsAParent(origin))
+		{
+			score = score*10; 
+		}
 		origin.setScore(score);
 		
 		if(DEBUG3)
@@ -383,31 +387,28 @@ public class MCTS extends ModuleAlgorithm
 	}
 	
 	//for the path finding, check if a certain config has already been chosen
-	public boolean isInPath(MCTSNode node)
+	public boolean isSameAsAParent(MCTSNode node)
 	{
 		ArrayList<Agent> nodeAgents = node.getConfiguration().getAgents();
 		if(DEBUG5)
 			System.out.println("NODE AGENTS");
 		if(DEBUG5)
+		{for(int i=0; i<nodeAgents.size(); i++)
+			{System.out.println(nodeAgents.get(i).getLocation());}}
+		
+		
+		while(node.getParent() != null)
 		{
-			for(int i=0; i<nodeAgents.size(); i++)
-			{
-				System.out.println(nodeAgents.get(i).getLocation());
-			}
-		}
-		for(int i=0; i<nodePath.size(); i++)
-		{
-			ArrayList<Agent> pathAgents = nodePath.get(i).getConfiguration().getAgents();
+			ArrayList<Agent> pathAgents = node.getParent().getConfiguration().getAgents();
 			
-			if(DEBUG5)
+			/*if(DEBUG5)
 			{
 				for(int w=0; w<pathAgents.size(); w++)
-			
-				{
-					System.out.println("PATH AGENTS NUMBER "+i);
+				{System.out.println("PATH AGENTS NUMBER "+i);
 					System.out.println(pathAgents.get(w).getLocation());
-				}
-			}
+					}
+				}*/
+			
 			int agentCounter=0;
 			for(int j=0; j<nodeAgents.size(); j++)
 			{
@@ -440,6 +441,8 @@ public class MCTS extends ModuleAlgorithm
 					System.out.println("RETURN TRUE");
 				return true; 
 			}
+			
+			node = node.getParent();
 		}
 		
 		return false; 
