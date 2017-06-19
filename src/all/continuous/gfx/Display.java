@@ -412,7 +412,6 @@ public class Display {
 				try {
 					sim = wr.createSimulation();
 					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
-				
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
