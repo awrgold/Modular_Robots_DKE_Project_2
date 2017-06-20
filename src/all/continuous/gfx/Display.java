@@ -1,5 +1,6 @@
 package all.continuous.gfx;
 
+import all.continuous.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -19,12 +20,6 @@ import ai.AStarGreedyAlgorithm;
 import ai.CooperativeAStar;
 import ai.MCTS;
 import ai.SimpleAI;
-import all.continuous.Agent;
-import all.continuous.Configuration;
-import all.continuous.GreedyAlgorithm;
-import all.continuous.ModuleAlgorithm;
-import all.continuous.RandomAlgorithm;
-import all.continuous.Simulation;
 import all.continuous.exceptions.DisplayInitException;
 import all.continuous.exceptions.InvalidStateException;
 import all.continuous.exceptions.ShaderException;
@@ -401,17 +396,15 @@ public class Display {
             final AlgorithmWindow algWin = new AlgorithmWindow();
             algWin.addAlgorithm(AStarAlgorithm.class);
             algWin.addAlgorithm(AStarGreedyAlgorithm.class);
-            algWin.addAlgorithm(SimpleAI.class);
+            algWin.addAlgorithm(Pheromones.class);
             algWin.addAlgorithm(CooperativeAStar.class);
-            algWin.addAlgorithm(MCTS.class);
+            algWin.addAlgorithm(RandomAlgorithm.class);
             cont.addWindow(algWin);
             
             // Add a window to the ui
 			window = new PlayerWindow();
 			Runnable simCalcFunc = () -> {
 				try {
-					sim = wr.createSimulation();
-					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
@@ -424,11 +417,10 @@ public class Display {
 			};
 			window.setCallback(() -> {
 				computing = true;
-				sim = wr.createSimulation();
 				try {
+					sim = wr.createSimulation();
 					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					error = e.getClass().getName() + ": " + e.getMessage();
 				}
@@ -455,7 +447,7 @@ public class Display {
                 // Clear the colour and depth buffers
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                // Reset gl state (get messed up by the ui context)
+                // Reset gl state (gets messed up by the ui context)
                 ShaderManager.getInstance().setShader("phong");
                 disp.updateViewport();
                 glEnable(GL_DEPTH_TEST);

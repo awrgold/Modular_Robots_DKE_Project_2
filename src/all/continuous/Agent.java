@@ -1,7 +1,8 @@
 package all.continuous;
 
 import javafx.geometry.Point3D;
-import org.omg.CORBA.DynAnyPackage.Invalid;
+
+import org.joml.Vector3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,18 +14,23 @@ public class Agent extends Cube {
     private ArrayList<Point3D> path;
 
     public Agent(float id, Point3D location){
+    	super(1);
         this.id = id;
         this.location = location;
+        setPosition(new Vector3d(location.getX(), location.getY(), location.getZ()));
+        
         this.intermediateGoal = null;
         this.path=new ArrayList<Point3D>();
         path.add(location);
     }
 
     public Agent copy(){
-        Agent newAgent = new Agent(this.id, this.location);
+    	Vector3d pos = getPosition();
+        Agent newAgent = new Agent(this.id, new Point3D(Math.round(pos.x*10.0)/10.0, Math.round(pos.y*10.0)/10.0, Math.round(pos.z*10.0)/10.0));
         newAgent.index = this.index;
         newAgent.intermediateGoal = this.intermediateGoal;
         newAgent.path = this.path;
+        newAgent.setVelocity(getVelocity());
         return newAgent;
     }
 
@@ -34,7 +40,6 @@ public class Agent extends Cube {
             this.location = location;
             this.moved = true;
         } else throw new InvalidMoveException("Tried to move an agent that has already moved this turn!");
-
     }
     
     @Override
@@ -266,8 +271,15 @@ public class Agent extends Cube {
 	public boolean isConnected(Configuration conf) {
 		for (Point3D dir : Direction.DIRECTIONS) {
 			CollisionUtil.Collision c = CollisionUtil.castRayCube(conf, new Ray(this.location, dir), 0.24, 1.0, 0.0, this);
-			if (c.type == CollisionType.AGENT) return true;
+			if (c.type == CollisionType.AGENT)
+				return true;
 		}
 		return false;
 	}
+
+	public Point3D getCenter(){
+		Point3D center = new Point3D(this.getLocation().getX()+0.5, this.getLocation().getY()+0.5, this.getLocation().getZ());
+		return center;
+	}
+
 }

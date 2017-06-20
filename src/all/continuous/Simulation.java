@@ -2,7 +2,12 @@ package all.continuous;
 
 import java.util.ArrayList;
 
+import org.joml.Vector3d;
+
+import physics.Body;
+import physics.FloorGeometry;
 import physics.Physics;
+import physics.PhysicsSimulation;
 
 import static all.continuous.Main.VALIDATE_EVERYTHING;
 
@@ -18,6 +23,8 @@ public class Simulation {
     private ModuleAlgorithm algorithm;
 
     private ArrayList<Configuration> timeStep;
+    
+    PhysicsSimulation physSim;
 
     public ArrayList<Configuration> getTimeStep() {
 		return timeStep;
@@ -27,6 +34,12 @@ public class Simulation {
         this.terrain = terrain;
         this.start = start;
         this.goal = goal;
+        
+        this.physSim = new PhysicsSimulation();
+        
+        this.physSim.addBody(new Body(0, new FloorGeometry(0)));
+        for (Obstacle obs : terrain.getObstacles())  this.physSim.addBody(obs);
+        for (Agent agent : start.getAgents()) this.physSim.addBody(agent);
 
         terrain.setSimulation(this);
         start.setSimulation(this);
@@ -41,6 +54,7 @@ public class Simulation {
         configuration.apply(action);
     }
 
+
     public void apply(Configuration configuration, ArrayList<Action> actions){
         //applies a set of actions to a given configuration in the given order (WITHOUT ENDING THE TURN!)
         for (Action action: actions) {
@@ -54,6 +68,10 @@ public class Simulation {
         //applies an action to the current simulation timestep
         getCurrentConfiguration().apply(action);
     }
+    
+	public void applyPhysical(AgentAction action) {
+		getCurrentConfiguration().applyPhysical(action);
+	}
 
     public void applyAll(ArrayList<Action> actions){
         //applies a set of actions to the current simulation timestep in the given order (WITHOUT ENDING THE TURN!)
@@ -66,6 +84,10 @@ public class Simulation {
 
     public ArrayList<Action> getAllValidActions(){
         return getCurrentConfiguration().getAllValidActions();
+    }
+    
+    public ArrayList<AgentAction> getAllPhysicalActions(){
+        return getCurrentConfiguration().getAllPhysicalActions();
     }
 
     public ArrayList<Configuration> run(){
@@ -82,7 +104,9 @@ public class Simulation {
 
     public boolean hasGoalBeenReached() {
 		for (Agent a : goal.agents) {
-			if (getCurrentConfiguration().agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))) return false;
+			if (getCurrentConfiguration().agents.stream().noneMatch((a2) -> a.getLocation().equals(a2.getLocation()))){
+			    return false;
+            }
 		}
 		return true;
 	}
@@ -101,12 +125,20 @@ public class Simulation {
 
     public void endTurn() {
         if(VALIDATE_EVERYTHING) timeStep.get(timeStep.size()-1).validate();
-
+        
+        physSim.tick(1.0);
+        for (Agent agent : timeStep.get(timeStep.size()-1).getAgents()) this.physSim.removeBody(agent);
         Configuration newTimeStep = timeStep.get(timeStep.size()-1).copy();
         newTimeStep.setSimulation(this);
+        
         timeStep.add(newTimeStep);
+        for (Agent agent : timeStep.get(timeStep.size()-1).getAgents()) {
+        	Vector3d vel = agent.getVelocity();
+        	agent.setVelocity(new Vector3d(0, vel.y, 0));
+        	this.physSim.addBody(agent);
+        }
 
-        newTimeStep.resolveFalling();
+        //newTimeStep.resolveFalling();
     }
 
 	public void finish() {
