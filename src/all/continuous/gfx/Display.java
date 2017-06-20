@@ -1,5 +1,6 @@
 package all.continuous.gfx;
 
+import all.continuous.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -18,12 +19,6 @@ import ai.AStarAlgorithm;
 import ai.AStarGreedyAlgorithm;
 import ai.CooperativeAStar;
 import ai.SimpleAI;
-import all.continuous.Agent;
-import all.continuous.Configuration;
-import all.continuous.GreedyAlgorithm;
-import all.continuous.ModuleAlgorithm;
-import all.continuous.RandomAlgorithm;
-import all.continuous.Simulation;
 import all.continuous.exceptions.DisplayInitException;
 import all.continuous.exceptions.InvalidStateException;
 import all.continuous.exceptions.ShaderException;
@@ -399,6 +394,7 @@ public class Display {
             final AlgorithmWindow algWin = new AlgorithmWindow();
             algWin.addAlgorithm(AStarAlgorithm.class);
             algWin.addAlgorithm(AStarGreedyAlgorithm.class);
+            algWin.addAlgorithm(Pheromones.class);
             cont.addWindow(algWin);
             
             // Add a window to the ui

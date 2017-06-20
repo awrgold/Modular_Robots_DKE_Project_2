@@ -271,4 +271,9 @@ public class Agent extends Cube {
 		return false;
 	}
 
+	public Point3D getCenter(){
+		Point3D center = new Point3D(this.getLocation().getX()+0.5, this.getLocation().getY()+0.5, this.getLocation().getZ());
+		return center;
+	}
+
 }
