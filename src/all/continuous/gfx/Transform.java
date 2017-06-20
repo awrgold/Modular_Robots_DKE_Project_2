@@ -46,4 +46,8 @@ public class Transform {
 	public Point3D toPoint3D() {
 		return new Point3D(position.x, position.y, position.z);
 	}
+
+	public Point3D toPoint3DRounded() {
+		return new Point3D(Math.round(position.x*10.0)/10.0, Math.round(position.y*10.0)/10.0, Math.round(position.z*10.0)/10.0);
+	}
 }

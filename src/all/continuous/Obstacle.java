@@ -3,13 +3,18 @@ package all.continuous;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Vector3d;
+
 import javafx.geometry.Point3D;
 
 public class Obstacle extends Cube{
 
     public Obstacle(float id, Point3D location){
+    	super(0);
         this.id = id;
         this.location = location;
+        
+        setPosition(new Vector3d(location.getX(), location.getY(), location.getZ()));
     }
     
   	//Check if the obstacle is supported by another obstacle underneath it

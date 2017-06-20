@@ -15,13 +15,13 @@ public class RandomAlgorithm extends ModuleAlgorithm {
 	
 	@Override
 	public void takeTurn() {
-		List<Action> actions = this.sim.getAllValidActions();
+		List<AgentAction> actions = this.sim.getAllPhysicalActions();
 		int actionCount = actions.size();
 		if (actionCount <= 0) {
-			//sim.finish();
+			sim.finish();
 			return;
 		}
-		sim.apply(actions.get(rand.nextInt(actionCount)));
+		sim.applyPhysical(actions.get(rand.nextInt(actionCount)));
 		
 		if (rand.nextFloat() < 0.01f) {
 			sim.finish();
