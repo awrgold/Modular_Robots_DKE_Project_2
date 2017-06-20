@@ -31,15 +31,16 @@ public class SuperAgent {
     }
 
     public boolean isGoalReached(ArrayList<AgentCouple> agents, ArrayList<Point3D> goals){
-        for(int i = 0; i < agents.size(); i++){
-            for(int j = 0; j < goals.size(); j++){
-                if(agents.get(i).getAgent1().getPath().equals(goals.get(j)) || agents.get(i).getAgent2().getPath().equals(goals.get(j))){
-                    agents.get(i).setPheromoneSwitch();
-                    return true;
-                }
-            }
-        }
-        return false;
+    	  for(int i = 0; i < agents.size(); i++){
+              for(int j = 0; j < goals.size(); j++){
+                  if(agents.get(i).getAgent1().getPath().equals(goals.get(j)) || agents.get(i).getAgent2().getPath().equals(goals.get(j))){
+                      agents.get(i).setPheromoneSwitch();
+                      return true;
+                  }
+              }
+          }
+
+          return false;
     }
 
     public ArrayList<Point3D> getActiveTrail(int index){
