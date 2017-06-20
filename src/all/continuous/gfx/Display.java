@@ -405,7 +405,7 @@ public class Display {
             algWin.addAlgorithm(CooperativeAStar.class);
             algWin.addAlgorithm(MCTS.class);
 
-            algWin.addAlgorithm(Pheromones.class);
+            //algWin.addAlgorithm(Pheromones.class);
 
             algWin.addAlgorithm(CooperativeAStar.class);
             algWin.addAlgorithm(RandomAlgorithm.class);
