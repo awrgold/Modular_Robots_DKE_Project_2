@@ -11,8 +11,7 @@ public class Pheromones extends ModuleAlgorithm {
 
     private ArrayList<AgentCouple> agentCouples = new ArrayList<>();
     SuperAgent superAgent;
-    private static int iterations=0;
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = true; 
 
     public Pheromones(Simulation sim)
     {
@@ -35,6 +34,8 @@ public class Pheromones extends ModuleAlgorithm {
                         Math.abs(agents.get(i).getCenter().getZ() - agents.get(j).getCenter().getZ()) == 1) {
                             AgentCouple couple = new AgentCouple(agents.get(i), agents.get(j));
                             agentCouples.add(couple);
+                            if(DEBUG)
+                            	System.out.println("agent couple created");
                 }
             }
         }
@@ -44,6 +45,8 @@ public class Pheromones extends ModuleAlgorithm {
         //if the agent is on its own path, move randomly
         if (couple.getPathNumber() == -1){
             Action action = randomMove(couple);
+            //add position to the agent's paths
+            sim.getCurrentConfiguration().getAgent(action.getAgent()).addPath(action.getDestination());
             sim.apply(action);
         }
 
@@ -58,6 +61,7 @@ public class Pheromones extends ModuleAlgorithm {
             for(int i=0; i<validMoves1.size(); i++){
                 if(validMoves1.get(i).getDestination().equals(nextLoc)){
                     Action action = validMoves1.get(i);
+                    couple.getAgent1().addPath(action.getDestination());
                     sim.apply(action);
                     break;
                 }
@@ -67,6 +71,7 @@ public class Pheromones extends ModuleAlgorithm {
                 for(int i=0; i<validMoves2.size(); i++){
                     if(validMoves2.get(i).getDestination().equals(nextLoc)){
                         Action action = validMoves2.get(i);
+                        couple.getAgent2().addPath(action.getDestination());
                         sim.apply(action);
                         break;
                     }
@@ -80,32 +85,36 @@ public class Pheromones extends ModuleAlgorithm {
 
     public Action randomMove(AgentCouple couple){
 
-        //randomly choose which agent to choose
+    	//randomly choose which agent to choose
+
         double rand = Math.random();
         Agent agent;
         int agentChoice =0;
         if(rand<0.5) {
             if(DEBUG)
                 System.out.println("first agent chosen");
+
             agent=couple.getAgent1();
             agentChoice=1;
-        }
+       }
         else {
             if(DEBUG)
                 System.out.println("second agent chosen");
             agent=couple.getAgent2();
             agentChoice=2;
         }
-
         //get all valid moves for that agent
         ArrayList<Action> validMoves = sim.getCurrentConfiguration().getAllValidActions(agent);
         if(DEBUG)
             System.out.println("valid moves size : "+validMoves.size());
         int rand2 = (int)(Math.random()*validMoves.size());
+        //if i can move the chosen agent
         if(validMoves.size() !=0) {
             Action action = validMoves.get(rand2);
+            
             return action;
         }
+        //if I cannot move the chosen agent
         else{
             if(agentChoice==1)
                 agent = couple.getAgent2();
@@ -113,37 +122,21 @@ public class Pheromones extends ModuleAlgorithm {
                 agent = couple.getAgent1();
 
             validMoves = sim.getCurrentConfiguration().getAllValidActions(agent);
+            
             if(DEBUG)
-                System.out.println("valid moves size : "+validMoves.size());
+                System.out.println("valid moves size new agent: "+validMoves.size());
+
             rand2 = (int)(Math.random()*validMoves.size());
             Action action = validMoves.get(rand2);
             return action;
         }
-
-
     }
 
 
 
     @Override
     public void takeTurn(){
-
-        if(iterations>300)
-            sim.finish();
-
-        if(iterations==0){
-            pheromoneAlgorithm();
-        }
         // if goal is reached
-        if(DEBUG){
-            if(agentCouples == null)
-                System.out.println("agent couple null");
-            if(sim.getGoalConfiguration().getLocations() == null)
-                System.out.println("goal locations null");
-            if(superAgent == null)
-                System.out.println("SuperAgent null");
-
-        }
         superAgent.isGoalReached(agentCouples, sim.getGoalConfiguration().getLocations());
             // do (reconfiguration into goal space, make sure both agents sit in goal)
         superAgent.checkPheromoneTrail();
@@ -153,7 +146,7 @@ public class Pheromones extends ModuleAlgorithm {
         for(int i=0; i<agentCouples.size();i++){
             moveCouple(agentCouples.get(i));
         }
-        iterations++;
+
 
     }
 
