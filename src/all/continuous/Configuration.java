@@ -464,4 +464,15 @@ public class Configuration {
 			agent.move(coll.location);
 		}
 	}
+
+	public ArrayList<Point3D> getLocations(){
+		ArrayList<Point3D> loc = new ArrayList<>();
+
+		for(int i =0; i<agents.size();i++){
+			loc.add(agents.get(i).getLocation());
+		}
+
+		return loc;
+	}
+
 }
