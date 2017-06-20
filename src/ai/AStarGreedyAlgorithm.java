@@ -32,12 +32,11 @@ public class AStarGreedyAlgorithm extends ModuleAlgorithm {
 				.stream()
 				.reduce((a, b) -> calculateAgentScore(a.getIndex(), sim.getCurrentConfiguration(), goal) > 
 									calculateAgentScore(b.getIndex(), sim.getCurrentConfiguration(), goal) ? a : b).get().getIndex();
-			if (Math.random() < 0.1) {
+			if (Math.random() < 0.5) {
 				currentAgentIndex = rand.nextInt(sim.getCurrentConfiguration().getAgents().size());
 			} 
 			currentPath = AStar.aStar(this::calculateScore, this::getNeighbours, sim.getCurrentConfiguration(), sim.getGoalConfiguration()); // TODO: Use queue instead of list
 			if (currentPath.isEmpty()) {
-				sim.finish();
 				return;
 			}
 			currentPath.remove(0);

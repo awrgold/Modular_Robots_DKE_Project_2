@@ -1,11 +1,20 @@
 package all.continuous;
 
 import javafx.geometry.Point3D;
+import physics.AABBGeometry;
+import physics.Body;
+import physics.Geometry;
 
 import static all.continuous.Direction.*;
 
-public abstract class Cube {
-    protected float id;
+import org.joml.Vector3d;
+
+public abstract class Cube extends Body {
+    public Cube(double mass) {
+		super(mass, new AABBGeometry(new Vector3d(0, 0, 0), new Vector3d(1, 1, 1)));
+	}
+
+	protected float id;
     public float getId() { return id; }
 
 	protected int index;

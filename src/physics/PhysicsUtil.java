@@ -86,4 +86,54 @@ public class PhysicsUtil {
 		}
 		return false; // No collision occurred
 	}
+	
+	public static boolean AABBvsFloor(Manifold manifold) {
+		Body a = manifold.a;
+		Body b = manifold.b;
+		AABBGeometry aGeom;
+		FloorGeometry bGeom;
+		if (a == b)
+			throw new IllegalArgumentException("Bodies of manifold should differ");
+		if (a.getGeometry() instanceof AABBGeometry && b.getGeometry() instanceof FloorGeometry) {
+			aGeom = (AABBGeometry) a.getGeometry();
+			bGeom = (FloorGeometry) b.getGeometry();
+		} else if (a.getGeometry() instanceof FloorGeometry && b.getGeometry() instanceof AABBGeometry) {
+			Body temp = a;
+			a = b;
+			b = temp;
+			aGeom = (AABBGeometry) a.getGeometry();
+			bGeom = (FloorGeometry) b.getGeometry();
+		} else
+			throw new IllegalArgumentException("Geometries in manifold should be AABB and floor");
+		
+		Vector3d aMin = aGeom.min.add(a.getPosition(), new Vector3d());
+		double by = bGeom.y;
+		
+		if (aMin.y < by) { // There exists y overlap
+			manifold.normal = new Vector3d(0, -1, 0);
+			manifold.penetration = by - aMin.y;
+			return true; // A collision occurred (and the manifold has been updated)
+		}
+		
+		return false; // No collision occurred
+	}
+
+	public static boolean bodyVsBody(Manifold manifold) {
+		Body a = manifold.a;
+		Body b = manifold.b;
+		if (a.getGeometry() instanceof AABBGeometry) {
+			if (b.getGeometry() instanceof AABBGeometry) {
+				return AABBvsAABB(manifold);
+			} else if (b.getGeometry() instanceof FloorGeometry) {
+				return AABBvsFloor(manifold);
+			}
+		} else {
+			if (b.getGeometry() instanceof AABBGeometry) {
+				return AABBvsFloor(manifold);
+			} else if (b.getGeometry() instanceof FloorGeometry) {
+				throw new IllegalArgumentException("Unsupported collision type: floor vs floor");
+			}
+		}
+		return false;
+	}
 }

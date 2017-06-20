@@ -29,6 +29,7 @@ import all.continuous.exceptions.InvalidStateException;
 import all.continuous.exceptions.ShaderException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
@@ -399,14 +400,14 @@ public class Display {
             final AlgorithmWindow algWin = new AlgorithmWindow();
             algWin.addAlgorithm(AStarAlgorithm.class);
             algWin.addAlgorithm(AStarGreedyAlgorithm.class);
+            algWin.addAlgorithm(CooperativeAStar.class);
+            algWin.addAlgorithm(RandomAlgorithm.class);
             cont.addWindow(algWin);
             
             // Add a window to the ui
 			window = new PlayerWindow();
 			Runnable simCalcFunc = () -> {
 				try {
-					sim = wr.createSimulation();
-					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
 					sim.run();
 					window.max = sim.getTimeStep().size()-1;
 					wr.animateTo(sim.getTimeStep().get(0));
@@ -419,6 +420,13 @@ public class Display {
 			};
 			window.setCallback(() -> {
 				computing = true;
+				try {
+					sim = wr.createSimulation();
+					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
+				} catch (Exception e) {
+					e.printStackTrace();
+					error = e.getClass().getName() + ": " + e.getMessage();
+				}
 				currentThread = new Thread(simCalcFunc);
 				currentThread.start();
 			});
@@ -442,7 +450,7 @@ public class Display {
                 // Clear the colour and depth buffers
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                // Reset gl state (get messed up by the ui context)
+                // Reset gl state (gets messed up by the ui context)
                 ShaderManager.getInstance().setShader("phong");
                 disp.updateViewport();
                 glEnable(GL_DEPTH_TEST);
