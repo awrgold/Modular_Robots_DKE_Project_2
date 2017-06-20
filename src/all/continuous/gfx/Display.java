@@ -395,12 +395,9 @@ public class Display {
             final AlgorithmWindow algWin = new AlgorithmWindow();
             algWin.addAlgorithm(AStarAlgorithm.class);
             algWin.addAlgorithm(AStarGreedyAlgorithm.class);
-<<<<<<< HEAD
-            algWin.addAlgorithm(Pheromones.class);
-=======
-            algWin.addAlgorithm(CooperativeAStar.class);
+			algWin.addAlgorithm(Pheromones.class);
+            //algWin.addAlgorithm(CooperativeAStar.class);
             algWin.addAlgorithm(RandomAlgorithm.class);
->>>>>>> origin/master
             cont.addWindow(algWin);
             
             // Add a window to the ui

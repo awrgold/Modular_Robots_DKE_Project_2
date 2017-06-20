@@ -52,13 +52,15 @@ public class SuperAgent {
     public void checkPheromoneTrail(){
         for(int i = 0; i < allAgents.size(); i++){
             for(int j = 0; j < activeTrails.length; j++){
-                for(int k = 0; k < activeTrails[j].size(); k++){
-                    if(allAgents.get(i).getAgent1().getLocation().equals(activeTrails[j].get(k)) || allAgents.get(i).getAgent2().getLocation().equals(activeTrails[j].get(k))){
-                        if(!allAgents.get(i).isPheromoneActive() && allAgents.get(i).getPathNumber() == -1){
-                            allAgents.get(i).setPheromoneSwitch();
-                            addActiveTrail(allAgents.get(i).getPheromones());
-                            allAgents.get(i).setPathNumber(j);
-                            allAgents.get(i).setPositionInPath(k);
+                if(activeTrails[j] != null){
+                    for(int k = 0; k < activeTrails[j].size(); k++){
+                        if(allAgents.get(i).getAgent1().getLocation().equals(activeTrails[j].get(k)) || allAgents.get(i).getAgent2().getLocation().equals(activeTrails[j].get(k))){
+                            if(!allAgents.get(i).isPheromoneActive() && allAgents.get(i).getPathNumber() == -1){
+                                allAgents.get(i).setPheromoneSwitch();
+                                addActiveTrail(allAgents.get(i).getPheromones());
+                                allAgents.get(i).setPathNumber(j);
+                                allAgents.get(i).setPositionInPath(k);
+                            }
                         }
                     }
                 }
@@ -68,10 +70,12 @@ public class SuperAgent {
 
     public void mergeTrails(){
         for (int i = 0; i < allAgents.size(); i++){
-            for (int j = 0; j < activeTrails[allAgents.get(i).getPathNumber()].size(); j++){
-                if (allAgents.get(i).getPositionInPath() == activeTrails[allAgents.get(i).getPathNumber()].size()-1){
-                    allAgents.get(i).setPathNumber(getPathJunction(allAgents.get(i))[0]);
-                    allAgents.get(i).setPositionInPath(getPathJunction(allAgents.get(i))[1]);
+            if(allAgents.get(i).getPathNumber() > -1){
+                for (int j = 0; j < activeTrails[allAgents.get(i).getPathNumber()].size(); j++){
+                    if (allAgents.get(i).getPositionInPath() == activeTrails[allAgents.get(i).getPathNumber()].size()-1){
+                        allAgents.get(i).setPathNumber(getPathJunction(allAgents.get(i))[0]);
+                        allAgents.get(i).setPositionInPath(getPathJunction(allAgents.get(i))[1]);
+                    }
                 }
             }
         }
