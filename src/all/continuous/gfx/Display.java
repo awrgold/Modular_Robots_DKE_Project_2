@@ -404,6 +404,12 @@ public class Display {
             algWin.addAlgorithm(SimpleAI.class);
             algWin.addAlgorithm(CooperativeAStar.class);
             algWin.addAlgorithm(MCTS.class);
+
+            algWin.addAlgorithm(Pheromones.class);
+
+            algWin.addAlgorithm(CooperativeAStar.class);
+            algWin.addAlgorithm(RandomAlgorithm.class);
+
             cont.addWindow(algWin);
             
             // Add a window to the ui

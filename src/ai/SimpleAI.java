@@ -33,7 +33,7 @@ public class SimpleAI extends ModuleAlgorithm
 	public SimpleAI(Simulation sim)
 	{
 		super(sim);
-		
+
 	}
 	@Override
 	public void takeTurn() {
