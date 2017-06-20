@@ -2,6 +2,8 @@ package all.continuous;
 
 import java.util.ArrayList;
 
+import org.joml.Vector3d;
+
 import physics.Body;
 import physics.FloorGeometry;
 import physics.Physics;
@@ -127,7 +129,11 @@ public class Simulation {
         newTimeStep.setSimulation(this);
         
         timeStep.add(newTimeStep);
-        for (Agent agent : timeStep.get(timeStep.size()-1).getAgents()) this.physSim.addBody(agent);
+        for (Agent agent : timeStep.get(timeStep.size()-1).getAgents()) {
+        	Vector3d vel = agent.getVelocity();
+        	agent.setVelocity(new Vector3d(0, vel.y, 0));
+        	this.physSim.addBody(agent);
+        }
 
         //newTimeStep.resolveFalling();
     }

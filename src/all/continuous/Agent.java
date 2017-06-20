@@ -14,6 +14,7 @@ public class Agent extends Cube {
     private ArrayList<Point3D> path;
 
     public Agent(float id, Point3D location){
+    	super(1);
         this.id = id;
         this.location = location;
         setPosition(new Vector3d(location.getX(), location.getY(), location.getZ()));

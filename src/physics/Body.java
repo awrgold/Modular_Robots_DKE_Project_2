@@ -77,6 +77,8 @@ public class Body {
 		
 		acc = this.forces.mul(this.getInvMass(), acc);
 		this.velocity.add(acc.mul(delta));
+//		if (velocity.x != 0.0 || velocity.z != 0.0)
+//			System.out.println("YOU SHALL NOT PASS");
 		this.position.add(this.velocity.mul(delta, posDelta));
 		
 		this.forces.mul(0);

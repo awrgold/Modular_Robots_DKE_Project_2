@@ -115,20 +115,20 @@ public class PhysicsSimulation {
 		Body b = sim.addBody(new Body(0, new FloorGeometry(0)));
 		for (int i=0; i<1000; i++) {
 			sim.tick(100);
-			System.out.printf("%s, %s\n", 0.02*i, a.getPosition().y);
+			//System.out.printf("%s, %s\n", 0.02*i, a.getPosition().y);
 		}
-//		
-//		for (double strength=0; strength<=10; strength+=0.5) {
-//			Vector3d pos = a.getPosition();
-//			pos.x = 0;
-//			a.setPosition(pos);
-//			a.applyImpulse(new Vector3d(strength, 0, 0));
-//			for (int i=0; i<1; i++) {
-//				sim.tick(0.05);
-//			}
-//			//System.out.printf("Impulse strength of %s gives a relative movement of %s\n", strength, a.getPosition().x);
-//			System.out.printf("%s\t%s\n", strength, a.getPosition().x);
-//		}
+
+		for (double strength=0; strength<=10; strength+=0.5) {
+			Vector3d pos = a.getPosition();
+			pos.x = 0;
+			a.setPosition(pos);
+			a.applyImpulse(new Vector3d(strength, 0, 0));
+			for (int i=0; i<1; i++) {
+				sim.tick(0.05);
+			}
+			//System.out.printf("Impulse strength of %s gives a relative movement of %s\n", strength, a.getPosition().x);
+			System.out.printf("%s\t%s\n", strength, a.getPosition().x);
+		}
 
 //		//System.out.printf("%s, %s\n", 0, a.getPosition().y);
 //		for (double dynFric=0; dynFric<=2; dynFric+=0.25) {

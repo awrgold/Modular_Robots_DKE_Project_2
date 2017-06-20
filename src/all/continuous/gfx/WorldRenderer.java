@@ -178,7 +178,7 @@ public class WorldRenderer {
 		for (WorldObject obj : objects) {
 			switch (obj.getType()) {
 			case MODULE:
-				agents.add(new Agent(obj.id, obj.getTransform().toPoint3D()));
+				agents.add(new Agent(obj.id, obj.getTransform().toPoint3DRounded()));
 				if (addInitial) {
 				// Add init
 					Vector3f trans = obj.getTransform().position;
@@ -186,10 +186,10 @@ public class WorldRenderer {
 				}
 				break;
 			case OBSTACLE:
-				obstacles.add(new Obstacle((float) Math.random(), obj.getTransform().toPoint3D()));
+				obstacles.add(new Obstacle((float) Math.random(), obj.getTransform().toPoint3DRounded()));
 				break;
 			case GOAL:
-				goal.add(new Agent(modules.get(Math.min(i, modules.size()-1)).id, obj.getTransform().toPoint3D()));
+				goal.add(new Agent(modules.get(Math.min(i, modules.size()-1)).id, obj.getTransform().toPoint3DRounded()));
 				i++;
 				break;
 			case INIT:

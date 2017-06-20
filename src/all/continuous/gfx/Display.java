@@ -401,6 +401,7 @@ public class Display {
             algWin.addAlgorithm(AStarAlgorithm.class);
             algWin.addAlgorithm(AStarGreedyAlgorithm.class);
             algWin.addAlgorithm(CooperativeAStar.class);
+            algWin.addAlgorithm(RandomAlgorithm.class);
             cont.addWindow(algWin);
             
             // Add a window to the ui
@@ -419,11 +420,10 @@ public class Display {
 			};
 			window.setCallback(() -> {
 				computing = true;
-				sim = wr.createSimulation();
 				try {
+					sim = wr.createSimulation();
 					sim.setAlgorithm((ModuleAlgorithm) algWin.getCurrent().getConstructor(Simulation.class).newInstance(sim));
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					error = e.getClass().getName() + ": " + e.getMessage();
 				}
@@ -450,7 +450,7 @@ public class Display {
                 // Clear the colour and depth buffers
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                // Reset gl state (get messed up by the ui context)
+                // Reset gl state (gets messed up by the ui context)
                 ShaderManager.getInstance().setShader("phong");
                 disp.updateViewport();
                 glEnable(GL_DEPTH_TEST);
