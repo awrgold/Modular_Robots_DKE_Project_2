@@ -45,7 +45,7 @@ public class MCTS extends ModuleAlgorithm
 
 		int counter1 = 0 ;
 		//TO BE LOOPED UNTIL GOAL IS FOUND
-		while(counter1<10000)
+		while(counter1<3000)
 		{
 			root.addVisit();
 			//if(DEBUG)
