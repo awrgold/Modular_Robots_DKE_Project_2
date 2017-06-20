@@ -23,6 +23,7 @@ public class CollisionUtil {
 	}
 
 	private static final double DEFAULT_DELTA = 0.05;
+	private static final boolean DEBUG = false;
 	
 	public static Collision castRay(Configuration conf, Ray ray, Agent exclude) {
 		return castRay(conf, ray, DEFAULT_DELTA, 1.0, 0.0, exclude);
@@ -44,6 +45,12 @@ public class CollisionUtil {
 	public static Collision castRayCube(Configuration sim, Ray ray, double delta, double maxDist, double minDist, Agent exclude) {
 		for (double dist=minDist; dist<=maxDist; dist+=delta) {
 			Point3D p = ray.getPoint(dist);
+			
+			if(DEBUG)
+			{
+				if(p == null)
+				System.out.println("castRayCune point is null");
+			}
 			Collision c = isCollidingCube(sim, p, exclude);
 			if (c.type != CollisionType.NONE) return c;
 		}
@@ -103,6 +110,18 @@ public class CollisionUtil {
 			
 			if (isColliding(minA, maxA, minB, maxB))
 				return new Collision(CollisionType.AGENT, point);
+		}
+		
+		if(DEBUG)
+		{
+			if(conf == null)
+				System.out.println("conf is null");
+			if(conf.getSimulation() == null)
+				System.out.println("conf sim is null");
+			if(conf.getSimulation().getTerrain() == null)
+				System.out.println("terrain is ull");
+			if(conf.getSimulation().getTerrain().getObstacles() == null)
+				System.out.println("obstacles is null");
 		}
 		
 		for (Obstacle obs : conf.getSimulation().getTerrain().obstacles) {

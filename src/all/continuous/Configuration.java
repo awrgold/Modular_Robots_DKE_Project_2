@@ -13,7 +13,7 @@ import static all.continuous.CollisionUtil.castRayCube;
 import static all.continuous.CollisionUtil.castRayCubeFalling;
 
 public class Configuration {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 	Simulation simulation;
     ArrayList<Agent> agents;
 
@@ -73,6 +73,15 @@ public class Configuration {
         	
         	// If the agent is grounded, attempt movement in the current direction
         	if (groundedDirs.size() > 0) {
+        		
+        		if(DEBUG)
+        		{
+        			System.out.println("we have reached the groundedDirs debug thingy");
+        			if(dir == null)
+        				System.out.println("direction is null");
+        			if(agent == null)
+        				System.out.println("agent is null");
+        		}
         		// Determine the maximum new position
         		Collision max = castRayCube(this, new Ray(agent.location, dir), agent);
         		
@@ -245,8 +254,10 @@ public class Configuration {
         for (Agent agent: this.agents) {
             newAgents.add(agent.copy());
         }
-
-        return new Configuration(newAgents);
+        Configuration newConfig = new Configuration(newAgents);
+        newConfig.setSimulation(this.getSimulation());
+        
+        return newConfig;
     }
 
     public Simulation getSimulation(){
