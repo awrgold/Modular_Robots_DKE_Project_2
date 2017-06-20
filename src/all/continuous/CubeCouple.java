@@ -40,8 +40,5 @@ public class CubeCouple {
         return cube2.getLocation();
     }
 
-    public void switchPheromoneOn(){
-        if(isPheromoneActive == false) isPheromoneActive = true;
-    }
 
 }

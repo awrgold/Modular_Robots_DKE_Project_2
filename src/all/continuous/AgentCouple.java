@@ -15,11 +15,15 @@ public class AgentCouple {
     private boolean pheromoneSwitch = false;
     private ArrayList<Agent> AgentPair;
     private ArrayList<Point3D> pheromones;
+    private int pathNumber;
+    private int positionInPath;
 
 
     public AgentCouple(Agent agent1, Agent agent2) {
         this.agent1 = agent1;
         this.agent2 = agent2;
+        pathNumber = -1;
+        positionInPath=-1;
     }
 
     public Agent getAgent1() {
@@ -56,6 +60,21 @@ public class AgentCouple {
         return pheromoneSwitch;
     }
 
+    public void setPathNumber(int index){
+        pathNumber=index;
+    }
+
+    public int getPathNumber(){
+        return pathNumber;
+    }
+
+    public int getPositionInPath(){
+        return positionInPath;
+    }
+
+    public void setPositionInPath(int pos){
+        positionInPath = pos;
+    }
 
 
 }
