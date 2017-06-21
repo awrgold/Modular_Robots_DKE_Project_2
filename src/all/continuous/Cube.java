@@ -61,4 +61,6 @@ public abstract class Cube extends Body {
     public Point3D getLocation(){
         return location;
     }
+
+
 }

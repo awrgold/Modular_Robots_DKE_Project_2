@@ -16,7 +16,7 @@ public class SimpleAI extends ModuleAlgorithm
 
 	private static ArrayList<Point3D> reachedGoals = new ArrayList<>();
 	private static ArrayList<Point3D> visited = new ArrayList<Point3D>();
-	private static float currentAgentID;
+	private static float currentAgentID=0;
 	
 	private static PriorityQueue<Agent> PQ; 
 	
@@ -27,6 +27,8 @@ public class SimpleAI extends ModuleAlgorithm
 	private Point3D origin;
 	
 	private int unsuccessfulTurns;
+	
+	private static ArrayList<Float> notToBeAdded;
 
 	public SimpleAI(Simulation sim)
 	{
@@ -55,6 +57,7 @@ public class SimpleAI extends ModuleAlgorithm
 			}
 
 			unsuccessfulTurns=0;
+			notToBeAdded = new ArrayList<Float>();
 
 		}
 
@@ -90,7 +93,7 @@ public class SimpleAI extends ModuleAlgorithm
         {
         	for(int i=0; i<agents.size(); i++)
         	{
-        		if(agents.get(i).getId()!=currentAgentID)
+        		if(agents.get(i).getId()!=currentAgentID && !isIn(agents.get(i).getId()))
         			PQ.add(agents.get(i));
         	}
         }
@@ -117,6 +120,8 @@ public class SimpleAI extends ModuleAlgorithm
         		sim.apply(action);
         		currentAgent.addPath(action.getDestination());
             	unsuccessfulTurns=0;
+            	if(PQ.size()==0)
+            		sim.finish();
             	currentAgent = PQ.poll();
 	    		currentAgentID = currentAgent.getId();
 	    		//unsuccessfulTurns++;
@@ -126,12 +131,21 @@ public class SimpleAI extends ModuleAlgorithm
         	
         	else
         	{
+        		notToBeAdded.add(currentAgentID);
         		
+        		if(DEBUG)
+        			System.out.println("PQ size : "+PQ.size());
+        		
+        		if(PQ.size()==0)
+        			sim.finish();
+        		else
+        		{
 	    		currentAgent = PQ.poll();
 	    		currentAgentID = currentAgent.getId();
 	    		unsuccessfulTurns++;
 	    		if(DEBUG)
 	    			System.out.println("next agent : "+currentAgentID);
+        		}
 	    		
         	}
         	
@@ -139,6 +153,7 @@ public class SimpleAI extends ModuleAlgorithm
         else
         {
     	
+        	notToBeAdded.clear();
 	        
 	    	//Check if there is an action that would bring it closer to its goal
 	    
@@ -162,11 +177,16 @@ public class SimpleAI extends ModuleAlgorithm
 	    		
 	    		//Agent previous = currentAgent;
 	    		//new furthest agent
+	    		if(PQ.size()==0)
+	    			sim.finish();
+	    		else
+	    		{
 	    		currentAgent = PQ.poll();
 	    		currentAgentID = currentAgent.getId();
 	    		unsuccessfulTurns++;
 	    		if(DEBUG)
 	    			System.out.println("next agent : "+currentAgentID);
+	    		}
 	    		//put the agent we just moved back in the PQ
 	    		//PQ.add(previous);
 	    		
@@ -226,6 +246,16 @@ public class SimpleAI extends ModuleAlgorithm
         }
     }
     
+    public static boolean isIn(float id)
+    {
+    	for(int i=0; i<notToBeAdded.size(); i++)
+    	{
+    		if(notToBeAdded.get(i).equals(id))
+    			return true; 
+    	}
+    	
+    	return false; 
+    }
     // method that returns the valid move that reduces the distance to the intermediate goal the most, null if no such move
     public static Action isCloser(Agent agent, Simulation simulation){
     	

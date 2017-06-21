@@ -21,6 +21,10 @@ public class CooperativeAStar extends ModuleAlgorithm
 	private static Point3D[][] visited;
 	private static int iterations = 0;
 	
+	private int unsuccessfulTurns=0;;
+	
+	private static ArrayList<Float> notToBeAdded = new ArrayList<Float>();;
+	
 	
 	public static void main(String[] args)throws InvalidMoveException, InvalidStateException
 	{TestCases.AStar();}
@@ -112,45 +116,71 @@ public class CooperativeAStar extends ModuleAlgorithm
 	        ArrayList<Action> actions = new ArrayList<Action>();
 	       // while(!goalReached && counter<15){
 	        	
-	            // moving agent if possible and distance to goal is reduced
-	           // for(int i = 0; i < agents.size(); i++){
-	                Agent first = PQ.poll();
-	                
-	                if(DEBUG)
-	                {
-	                	//System.out.println("iteration  : "+i);
-	                	System.out.println("agent number  : "+first.getId());
-	                	System.out.println("PQ size  : "+PQ.size());
-	                }
-	                
-	                if(!first.hasMoved())
-	                {
-		                Action toBeEvaluated = isCloser(first, sim);
-		                if(toBeEvaluated != null){
-		                    Action action = toBeEvaluated;
-		                    //actions.add(action);
-		                    //first.move(action.getDestination());
-		                    if(isAlreadyAStar(action.getDestination()))
-		                    {
-		                    	AStarNode node = aStarNodes.get(indexAStar(action.getDestination(), aStarNodes));
-		                    	node.addVisitedAgent(first.getId());
-		                    }
-		                    else
-		                    {
-		                    	AStarNode node = new AStarNode(action.getDestination(), sim.getCurrentConfiguration(), sim.getTerrain());
-		                    	node.addVisitedAgent(first.getId());
-		                    }
-		                    
-		                    
-		                    sim.apply(action);
-		                    
-		                    if(DEBUG)
-		                    	System.out.println("agent should have moved to  : "+AStarSearch.printPoint(action.getDestination()));
-		                    if(DEBUG)
-		                    	System.out.println("agent is at  : "+AStarSearch.printPoint(first.getLocation()));
-		                    //break;
-		                }
-	                }
+        // moving agent if possible and distance to goal is reduced
+       // for(int i = 0; i < agents.size(); i++){
+            Agent first = PQ.poll();
+            
+            if(DEBUG)
+            {
+            	//System.out.println("iteration  : "+i);
+            	System.out.println("agent number  : "+first.getId());
+            	System.out.println("PQ size  : "+PQ.size());
+            }
+            
+            Action toBeEvaluated;
+            if(unsuccessfulTurns>=agents.size())
+            {
+            	toBeEvaluated = getSmallerActionWhenStuck(first, sim);
+            	
+            }
+            
+            else
+            {
+            	toBeEvaluated = isCloser(first, sim);
+            }
+            
+            
+        	if(!first.hasMoved() && !isAGoal(first.getLocation(),sim))
+            {
+               
+                if(toBeEvaluated != null){
+                    Action action = toBeEvaluated;
+                    //actions.add(action);
+                    //first.move(action.getDestination());
+                    if(isAlreadyAStar(action.getDestination()))
+                    {
+                    	AStarNode node = aStarNodes.get(indexAStar(action.getDestination(), aStarNodes));
+                    	node.addVisitedAgent(first.getId());
+                    }
+                    else
+                    {
+                    	AStarNode node = new AStarNode(action.getDestination(), sim.getCurrentConfiguration(), sim.getTerrain());
+                    	node.addVisitedAgent(first.getId());
+                    }
+                    
+                    
+                    sim.apply(action);
+                    
+                    if(DEBUG)
+                    	System.out.println("agent should have moved to  : "+AStarSearch.printPoint(action.getDestination()));
+                    if(DEBUG)
+                    	System.out.println("agent is at  : "+AStarSearch.printPoint(first.getLocation()));
+                    
+                    notToBeAdded.clear();
+                    unsuccessfulTurns=0; 
+                    //break;
+                }
+                
+                else
+                {
+                	unsuccessfulTurns++;
+                	notToBeAdded.add(first.getId());
+                }
+            }
+            
+            
+            
+            
 	          // }
 
 	            iterations++;
@@ -169,7 +199,7 @@ public class CooperativeAStar extends ModuleAlgorithm
 
 	            }
 	            
-	            if(iterations>45)
+	            if(iterations>350)
 	            	sim.finish();
 
 	            // place agents back into the priority queue
@@ -187,6 +217,8 @@ public class CooperativeAStar extends ModuleAlgorithm
 	            	sim.apply(actions.get(i));
 	            }*/
 	        //sim.finish();
+	            
+	            
 	    }
 
 	    // method that reduces the valid move that reduces the distance to the intermediate goal the most, null if no such move
@@ -222,7 +254,7 @@ public class CooperativeAStar extends ModuleAlgorithm
 	           if(DEBUG)
 	        	   System.out.println("new move dist : "+newDistance);
 	           
-	           if(minDistance > newDistance) {
+	           if(minDistance >= newDistance) {
 	               minDistance = newDistance;
 	               best = moves.get(i);
 	           }
@@ -236,7 +268,9 @@ public class CooperativeAStar extends ModuleAlgorithm
 	        for(int i = 0; i < agents.size(); i++){
 	        	if(DEBUG)
 	        		System.out.println("intermediate goal : "+agents.get(i).getIntermediateGoal());
-	            PQ.add(agents.get(i));
+	            
+	        	if(canBeAdded(agents.get(i)))
+	        		PQ.add(agents.get(i));
 	        }
 	    }
 
@@ -293,6 +327,87 @@ public class CooperativeAStar extends ModuleAlgorithm
     	
     	return false; 
     }
+    
+    public static boolean isAGoal(Point3D location, Simulation sim)
+    {
+    	ArrayList<Agent> goalConfig = sim.getGoalConfiguration().getAgents();
+    	
+    	for(int i=0; i<goalConfig.size(); i++)
+    	{
+    		if(goalConfig.get(i).getLocation().equals(location))
+    		{
+    			return true; 
+    		}
+    	}
+    	
+    	return false; 
+    }
+    
+    public static boolean canBeAdded(Agent agent)
+    {
+    	for(int i=0; i<notToBeAdded.size(); i++)
+    	{
+    		if(agent.getId() == notToBeAdded.get(i))
+    			return false; 
+    	}
+    	
+    	return true; 
+    }
+    
+    public static Action getSmallerActionWhenStuck(Agent agent, Simulation simulation)
+    {
+    	if(DEBUG)
+    	System.out.println("current agent at pos : "+agent.getLocation());
+    	
+    	//get the valid moves
+        ArrayList<Action> moves = simulation.getCurrentConfiguration().getAllValidActions(agent);
+        for(int  i=0; i<moves.size();i++)
+        {System.out.println("possible move : "+moves.get(i).getDestination());}
+        /*if(DEBUG)
+        	System.out.println("valid moves size "+moves.size());*/
+        
+        //get the current distance to the goal
+        double minDistance = Double.MAX_VALUE;
+        if(DEBUG)
+        	System.out.println("current distance : "+minDistance);
+        Action best = null;
+
+        //check if one of the moves reduces that current minimal distance to goal
+        for(int i = 0; i < moves.size(); i++){
+           double newDistance = getManhattanDistPoint3D(moves.get(i).getDestination() , agent.getIntermediateGoal());
+           
+           //increase weight of distance if the agent has already visited that position
+           if(agentHasVisited(agent, moves.get(i).getDestination()))
+        	   newDistance = newDistance*20;
+           
+           /*if(agent.getLocation().equals(agent.getIntermediateGoal()))
+        		   newDistance = newDistance*50;*/
+
+           if(DEBUG)
+        	   System.out.println("new move dist : "+newDistance);
+           
+           if(minDistance >= newDistance) {
+               minDistance = newDistance;
+               best = moves.get(i);
+           }
+        }
+        return best;
+    }
+    
+    public static double getManhattanDistPoint3D(Point3D one, Point3D two)
+    {
+    	double distance = 0;
+
+  		double xDiff = Math.abs(one.getX()-two.getX());
+  		double yDiff = Math.abs(one.getY()-two.getY());
+  		double zDiff = Math.abs(one.getZ()-two.getZ());
+
+  		distance += (xDiff + yDiff + zDiff);
+
+  		return distance;
+    	
+    }
+    
 
    // @Override
   /*  public void takeTurn() {

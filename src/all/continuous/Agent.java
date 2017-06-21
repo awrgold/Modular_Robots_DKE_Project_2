@@ -271,8 +271,15 @@ public class Agent extends Cube {
 	public boolean isConnected(Configuration conf) {
 		for (Point3D dir : Direction.DIRECTIONS) {
 			CollisionUtil.Collision c = CollisionUtil.castRayCube(conf, new Ray(this.location, dir), 0.24, 1.0, 0.0, this);
-			if (c.type == CollisionType.AGENT) return true;
+			if (c.type == CollisionType.AGENT)
+				return true;
 		}
 		return false;
 	}
+
+	public Point3D getCenter(){
+		Point3D center = new Point3D(this.getLocation().getX()+0.5, this.getLocation().getY()+0.5, this.getLocation().getZ());
+		return center;
+	}
+
 }

@@ -46,6 +46,7 @@ public class AStarGreedyAlgorithm extends ModuleAlgorithm {
 		
 		Action a = new Action(currentAgentIndex, nextLocation);
 		
+		
 		sim.apply(a);
 		
 		currentPath.remove(0);
