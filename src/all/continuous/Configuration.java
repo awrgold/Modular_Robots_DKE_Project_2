@@ -58,6 +58,8 @@ public class Configuration {
 	}
 
 	public ArrayList<AgentAction> getPhysicalActions(Agent agent) {
+		if (this.getAgents().stream().noneMatch((a) -> a == agent))
+			throw new IllegalArgumentException("Agent does not exist in this configuration");
 		ArrayList<AgentAction> actions = new ArrayList<>();
 
 		if (CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), Direction.UP), 
