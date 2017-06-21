@@ -12,6 +12,8 @@ public class MCTS extends ModuleAlgorithm
 	private static int turnCounter=0;
 	private static int height=0;
 
+	private final double GREEDY_CHANCE = 0.4;
+
 	private boolean continueLooping = true;
 	private int iterationCounter = 0;
 
@@ -30,7 +32,7 @@ public class MCTS extends ModuleAlgorithm
 		while(continueLooping){
 			if(iterationCounter==10000) continueLooping = false; //TODO: change this to checking whether the goal has been reached
 
-			if(iterationCounter%500==0) System.out.println("MCTS iteration: "+iterationCounter);
+			if(iterationCounter%1000==0) System.out.println("MCTS iteration: "+iterationCounter);
 			iterationCounter++;
 
 			root.addVisit();
@@ -67,7 +69,7 @@ public class MCTS extends ModuleAlgorithm
 	public MCTSNode bestValueChild(MCTSNode parent){
 		ArrayList<MCTSNode> children = parent.getChildren();
 
-		int min = Integer.MAX_VALUE;
+		double min = Double.MAX_VALUE;
 		MCTSNode best = null;
 
 		for (MCTSNode child: children) {
@@ -84,7 +86,7 @@ public class MCTS extends ModuleAlgorithm
 	public MCTSNode bestVisitsChild(MCTSNode parent){
 		ArrayList<MCTSNode> children = parent.getChildren();
 
-		int max = Integer.MIN_VALUE;
+		double max = Double.MAX_VALUE;
 		MCTSNode best = null;
 
 		for (MCTSNode child: children) {
@@ -141,35 +143,57 @@ public class MCTS extends ModuleAlgorithm
 
 	public void simulate(MCTSNode origin){
 		Configuration currentConfig = origin.getConfiguration();
+		if(isSameAsAParent(origin)) origin.getParent().getChildren().remove(origin);
+		if(currentConfig.equals(sim.getGoalConfiguration())) System.out.println("FOUND GOAL CONFIG!");
 
 		long t = System.nanoTime();
-		long end = t + 100000;
+		long end = t + 1000;
 
 		while(System.nanoTime() < end){
 			Configuration nextConfig = currentConfig.copy();
 			currentConfig = nextConfig;
 
 			ArrayList<Action> validActions = currentConfig.getAllValidActions();
-			int size = validActions.size();
-			int random = (int) Math.random()*size;
 
-			currentConfig.apply(validActions.get(random));
+			double chance = Math.random();
+
+			if(chance > GREEDY_CHANCE){ //random
+				int size = validActions.size();
+				int random = (int) Math.random()*size;
+
+				currentConfig.apply(validActions.get(random));
+			} else { //greedy
+				double bestScore = Integer.MAX_VALUE;
+				Action bestAction = null;
+				for (Action action: validActions) {
+					Configuration testConfig = currentConfig.copy();
+					testConfig.apply(action);
+
+					double currentScore = estimateScore(testConfig);
+
+					if(currentScore < bestScore) {
+						bestAction = action;
+						bestScore = currentScore;
+					}
+				}
+
+				currentConfig.apply(bestAction);
+			}
 		}
 
-		int score = estimateScore(currentConfig);
-		if(isSameAsAParent(origin)) score = score*10;
+		double score = estimateScore(currentConfig);
 
 		origin.setScore(score);
 	}
 
-	public int estimateScore(Configuration config){
+	public double estimateScore(Configuration config){
 		ArrayList<Agent> agents = config.getAgents();
 		ArrayList<Agent> goals = config.getSimulation().getGoalConfiguration().getAgents();
-		int totalManhattanDistance = 0;
+		double totalManhattanDistance = 0;
 
 		for(int i = 0; i < agents.size() ; i++) totalManhattanDistance += agents.get(i).getManhattanDistanceTo(goals.get(i).getLocation());
 
-		totalManhattanDistance = (int) (totalManhattanDistance/agents.size());
+		totalManhattanDistance = totalManhattanDistance/agents.size();
 
 		return totalManhattanDistance;
 	}
