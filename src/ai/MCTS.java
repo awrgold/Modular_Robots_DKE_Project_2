@@ -9,7 +9,6 @@ public class MCTS extends ModuleAlgorithm
 	ArrayList<Action> path = new ArrayList<Action>();
 	ArrayList<MCTSNode> nodePath = new ArrayList<MCTSNode>();
 
-	private static int counter=0;
 	private static int turnCounter=0;
 	private static int height=0;
 
@@ -29,7 +28,7 @@ public class MCTS extends ModuleAlgorithm
 
 		//Build tree
 		while(continueLooping){
-			if(iterationCounter==100000) continueLooping = false; //TODO: change this to checking whether the goal has been reached
+			if(iterationCounter==10000) continueLooping = false; //TODO: change this to checking whether the goal has been reached
 
 			if(iterationCounter%500==0) System.out.println("MCTS iteration: "+iterationCounter);
 			iterationCounter++;
@@ -199,65 +198,28 @@ public class MCTS extends ModuleAlgorithm
 		if(newHeight>height) height=newHeight;
 	}
 
-	public boolean isSameAsAParent(MCTSNode node){ //TODO: remove literally all of this
-		ArrayList<Agent> nodeAgents = node.getConfiguration().getAgents();
+	public boolean isSameAsAParent(MCTSNode startingNode){
+		if(startingNode.getParent() == null) return false;
 
-		while(node.getParent() != null)
-		{
-			ArrayList<Agent> pathAgents = node.getParent().getConfiguration().getAgents();
+		MCTSNode workingNode = startingNode.getParent();
 
-			int agentCounter=0;
-			for(int j=0; j<nodeAgents.size(); j++)
-			{
-				int count2=0;
-				for(int k=0; k<pathAgents.size(); k++)
-				{
-					if(DEBUG5)
-						System.out.println("analyse : "+nodeAgents.get(j).getLocation()+ "and "+ pathAgents.get(k).getLocation());
-					if(nodeAgents.get(j).getLocation().equals(pathAgents.get(k).getLocation()))
-					{
+		while(true){
+			if(workingNode.getConfiguration().equals(startingNode.getConfiguration())) return true;
 
-						count2++;
-						if(DEBUG5)
-							System.out.println("count2 : "+count2);
-					}
-
-
-				}
-				if(count2>=1)
-				{
-					agentCounter++;
-					if(DEBUG5)
-						System.out.println("agentCounter : "+agentCounter);
-				}
-
-			}
-			if(agentCounter==pathAgents.size())
-			{
-				if(DEBUG5)
-					System.out.println("RETURN TRUE");
-				return true;
-			}
-
-			node = node.getParent();
+			if(workingNode.getParent() == null) return false;
+			else workingNode = workingNode.getParent();
 		}
-
-		return false;
 	}
-	
+
 	@Override
-	public void takeTurn() {
+	public void takeTurn() { //TODO: there could be something wrong with the counters here
 		if(turnCounter==0){
 			mainMCTS(sim);
-			turnCounter++;
 		}
 
-		if(counter<path.size()){
-			sim.apply(path.get(counter));
-			counter++;
+		if(turnCounter < path.size()){
+			sim.apply(path.get(turnCounter));
 			turnCounter++;
-		} else {
-			sim.finish();
-		}
+		} else sim.finish();
 	}
 }
