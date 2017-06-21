@@ -6,6 +6,7 @@ import java.util.Random;
 
 import all.continuous.Action;
 import all.continuous.Agent;
+import all.continuous.AgentAction;
 import all.continuous.Configuration;
 import all.continuous.ModuleAlgorithm;
 import all.continuous.Simulation;
@@ -75,15 +76,25 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 		}
 		return score;
 	}
+	
+	private class AStarNode {
+		public final Configuration conf;
+		public final AgentAction action;
+		
+		public AStarNode(Configuration conf, AgentAction action) {
+			this.conf = conf;
+			this.action = action;
+		}
+	}
 
 	private List<AStar.Neighbour<Configuration>> getNeighbours(Configuration conf) {
-		List<Action> actions = conf.getAllValidActions();
+		List<AgentAction> actions = conf.getAllPhysicalActions();
 		List<AStar.Neighbour<Configuration>> neighbours = new ArrayList<>();
-		for (Action a : actions) {
+		for (AgentAction a : actions) {
 			// FIXME: This is veeeeeeeeeeeeeeeeery memory inefficient...
-			if (conf.getAgent(a.getAgent()).hasMoved()) continue;
+			if (conf.getAgent(a.agent.getIndex()).hasMoved()) continue;
 			Configuration neighbour = conf.copy();
-			neighbour.apply(a);
+			neighbour.applyPhysical(a);
 			neighbour = neighbour.copy();
 			neighbour.setSimulation(sim);
 			neighbour.resolveFalling();

@@ -29,12 +29,8 @@ public class CollisionUtil {
 	}
 
 	private static final double DEFAULT_DELTA = 0.05;
-<<<<<<< HEAD
 	private static final boolean DEBUG = false;
 	
-=======
-
->>>>>>> origin/master
 	public static Collision castRay(Configuration conf, Ray ray, Agent exclude) {
 		return castRay(conf, ray, DEFAULT_DELTA, 1.0, 0.0, exclude);
 	}
@@ -135,7 +131,6 @@ public class CollisionUtil {
 			if (isColliding(minA, maxA, minB, maxB))
 				return new Collision(CollisionType.AGENT, point);
 		}
-<<<<<<< HEAD
 		
 		if(DEBUG)
 		{
@@ -148,10 +143,7 @@ public class CollisionUtil {
 			if(conf.getSimulation().getTerrain().getObstacles() == null)
 				System.out.println("obstacles is null");
 		}
-		
-=======
 
->>>>>>> origin/master
 		for (Obstacle obs : conf.getSimulation().getTerrain().obstacles) {
 			Point3D minA = obs.location;
 			Point3D maxA = minA.add(vSize, vSize, vSize);
