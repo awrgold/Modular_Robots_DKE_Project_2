@@ -1,6 +1,7 @@
 package ai;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import all.continuous.*;
 
@@ -12,10 +13,14 @@ public class MCTS extends ModuleAlgorithm
 	private static int turnCounter=0;
 	private static int height=0;
 
-	private final double GREEDY_CHANCE = 0.4;
+	private final double GREEDY_CHANCE = 0.6;
+
+	boolean printed = false;
 
 	private boolean continueLooping = true;
 	private int iterationCounter = 0;
+
+	private MCTSNode finalNode = null;
 
 	public MCTS(Simulation sim) {
 		super(sim);
@@ -32,7 +37,7 @@ public class MCTS extends ModuleAlgorithm
 		while(continueLooping){
 			if(iterationCounter==10000) continueLooping = false; //TODO: change this to checking whether the goal has been reached
 
-			if(iterationCounter%1000==0) System.out.println("MCTS iteration: "+iterationCounter);
+			if(iterationCounter%500==0) System.out.println("MCTS iteration: "+iterationCounter);
 			iterationCounter++;
 
 			root.addVisit();
@@ -54,15 +59,31 @@ public class MCTS extends ModuleAlgorithm
 		}
 
 		//Construct best path
-		while(root.getChildren().size()>0){
-			MCTSNode next = bestValueChild(root);
+		if(finalNode!=null){
+			nodePath.add(finalNode);
+			MCTSNode workingNode = finalNode;
 
-			nodePath.add(next);
+			while(workingNode.getParent() != null){
+				workingNode = workingNode.getParent();
+				nodePath.add(workingNode);
+			}
 
-			Action a = next.getAction();
-			path.add(a);
+			Collections.reverse(nodePath);
 
-			root = next;
+			for (MCTSNode node: nodePath) {
+				path.add(node.getAction());
+			}
+		} else {
+			while(root.getChildren().size()>0){
+				MCTSNode next = bestValueChild(root);
+
+				nodePath.add(next);
+
+				Action a = next.getAction();
+				path.add(a);
+
+				root = next;
+			}
 		}
 	}
 
@@ -130,60 +151,73 @@ public class MCTS extends ModuleAlgorithm
 	public void expand(MCTSNode origin){
 		ArrayList<Action> validActions = origin.getConfiguration().getAllValidActions();
 
-		for (Action action:validActions) {
-			Configuration configCopy = origin.getConfiguration().copy();
-			configCopy.apply(action);
+		if (origin.getConfiguration().equals(sim.getGoalConfiguration())) {
+			if(!printed) System.out.println("Found goal config!");
+			printed = true;
+			continueLooping = false;
+			finalNode = origin;
+		} else {
+			for (Action action:validActions) {
+				Configuration configCopy = origin.getConfiguration().copy();
+				configCopy.apply(action);
 
-			MCTSNode child = new MCTSNode(configCopy);
-			child.setAction(action);
+				MCTSNode child = new MCTSNode(configCopy);
+				child.setAction(action);
 
-			origin.addChild(child);
+				origin.addChild(child);
+
+				if (isSameAsAParent(origin)) origin.getParent().getChildren().remove(origin);
+			}
 		}
 	}
 
-	public void simulate(MCTSNode origin){
+	public void simulate(MCTSNode origin) {
 		Configuration currentConfig = origin.getConfiguration();
-		if(isSameAsAParent(origin)) origin.getParent().getChildren().remove(origin);
-		if(currentConfig.equals(sim.getGoalConfiguration())) System.out.println("FOUND GOAL CONFIG!");
+		if (currentConfig.equals(sim.getGoalConfiguration())) {
+			if(!printed) System.out.println("Found goal config!");
+			printed = true;
+			continueLooping = false;
+			finalNode = origin;
+		} else {
+			long t = System.nanoTime();
+			long end = t + 1000;
 
-		long t = System.nanoTime();
-		long end = t + 1000;
+			while (System.nanoTime() < end) {
+				Configuration nextConfig = currentConfig.copy();
+				currentConfig = nextConfig;
 
-		while(System.nanoTime() < end){
-			Configuration nextConfig = currentConfig.copy();
-			currentConfig = nextConfig;
+				ArrayList<Action> validActions = currentConfig.getAllValidActions();
 
-			ArrayList<Action> validActions = currentConfig.getAllValidActions();
+				double chance = Math.random();
 
-			double chance = Math.random();
+				if (chance > GREEDY_CHANCE) { //random
+					int size = validActions.size();
+					int random = (int) (Math.random() * size);
 
-			if(chance > GREEDY_CHANCE){ //random
-				int size = validActions.size();
-				int random = (int) Math.random()*size;
+					currentConfig.apply(validActions.get(random));
+				} else { //greedy
+					double bestScore = Integer.MAX_VALUE;
+					Action bestAction = null;
+					for (Action action : validActions) {
+						Configuration testConfig = currentConfig.copy();
+						testConfig.apply(action);
 
-				currentConfig.apply(validActions.get(random));
-			} else { //greedy
-				double bestScore = Integer.MAX_VALUE;
-				Action bestAction = null;
-				for (Action action: validActions) {
-					Configuration testConfig = currentConfig.copy();
-					testConfig.apply(action);
+						double currentScore = estimateScore(testConfig);
 
-					double currentScore = estimateScore(testConfig);
-
-					if(currentScore < bestScore) {
-						bestAction = action;
-						bestScore = currentScore;
+						if (currentScore < bestScore) {
+							bestAction = action;
+							bestScore = currentScore;
+						}
 					}
+
+					currentConfig.apply(bestAction);
 				}
-
-				currentConfig.apply(bestAction);
 			}
+
+			double score = estimateScore(currentConfig);
+
+			origin.setScore(score);
 		}
-
-		double score = estimateScore(currentConfig);
-
-		origin.setScore(score);
 	}
 
 	public double estimateScore(Configuration config){
@@ -191,7 +225,7 @@ public class MCTS extends ModuleAlgorithm
 		ArrayList<Agent> goals = config.getSimulation().getGoalConfiguration().getAgents();
 		double totalManhattanDistance = 0;
 
-		for(int i = 0; i < agents.size() ; i++) totalManhattanDistance += agents.get(i).getManhattanDistanceTo(goals.get(i).getLocation());
+		for(int i = 0; i < agents.size() ; i++) totalManhattanDistance += Math.pow(agents.get(i).getManhattanDistanceTo(goals.get(i).getLocation()),2);
 
 		totalManhattanDistance = totalManhattanDistance/agents.size();
 
@@ -211,7 +245,7 @@ public class MCTS extends ModuleAlgorithm
 			totalScore=0;
 
 			for (MCTSNode child: start.getParent().getChildren()) totalScore+=child.getScore();
-			totalScore = totalScore/start.getParent().getChildren().size();
+			if(start.getParent().getChildren().size() != 0) totalScore = totalScore/start.getParent().getChildren().size();
 
 			start.getParent().setScore(totalScore);
 
