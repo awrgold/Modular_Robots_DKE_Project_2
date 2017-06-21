@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class SuperAgent {
 
+	private static boolean DEBUG = true; 
+	
     private int agentAmount;
     private int counter;
     private ArrayList<AgentCouple> allAgents;
@@ -31,10 +33,14 @@ public class SuperAgent {
     }
 
     public boolean isGoalReached(ArrayList<AgentCouple> agents, ArrayList<Point3D> goals){
-    	  for(int i = 0; i < agents.size(); i++){
+    	if(DEBUG)
+    		System.out.println("check if goal reached");
+    	for(int i = 0; i < agents.size(); i++){
               for(int j = 0; j < goals.size(); j++){
                   if(agents.get(i).getAgent1().getPath().equals(goals.get(j)) || agents.get(i).getAgent2().getPath().equals(goals.get(j))){
                       agents.get(i).setPheromoneSwitch();
+                      if(DEBUG)
+                    	  System.out.println("goal reached!!!");
                       return true;
                   }
               }
@@ -51,6 +57,9 @@ public class SuperAgent {
 
     // Must be modified for "smell" as it only checks if.equals(location)
     public void checkPheromoneTrail(){
+    	if(DEBUG)
+    		System.out.println("check if any agent has reached an active trail");
+    	
         for(int i = 0; i < allAgents.size(); i++){
             for(int j = 0; j < activeTrails.length; j++){
                 if(activeTrails[j] != null){
@@ -61,6 +70,8 @@ public class SuperAgent {
                                 addActiveTrail(allAgents.get(i).getPheromones());
                                 allAgents.get(i).setPathNumber(j);
                                 allAgents.get(i).setPositionInPath(k);
+                                if(DEBUG)
+                                	System.out.println("agent has stepped on an active trail");
                             }
                         }
                     }
@@ -70,12 +81,18 @@ public class SuperAgent {
     }
 
     public void mergeTrails(){
+    	if(DEBUG)
+    		System.out.println("check if an agent needs to pass onto another trail");
         for (int i = 0; i < allAgents.size(); i++){
             if(allAgents.get(i).getPathNumber() > -1){
                 for (int j = 0; j < activeTrails[allAgents.get(i).getPathNumber()].size(); j++){
                     if (allAgents.get(i).getPositionInPath() == activeTrails[allAgents.get(i).getPathNumber()].size()-1){
-                        allAgents.get(i).setPathNumber(getPathJunction(allAgents.get(i))[0]);
+                        if(DEBUG)
+                        	System.out.println("old path number : "+allAgents.get(i).getPathNumber());
+                    	allAgents.get(i).setPathNumber(getPathJunction(allAgents.get(i))[0]);
                         allAgents.get(i).setPositionInPath(getPathJunction(allAgents.get(i))[1]);
+                        if(DEBUG)
+                        	System.out.println("new path number : "+allAgents.get(i).getPathNumber());
                     }
                 }
             }
