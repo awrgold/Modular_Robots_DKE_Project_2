@@ -16,7 +16,7 @@ public class PhysicsSimulation {
 	private double accumulator;
 
 	public PhysicsSimulation() {
-
+		
 	}
 
 	public Body addBody(Body b) {
