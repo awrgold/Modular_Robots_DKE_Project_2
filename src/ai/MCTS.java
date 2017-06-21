@@ -60,6 +60,7 @@ public class MCTS extends ModuleAlgorithm
 
 		//Construct best path
 		if(finalNode!=null){
+			System.out.println("Reconstructing path that leads to goal config");
 			nodePath.add(finalNode);
 			MCTSNode workingNode = finalNode;
 
@@ -74,6 +75,7 @@ public class MCTS extends ModuleAlgorithm
 				path.add(node.getAction());
 			}
 		} else {
+			System.out.println("Reconstructing best path");
 			while(root.getChildren().size()>0){
 				MCTSNode next = bestValueChild(root);
 
@@ -152,8 +154,7 @@ public class MCTS extends ModuleAlgorithm
 		ArrayList<Action> validActions = origin.getConfiguration().getAllValidActions();
 
 		if (origin.getConfiguration().equals(sim.getGoalConfiguration())) {
-			if(!printed) System.out.println("Found goal config!");
-			printed = true;
+			System.out.println("Found goal config!");
 			continueLooping = false;
 			finalNode = origin;
 		} else {
@@ -174,8 +175,7 @@ public class MCTS extends ModuleAlgorithm
 	public void simulate(MCTSNode origin) {
 		Configuration currentConfig = origin.getConfiguration();
 		if (currentConfig.equals(sim.getGoalConfiguration())) {
-			if(!printed) System.out.println("Found goal config!");
-			printed = true;
+			System.out.println("Found goal config!");
 			continueLooping = false;
 			finalNode = origin;
 		} else {
