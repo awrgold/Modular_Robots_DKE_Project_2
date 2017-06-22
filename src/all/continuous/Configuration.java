@@ -25,9 +25,9 @@ public class Configuration {
 
 		for (int i = 0; i < agents.size(); i++) {
 			agents.get(i).setIndex(i);
-			if (agents.get(i).getLocation().getX() != Math.floor(agents.get(i).getLocation().getX()) || agents.get(i).getLocation().getZ() != Math.floor(agents.get(i).getLocation().getZ())) {
-				System.out.println("ewfewfwef");
-			}
+//			if (agents.get(i).getLocation().getX() != Math.floor(agents.get(i).getLocation().getX()) || agents.get(i).getLocation().getZ() != Math.floor(agents.get(i).getLocation().getZ())) {
+//				System.out.println("ewfewfwef");
+//			}
 		}
 	}
 
