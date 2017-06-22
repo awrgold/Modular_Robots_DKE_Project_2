@@ -15,6 +15,7 @@ public class Pheromones extends ModuleAlgorithm {
     SuperAgent superAgent;
     private static boolean DEBUG = true; 
     private static int iterations = 0; 
+    private static final double EPSILON = 0.001;
 
     public Pheromones(Simulation sim)
     {
@@ -36,14 +37,39 @@ public class Pheromones extends ModuleAlgorithm {
             for (int j = i+1; j < size; j++){
             	if(i!=j && !isInACouple(i) && !isInACouple(j))
                 {
-            		if (Math.abs(agents.get(i).getCenter().getX() - agents.get(j).getCenter().getX()) == 1 ||
-                        Math.abs(agents.get(i).getCenter().getY() - agents.get(j).getCenter().getY()) == 1 ||
-                        Math.abs(agents.get(i).getCenter().getZ() - agents.get(j).getCenter().getZ()) == 1) {
-                            AgentCouple couple = new AgentCouple(sim,i,j);
-                            agentCouples.add(couple);
-                            if(DEBUG)
-                            	System.out.println("agent couple created : "+i+" "+j);
+            		if(DEBUG)
+            		{
+            			System.out.println("agent "+i+" : "+printVector(agents.get(i).getPosition()));
+            			System.out.println("agent "+j+" : "+printVector(agents.get(j).getPosition()));
             		}
+            		//
+            		if (Math.abs(agents.get(i).getCenter().getX() - agents.get(j).getCenter().getX()) == 1 &&
+            				Math.abs(agents.get(i).getCenter().getY() - agents.get(j).getCenter().getY()) != 1 &&
+            						Math.abs(agents.get(i).getCenter().getZ() - agents.get(j).getCenter().getZ()) != 1){
+            			 AgentCouple couple = new AgentCouple(sim,i,j);
+            			 agentCouples.add(couple);
+            			 if(DEBUG)
+            				 System.out.println("agent couple created : "+i+" "+j);
+            		}
+            		
+            		else if(Math.abs(agents.get(i).getCenter().getX() - agents.get(j).getCenter().getX()) != 1 &&
+            				Math.abs(agents.get(i).getCenter().getY() - agents.get(j).getCenter().getY()) == 1 &&
+            						Math.abs(agents.get(i).getCenter().getZ() - agents.get(j).getCenter().getZ()) != 1){
+            			AgentCouple couple = new AgentCouple(sim,i,j);
+           			 agentCouples.add(couple);
+           			 if(DEBUG)
+           				 System.out.println("agent couple created : "+i+" "+j);
+            		}
+            		
+            		else if(Math.abs(agents.get(i).getCenter().getX() - agents.get(j).getCenter().getX()) != 1 &&
+            				Math.abs(agents.get(i).getCenter().getY() - agents.get(j).getCenter().getY()) != 1 &&
+            						Math.abs(agents.get(i).getCenter().getZ() - agents.get(j).getCenter().getZ()) == 1){
+            			AgentCouple couple = new AgentCouple(sim,i,j);
+           			    agentCouples.add(couple);
+           			    if(DEBUG)
+           				 System.out.println("agent couple created : "+i+" "+j);
+            		}
+            		
                 }
             }
         }
@@ -71,7 +97,9 @@ public class Pheromones extends ModuleAlgorithm {
         		System.out.println("follow path!!");
         	
             ArrayList<AgentAction> validMoves1 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent1(sim));
+            deleteNotCoupleMoves(couple, validMoves1, sim);
             ArrayList<AgentAction> validMoves2 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent2(sim));
+            deleteNotCoupleMoves(couple, validMoves2, sim);
 
             Point3D nextLoc = superAgent.getActiveTrail(couple.getPathNumber()).get(couple.getPositionInPath()+1);
             Vector3d nextVect = new Vector3d(nextLoc.getX(), nextLoc.getY(), nextLoc.getZ());
@@ -133,6 +161,7 @@ public class Pheromones extends ModuleAlgorithm {
         }
         //get all valid moves for that agent
         ArrayList<AgentAction> validMoves = sim.getCurrentConfiguration().getPhysicalActions(agent);
+        deleteNotCoupleMoves(couple, validMoves, sim);
         
         if(DEBUG)
             System.out.println("valid moves size : "+validMoves.size());
@@ -157,6 +186,7 @@ public class Pheromones extends ModuleAlgorithm {
                 
 
             validMoves = sim.getCurrentConfiguration().getPhysicalActions(agent);
+            deleteNotCoupleMoves(couple, validMoves, sim);
             
             if(DEBUG)
             	System.out.println("new agent pos : "+printVector(agent.getPosition()));
@@ -197,18 +227,57 @@ public class Pheromones extends ModuleAlgorithm {
     	return false; 
     }
     
-   /* public void deleteNotCoupleMoves(ArrayList<AgentAction> actions){
-    	
+    public void deleteNotCoupleMoves(AgentCouple ac, ArrayList<AgentAction> actions, Simulation sim){
+    	if(DEBUG)
+    		System.out.println("check for bumping into other couple moves");
     	for(int i=0; i<actions.size(); i++){
-    		if()
+    		if(isOnTopOfNotCoupleAgent(ac, getDestination(actions.get(i), sim.getCurrentConfiguration()), sim)){
+    			actions.remove(i);
+    		}
     	}
-    }*/
+    }
+    
+    public boolean isOnTopOfNotCoupleAgent(AgentCouple ac, Point3D loc, Simulation sim){
+    	if(DEBUG)
+    		System.out.println("locqtion to analyse : "+loc);
+    	//it's not on top on anything
+    	if(loc.getZ()<0.9)
+    		return false; 
+    	
+    	//if it's on top of smth, check if it's an agent that is not in the couple
+    	for(int i=0; i<agentCouples.size(); i++){
+    		if(agentCouples.get(i).getIndex1()!=ac.getIndex1() && agentCouples.get(i).getIndex2()!=agentCouples.get(i).getIndex2()){
+	    		Vector3d vector1 = agentCouples.get(i).getAgent1(sim).getPosition();
+	    		Point3D locAgent1 = new Point3D(vector1.x, vector1.y, vector1.z);
+	    		if (Math.abs(loc.getX() - locAgent1.getX()) <EPSILON &&
+	                    Math.abs(loc.getY() - locAgent1.getZ()) <EPSILON &&
+	                    Math.abs(loc.getZ() - locAgent1.getY()) >0.99 &&
+	                    Math.abs(loc.getZ() - locAgent1.getY())<1.01){
+	    			if(DEBUG)
+	    				System.out.println("MOVE TO BE DELETED");
+	    			return true; 
+	    		}
+	    		
+	    		Vector3d vector2 = agentCouples.get(i).getAgent2(sim).getPosition();
+	    		Point3D locAgent2 = new Point3D(vector2.x, vector2.y, vector2.z);
+	    		if (Math.abs(loc.getX() - locAgent2.getX()) <EPSILON &&
+	                    Math.abs(loc.getY() - locAgent2.getZ()) <EPSILON &&
+	                    Math.abs(loc.getZ() - locAgent2.getY()) >0.99 &&
+	                    Math.abs(loc.getZ() - locAgent2.getY())<1.01){
+	    			if(DEBUG)
+	    				System.out.println("MOVE TO BE DELETED");
+	    			return true; 
+	    		}
+	    	}
+    	}
+    	return false;
+    }
 
     /*END OF HELPER METHODS*/
 
     @Override
     public void takeTurn(){
-    	if(iterations>300)
+    	if(iterations>30)
            sim.finish();
 
         if(iterations==0){
