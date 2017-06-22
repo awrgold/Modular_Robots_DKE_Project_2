@@ -80,6 +80,16 @@ public class Agent extends Cube {
 	{
 		return path;
 	}
+	
+	public ArrayList<Vector3d> translatePathToVectors(){
+		ArrayList<Vector3d> vectorPath = new ArrayList<Vector3d>();
+		
+		for(int i=0; i<path.size(); i++){
+			vectorPath.add(new Vector3d(path.get(i).getX(), path.get(i).getY(), path.get(i).getZ()));
+		}
+		
+		return vectorPath;
+	}
     
     /*THE NEXT 6 METHODS ARE USED FOR THE GRAVITY FALL //see physics class*/
   	
