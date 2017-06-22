@@ -26,6 +26,10 @@ public class CollisionUtil {
 			this.location = location;
 			this.collided = collided;
 		}
+
+		public Point3D getLocation(){
+			return location;
+		}
 	}
 
 	private static final double DEFAULT_DELTA = 0.05;

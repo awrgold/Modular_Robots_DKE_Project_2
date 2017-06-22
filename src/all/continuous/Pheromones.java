@@ -178,6 +178,7 @@ public class Pheromones extends ModuleAlgorithm {
     	Configuration configCopy = config.copy();
     	configCopy.applyPhysical(action);
     	return action.agent.getLocation();
+
     }
 
     public String printVector(Vector3d vector){
