@@ -270,7 +270,7 @@ public class MCTS extends ModuleAlgorithm
 	}
 
 	@Override
-	public void takeTurn() { //TODO: there could be something wrong with the counters here
+	public void takeTurn() {
 		if(turnCounter==0){
 			mainMCTS(sim);
 		}
