@@ -173,18 +173,19 @@ public class Pheromones extends ModuleAlgorithm {
     }
 
     /*HELPER METHODS*/
-    public Point3D getDestination(AgentAction action, Configuration config ){
+    public Point3D getDestination(AgentAction action, Configuration config){
     	
     	Configuration configCopy = config.copy();
     	configCopy.applyPhysical(action);
     	return action.agent.getLocation();
     }
+
     public String printVector(Vector3d vector){
-    	return "x : "+vector.x+", y: "+vector.y+", z: "+vector.z;
+    	return "x : " + vector.x + ", y: " + vector.y + ", z: " + vector.z;
     }
     
     public boolean isInACouple(int index){
-    	for(int i=0; i<agentCouples.size(); i++){
+    	for(int i = 0; i < agentCouples.size(); i++){
     		if(agentCouples.get(i).getIndex1()==index || agentCouples.get(i).getIndex2()==index)
     		{
     			if(DEBUG)

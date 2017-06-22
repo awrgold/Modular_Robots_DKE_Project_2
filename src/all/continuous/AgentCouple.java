@@ -5,6 +5,8 @@ import javafx.geometry.Point3D;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static all.continuous.gfx.Display.sim;
+
 /**
  * Created by God on the 8th day, and it was good...
  */
@@ -94,5 +96,6 @@ public class AgentCouple {
     	return agent2Index; 
     }
 
+    public
 
 }
