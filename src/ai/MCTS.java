@@ -61,14 +61,15 @@ public class MCTS extends ModuleAlgorithm{
 		}
 
 		//Construct best path
+
+		int i = 0;
 		if(finalNode!=null){
 			System.out.println("Reconstructing path that leads to goal config");
-			nodePath.add(finalNode);
 			MCTSNode workingNode = finalNode;
 
 			while(workingNode.getParent() != null){
-				workingNode = workingNode.getParent();
 				nodePath.add(workingNode);
+				workingNode = workingNode.getParent();
 			}
 
 			Collections.reverse(nodePath);
@@ -80,6 +81,9 @@ public class MCTS extends ModuleAlgorithm{
 			System.out.println("Reconstructing best path");
 			while(root.getChildren().size()>0){
 				MCTSNode next = bestValueChild(root);
+
+				System.out.println("Frame " + i + ": " + estimateScore(next.getConfiguration()));
+				i++;
 
 				nodePath.add(next);
 
