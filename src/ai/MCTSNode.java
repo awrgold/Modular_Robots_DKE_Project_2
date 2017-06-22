@@ -18,7 +18,7 @@ public class MCTSNode{
 		this.config = config;
 		children = new ArrayList<MCTSNode>();
 		visits = 0;
-		score=20;
+		score = 0;
 	}
 	
 	public MCTSNode getParent(){
@@ -55,12 +55,12 @@ public class MCTSNode{
 	
 	public void addScore(double score){
 		this.score += score;
+		addVisit();
 	}
 	
 	public void addChild(MCTSNode child){
 		child.setParent(this);
 		children.add(child);
-		
 	}
 	
 	public void setAction(Action action)

@@ -5,17 +5,20 @@ import java.util.Collections;
 
 import all.continuous.*;
 
-public class MCTS extends ModuleAlgorithm
-{
+public class MCTS extends ModuleAlgorithm{
+
+	//SETTINGS
+	private final double GREEDY_SIMULATION_CHANCE = 1;
+	private final int MAX_ITERATIONS = 10000;
+	private final int MINIMUM_VISITS = 20;
+	private final double EXPLORATION = Math.sqrt(2);
+	private final int SIMULATION_DEPTH = 20;
+
 	ArrayList<Action> path = new ArrayList<Action>();
 	ArrayList<MCTSNode> nodePath = new ArrayList<MCTSNode>();
 
 	private static int turnCounter=0;
 	private static int height=0;
-
-	private final double GREEDY_CHANCE = 0.6;
-
-	boolean printed = false;
 
 	private boolean continueLooping = true;
 	private int iterationCounter = 0;
@@ -35,27 +38,26 @@ public class MCTS extends ModuleAlgorithm
 
 		//Build tree
 		while(continueLooping){
-			if(iterationCounter==10000) continueLooping = false; //TODO: change this to checking whether the goal has been reached
+			if(iterationCounter==MAX_ITERATIONS) continueLooping = false;
 
 			if(iterationCounter%500==0) System.out.println("MCTS iteration: "+iterationCounter);
 			iterationCounter++;
 
-			root.addVisit();
+			MCTSNode workingNode = root;
 
-			MCTSNode next = select(root);
+			while(workingNode.children.size() != 0) workingNode = select(workingNode);
 
-			if(next != null){
-				while(next.getChildren().size()!=0){
-					MCTSNode next2 = select(next);
-					next = next2;
-				}
+			if(workingNode.getVisits() >= MINIMUM_VISITS) {
+				expand(workingNode);
 
-				expand(next);
+				int childID = (int) (workingNode.getChildren().size() * Math.random());
 
-				for(int i = 0; i < next.getChildren().size(); i++) simulate(next.getChildren().get(i));
-
-				backUp(next, next.getChildren());
+				workingNode = workingNode.getChildren().get(childID);
 			}
+
+			double score = simulate(workingNode);
+
+			backPropagate(score, workingNode);
 		}
 
 		//Construct best path
@@ -86,6 +88,14 @@ public class MCTS extends ModuleAlgorithm
 
 				root = next;
 			}
+		}
+	}
+
+	private void backPropagate(double score, MCTSNode workingNode) {
+		while(true){
+			workingNode.addScore(score);
+			if(workingNode.getParent() != null) workingNode = workingNode.getParent();
+			else break;
 		}
 	}
 
@@ -126,18 +136,18 @@ public class MCTS extends ModuleAlgorithm
 		double selectScore=0;
 
 		if(node.getVisits()==0) selectScore = node.getScore()  - 100;
-		else selectScore = node.getScore() - Math.sqrt(1/5)*Math.sqrt(Math.log(node.getParent().getVisits())/node.getVisits());
+		else selectScore = node.getScore() - Math.sqrt(EXPLORATION)*Math.sqrt(Math.log(node.getParent().getVisits())/node.getVisits());
 
 		return selectScore;
 	}
 
 	public MCTSNode select(MCTSNode origin){
-		ArrayList<MCTSNode> children = origin.getChildren();
-
-		double min = 1000000; //CHANGED BY BOBBY
+		double min = Double.MAX_VALUE;
 		MCTSNode minNode = null;
 
-		for (MCTSNode child: children) {
+		for (MCTSNode child: origin.getChildren()) {
+			if(child.getVisits() < MINIMUM_VISITS) return child;
+
 			double selectScore = selectPolicy(child);
 
 			if(selectScore < min){
@@ -145,7 +155,6 @@ public class MCTS extends ModuleAlgorithm
 				minNode = child;
 			}
 		}
-		minNode.addVisit();
 
 		return minNode;
 	}
@@ -172,17 +181,19 @@ public class MCTS extends ModuleAlgorithm
 		}
 	}
 
-	public void simulate(MCTSNode origin) {
+	public double simulate(MCTSNode origin) {
 		Configuration currentConfig = origin.getConfiguration();
 		if (currentConfig.equals(sim.getGoalConfiguration())) {
 			System.out.println("Found goal config!");
 			continueLooping = false;
 			finalNode = origin;
 		} else {
-			long t = System.nanoTime();
-			long end = t + 1000;
 
-			while (System.nanoTime() < end) {
+			int moveCounter = 0;
+
+			while (moveCounter < SIMULATION_DEPTH) {
+				moveCounter++;
+
 				Configuration nextConfig = currentConfig.copy();
 				currentConfig = nextConfig;
 
@@ -190,7 +201,7 @@ public class MCTS extends ModuleAlgorithm
 
 				double chance = Math.random();
 
-				if (chance > GREEDY_CHANCE) { //random
+				if (chance > GREEDY_SIMULATION_CHANCE) { //random
 					int size = validActions.size();
 					int random = (int) (Math.random() * size);
 
@@ -213,11 +224,8 @@ public class MCTS extends ModuleAlgorithm
 					currentConfig.apply(bestAction);
 				}
 			}
-
-			double score = estimateScore(currentConfig);
-
-			origin.setScore(score);
 		}
+		return estimateScore(currentConfig);
 	}
 
 	public double estimateScore(Configuration config){
