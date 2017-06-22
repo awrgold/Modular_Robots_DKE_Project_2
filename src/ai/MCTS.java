@@ -14,6 +14,8 @@ public class MCTS extends ModuleAlgorithm{
 	private final double EXPLORATION = Math.sqrt(2);
 	private final int SIMULATION_DEPTH = 3;
 
+	private final boolean VERBOSE_DEBUG = false;
+
 	ArrayList<Action> path = new ArrayList<Action>();
 	ArrayList<MCTSNode> nodePath = new ArrayList<MCTSNode>();
 
@@ -62,9 +64,10 @@ public class MCTS extends ModuleAlgorithm{
 
 		//Construct best path
 
-		int i = 0;
+		int i = 1;
 		if(finalNode!=null){
-			System.out.println("Reconstructing path that leads to goal config");
+			System.out.println(" Reconstructing path that leads to goal config");
+
 			MCTSNode workingNode = finalNode;
 
 			while(workingNode.getParent() != null){
@@ -76,13 +79,16 @@ public class MCTS extends ModuleAlgorithm{
 
 			for (MCTSNode node: nodePath) {
 				path.add(node.getAction());
+
+				if(VERBOSE_DEBUG) System.out.println("  Frame " + i + ": " + estimateScore(node.getConfiguration()));
+				i++;
 			}
 		} else {
-			System.out.println("Reconstructing best path");
+			System.out.println(" Reconstructing best path");
 			while(root.getChildren().size()>0){
 				MCTSNode next = bestValueChild(root);
 
-				System.out.println("Frame " + i + ": " + estimateScore(next.getConfiguration()));
+				if(VERBOSE_DEBUG) System.out.println("  Frame " + i + ": " + estimateScore(next.getConfiguration()));
 				i++;
 
 				nodePath.add(next);
@@ -161,7 +167,7 @@ public class MCTS extends ModuleAlgorithm{
 
 				origin.addChild(child);
 
-				if (isSameAsAParent(origin)) origin.getParent().getChildren().remove(origin);
+				if(isSameAsAParent(origin)) origin.getParent().getChildren().remove(origin);
 			}
 		}
 	}
