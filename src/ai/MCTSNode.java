@@ -82,5 +82,7 @@ public class MCTSNode{
 	{
 		this.visits++;
 	}
+
+	public double getAverageScore(){return score/visits;}
 	
 }

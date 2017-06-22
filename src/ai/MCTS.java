@@ -12,7 +12,7 @@ public class MCTS extends ModuleAlgorithm{
 	private final int MAX_ITERATIONS = 10000;
 	private final int MINIMUM_VISITS = 20;
 	private final double EXPLORATION = Math.sqrt(2);
-	private final int SIMULATION_DEPTH = 20;
+	private final int SIMULATION_DEPTH = 3;
 
 	ArrayList<Action> path = new ArrayList<Action>();
 	ArrayList<MCTSNode> nodePath = new ArrayList<MCTSNode>();
@@ -106,37 +106,18 @@ public class MCTS extends ModuleAlgorithm{
 		MCTSNode best = null;
 
 		for (MCTSNode child: children) {
-			if(child.getScore()<min && child.getScore()!=Integer.MIN_VALUE){
-				min = child.getScore();
+			if(child.getAverageScore()<min){ // && child.getScore()!=Integer.MIN_VALUE
+				min = child.getAverageScore();
 				best = child;
 			}
 
-		}
-
-		return best;
-	}
-
-	public MCTSNode bestVisitsChild(MCTSNode parent){
-		ArrayList<MCTSNode> children = parent.getChildren();
-
-		double max = Double.MAX_VALUE;
-		MCTSNode best = null;
-
-		for (MCTSNode child: children) {
-			if(child.getVisits() > max){
-				max = child.getScore();
-				best = child;
-			}
 		}
 
 		return best;
 	}
 
 	public double selectPolicy(MCTSNode node){
-		double selectScore=0;
-
-		if(node.getVisits()==0) selectScore = node.getScore()  - 100;
-		else selectScore = node.getScore() - Math.sqrt(EXPLORATION)*Math.sqrt(Math.log(node.getParent().getVisits())/node.getVisits());
+		double selectScore = node.getAverageScore() - Math.sqrt(EXPLORATION)*Math.sqrt(Math.log(node.getParent().getVisits())/node.getVisits());
 
 		return selectScore;
 	}
@@ -238,30 +219,6 @@ public class MCTS extends ModuleAlgorithm{
 		totalManhattanDistance = totalManhattanDistance/agents.size();
 
 		return totalManhattanDistance;
-	}
-
-	public void backUp(MCTSNode start, ArrayList<MCTSNode> ends){
-		int newHeight=0;
-
-		int totalScore=0;
-		for (MCTSNode end: ends) totalScore+=end.getScore();
-		totalScore = totalScore/ends.size();
-
-		start.setScore(totalScore);
-
-		while(start.getParent() != null){
-			totalScore=0;
-
-			for (MCTSNode child: start.getParent().getChildren()) totalScore+=child.getScore();
-			if(start.getParent().getChildren().size() != 0) totalScore = totalScore/start.getParent().getChildren().size();
-
-			start.getParent().setScore(totalScore);
-
-			start = start.getParent();
-			newHeight++;
-		}
-
-		if(newHeight>height) height=newHeight;
 	}
 
 	public boolean isSameAsAParent(MCTSNode startingNode){
