@@ -23,12 +23,12 @@ public class Configuration {
 	public Configuration(ArrayList<Agent> agents) {
 		this.agents = agents;
 
-		for (int i = 0; i < agents.size(); i++) {
-			agents.get(i).setIndex(i);
-			if (agents.get(i).getLocation().getX() != Math.floor(agents.get(i).getLocation().getX()) || agents.get(i).getLocation().getZ() != Math.floor(agents.get(i).getLocation().getZ())) {
-				System.out.println("ewfewfwef");
-			}
-		}
+//		for (int i = 0; i < agents.size(); i++) {
+//			agents.get(i).setIndex(i);
+//			if (agents.get(i).getLocation().getX() != Math.floor(agents.get(i).getLocation().getX()) || agents.get(i).getLocation().getZ() != Math.floor(agents.get(i).getLocation().getZ())) {
+//				System.out.println("ewfewfwef");
+//			}
+//		}
 	}
 
 	public void apply(Action action){

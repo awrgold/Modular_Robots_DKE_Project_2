@@ -126,27 +126,27 @@ public class Simulation {
     public void endTurn() {
         if(VALIDATE_EVERYTHING) timeStep.get(timeStep.size()-1).validate();
         
-        boolean wasGood = true;
-        for (int i = 0; i < getCurrentConfiguration().agents.size(); i++) {
-        	getCurrentConfiguration().agents.get(i).setIndex(i);
-        	if (Math.abs(getCurrentConfiguration().agents.get(i).getPosition().x - Math.round(getCurrentConfiguration().agents.get(i).getPosition().x)) > 0.1 || 
-					Math.abs(getCurrentConfiguration().agents.get(i).getPosition().z - Math.round(getCurrentConfiguration().agents.get(i).getPosition().z)) > 0.1 ) {
-				wasGood = false;
-			}
-		}
+//        boolean wasGood = true;
+//        for (int i = 0; i < getCurrentConfiguration().agents.size(); i++) {
+//        	getCurrentConfiguration().agents.get(i).setIndex(i);
+//        	if (Math.abs(getCurrentConfiguration().agents.get(i).getPosition().x - Math.round(getCurrentConfiguration().agents.get(i).getPosition().x)) > 0.1 || 
+//					Math.abs(getCurrentConfiguration().agents.get(i).getPosition().z - Math.round(getCurrentConfiguration().agents.get(i).getPosition().z)) > 0.1 ) {
+//				wasGood = false;
+//			}
+//		}
         
         physSim.tick(1.0);
         
-        if(wasGood)
-        {
-        for (int i = 0; i < getCurrentConfiguration().agents.size(); i++) {
-        	getCurrentConfiguration().agents.get(i).setIndex(i);
-			if (Math.abs(getCurrentConfiguration().agents.get(i).getPosition().x - Math.round(getCurrentConfiguration().agents.get(i).getPosition().x)) > 0.1 || 
-					Math.abs(getCurrentConfiguration().agents.get(i).getPosition().z - Math.round(getCurrentConfiguration().agents.get(i).getPosition().z)) > 0.1 ) {
-				System.out.println("ewfewfwef");
-			}
-		}
-        }
+//        if(wasGood)
+//        {
+//        for (int i = 0; i < getCurrentConfiguration().agents.size(); i++) {
+//        	getCurrentConfiguration().agents.get(i).setIndex(i);
+//			if (Math.abs(getCurrentConfiguration().agents.get(i).getPosition().x - Math.round(getCurrentConfiguration().agents.get(i).getPosition().x)) > 0.1 || 
+//					Math.abs(getCurrentConfiguration().agents.get(i).getPosition().z - Math.round(getCurrentConfiguration().agents.get(i).getPosition().z)) > 0.1 ) {
+//				System.out.println("ewfewfwef");
+//			}
+//		}
+//        }
         
         for (Agent agent : timeStep.get(timeStep.size()-1).getAgents()) this.physSim.removeBody(agent);
         Configuration newTimeStep = timeStep.get(timeStep.size()-1).copy();
