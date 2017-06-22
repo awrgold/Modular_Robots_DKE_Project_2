@@ -82,13 +82,13 @@ public class AStar {
 
 			iter++;
 
-			//			if (iter > 500)
-			//				break;
+						if (iter > 5000)
+							break;
 
 			System.out.println(iter);
 		}
 
-		Optional<T> finalGoal = cameFrom.containsKey(goal) ? Optional.of(goal) : 
+		Optional<T> finalGoal = cameFrom.containsKey(goal) ? cameFrom.keySet().stream().filter((node) -> node.equals(goal)).findFirst() : 
 			cameFrom.keySet().stream().reduce((a, b) -> heuristic.calculate(a, goal) < heuristic.calculate(b, goal) ? a : b);
 		if (!finalGoal.isPresent()) return new ArrayList<>();
 		T current = finalGoal.get();

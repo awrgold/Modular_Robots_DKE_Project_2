@@ -5,8 +5,8 @@ import org.joml.Vector3dc;
 public class ImpulseAction extends AgentAction {
 	public final Vector3dc impulse;
 	
-	public ImpulseAction(Agent agent, Vector3dc impulse) {
-		super(agent);
+	public ImpulseAction(int index, Vector3dc impulse) {
+		super(index);
 		if (!((impulse.x() != 0 && impulse.y() == 0 && impulse.z() == 0) ||
 				(impulse.x() == 0 && impulse.y() != 0 && impulse.z() == 0) ||
 				(impulse.x() == 0 && impulse.y() == 0 && impulse.z() != 0)
@@ -16,7 +16,12 @@ public class ImpulseAction extends AgentAction {
 	}
 
 	@Override
-	public void apply() {
+	public void apply(Agent agent) {
 		agent.applyImpulse(impulse);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Applying impulse of %s for agent %s", impulse, index);
 	}
 }
