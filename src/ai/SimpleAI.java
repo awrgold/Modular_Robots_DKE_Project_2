@@ -311,7 +311,8 @@ public class SimpleAI extends ModuleAlgorithm
     	
     	Configuration configCopy = config.copy();
     	configCopy.applyPhysical(action);
-    	Vector3d pos = action.agent.getPosition();
+    	Agent agent = config.getAgent(action.index);
+    	Vector3d pos = agent.getPosition();
     	return new Point3D(pos.x, pos.y, pos.z);
     }
     

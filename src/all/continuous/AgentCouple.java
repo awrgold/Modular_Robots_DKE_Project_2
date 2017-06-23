@@ -96,6 +96,4 @@ public class AgentCouple {
     	return agent2Index; 
     }
 
-    public
-
 }

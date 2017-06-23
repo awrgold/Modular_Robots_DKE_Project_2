@@ -98,7 +98,9 @@ public class Pheromones extends ModuleAlgorithm {
             AgentAction action = randomMove(couple);
             //add position to the agent's paths
             if(action!=null)
-            {action.agent.addPath(getDestination(action, sim.getCurrentConfiguration()));
+            {
+            	Agent agent = sim.getCurrentConfiguration().getAgent(action.index);
+            	agent.addPath(getDestination(action, sim.getCurrentConfiguration()));
             sim.applyPhysical(action);
             }
         }
@@ -228,7 +230,8 @@ public class Pheromones extends ModuleAlgorithm {
     	
     	Configuration configCopy = config.copy();
     	configCopy.applyPhysical(action);
-    	Vector3d pos = action.agent.getPosition();
+    	Agent agent = config.getAgent(action.index);
+    	Vector3d pos = agent.getPosition();
     	return new Point3D(pos.x, pos.y, pos.z);
     }
     public String printVector(Vector3d vector){

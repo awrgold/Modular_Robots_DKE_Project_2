@@ -30,7 +30,7 @@ public class AgentSenses {
         agent2Loc = new Point3D(vector2.x, vector2.y, vector2.z);
     }
 
-    public AgentAction makeDecision(ArrayList<CollisionUtil.Collision> collisions){
+   /* public AgentAction makeDecision(ArrayList<CollisionUtil.Collision> collisions){
 
          /*
         Agents should try to stick together to find the goal.
@@ -39,7 +39,7 @@ public class AgentSenses {
          */
 
         // Loop through collisions and organize decision based on type (priority queue of sorts)
-        ArrayList<Point3D> seenObjects = new ArrayList<>();
+       /* ArrayList<Point3D> seenObjects = new ArrayList<>();
         double distanceToClosestObject = Double.MAX_VALUE;
         Point3D closestObject;
 
@@ -56,7 +56,7 @@ public class AgentSenses {
         // find the closest object.
         // if multiple objects are same distance, pick the agent.
         // if multiple objects are both obstacles at same distance, pick one at random.
-        for (int i = 0; i < seenObjects.size(); i++){
+       /* for (int i = 0; i < seenObjects.size(); i++){
             if (getManhattanDistanceBetween(agent1Loc, seenObjects.get(i)) < distanceToClosestObject) {
                 distanceToClosestObject = getManhattanDistanceBetween(agent1Loc, seenObjects.get(i));
                 closestObject = seenObjects.get(i);
@@ -85,7 +85,7 @@ public class AgentSenses {
                     i++;
                 }
             }
-        }
+        }*/
 
         // from here, determine which agent in AgentCouple is further from the closest object.
         // Choose the move that brings it closest in Manhattan distance to the closest object
@@ -94,10 +94,10 @@ public class AgentSenses {
 
 
 
-    }
+    //}
 
 
-    public void visualSearch(Configuration conf, Simulation sim){
+    /*public void visualSearch(Configuration conf, Simulation sim){
         // Cast Ray in Left/Right/Forward search field from front agent in "agents"
 
         // if Agent 1 is in front of Agent 2, cast rays from Agent 1 to L/R/F
@@ -315,7 +315,7 @@ public class AgentSenses {
 
             }
         }
-    }
+    }*/
 
     public void scentSearch(Configuration conf, Simulation sim){
         // loop through all the squares around AgentCouple
