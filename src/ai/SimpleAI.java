@@ -59,6 +59,10 @@ public class SimpleAI extends ModuleAlgorithm
 			{
 				agents.get(i).setIntermediateGoal(getFurthestGoal(sim));
 			}
+			
+			for(int i=0; i<agents.size(); i++){
+				System.out.println("agent : "+i+" "+agents.get(i).getLocation());
+			}
 
 			unsuccessfulTurns=0;
 			notToBeAdded = new ArrayList<Float>();
@@ -204,7 +208,7 @@ public class SimpleAI extends ModuleAlgorithm
     		System.out.println("iterations : "+iterations);
     	
     	//this is just for stopping my infinite for loop
-    	if(iterations>500)
+    	if(iterations>200)
     		sim.finish();
     	
     	//if the agent we're working with finds its goal, we stop the simulation
@@ -261,7 +265,7 @@ public class SimpleAI extends ModuleAlgorithm
     	return false; 
     }
     // method that returns the valid move that reduces the distance to the intermediate goal the most, null if no such move
-    public static AgentAction isCloser(Agent agent, Simulation sim){
+    public  AgentAction isCloser(Agent agent, Simulation sim){
     	
     	/*if(DEBUG)
     	{
@@ -307,11 +311,13 @@ public class SimpleAI extends ModuleAlgorithm
 
     }
     
-    public static Point3D getDestination(AgentAction action, Configuration config ){
+    public  Point3D getDestination(AgentAction action, Configuration config ){
     	
     	Configuration configCopy = config.copy();
     	configCopy.applyPhysical(action);
-    	Agent agent = config.getAgent(action.index);
+    	Simulation sim2 = new Simulation(sim.getTerrain(), configCopy, sim.getGoalConfiguration());
+    	sim2.endTurn();
+    	Agent agent = configCopy.getAgent(action.index);
     	Vector3d pos = agent.getPosition();
     	return new Point3D(pos.x, pos.y, pos.z);
     }
@@ -368,7 +374,7 @@ public class SimpleAI extends ModuleAlgorithm
     	return null;
     }
     
-    public static AgentAction getSmallerActionWhenStuck(Agent agent, Simulation sim)
+    public  AgentAction getSmallerActionWhenStuck(Agent agent, Simulation sim)
     {
     	if(DEBUG)
     	System.out.println("current agent at pos : "+agent.getLocation());
