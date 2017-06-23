@@ -90,6 +90,11 @@ public class Agent extends Cube {
 		
 		return vectorPath;
 	}
+	
+	public Point3D getPointPosition(){
+		Vector3d vector = this.getPosition();
+		return new Point3D(vector.x, vector.y, vector.z);
+	}
     
     /*THE NEXT 6 METHODS ARE USED FOR THE GRAVITY FALL //see physics class*/
   	
