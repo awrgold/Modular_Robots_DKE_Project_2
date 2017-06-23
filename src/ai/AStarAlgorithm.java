@@ -14,7 +14,7 @@ import javafx.geometry.Point3D;
 
 public class AStarAlgorithm extends ModuleAlgorithm {
 
-	private List<Configuration> currentPath;
+	private List<AStarNode> currentPath;
 
 	private Random rand = new Random();
 
@@ -28,7 +28,7 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 	public void takeTurn() {
 		if (currentPath == null) {
 			Configuration goal = sim.getGoalConfiguration();
-			currentPath = AStar.aStar(this::calculateScore, this::getNeighbours, sim.getCurrentConfiguration(), sim.getGoalConfiguration()); // TODO: Use queue instead of list
+			currentPath = AStar.aStar(this::calculateScore, this::getNeighbours, new AStarNode(sim.getCurrentConfiguration(), null), new AStarNode(sim.getGoalConfiguration(), null)); // TODO: Use queue instead of list
 			if (currentPath.isEmpty()) {
 				sim.finish();
 				return;
@@ -36,11 +36,10 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 			currentPath.remove(0);
 		}
 
-		for (Agent agent : sim.getCurrentConfiguration().getAgents()) {
-			Point3D nextLocation = currentPath.get(0).getAgent(agent.getIndex()).getLocation();
-			Action a = new Action(agent.getIndex(), nextLocation);
-
-			sim.apply(a);
+		AgentAction action = currentPath.get(0).action;
+		if (action != null) {
+			System.out.println("ITER: " + action.toString());
+			sim.applyPhysical(action);
 		}
 		
 		currentPath.remove(0);
@@ -69,10 +68,10 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 		return score;
 	}
 
-	private float calculateScore(Configuration node, Configuration goal) {
+	private float calculateScore(AStarNode node, AStarNode goal) {
 		float score = 0;
-		for (Agent agent : node.getAgents()) {
-			score += calculateAgentScore(agent.getIndex(), node, goal);
+		for (Agent agent : node.conf.getAgents()) {
+			score += calculateAgentScore(agent.getIndex(), node.conf, goal.conf);
 		}
 		return score;
 	}
@@ -85,20 +84,33 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 			this.conf = conf;
 			this.action = action;
 		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof AStarNode)) return false;
+			return ((AStarNode) obj).conf.equals(this.conf);
+		}
+		
+		@Override
+		public int hashCode() {
+			return this.conf.hashCode();
+		}
 	}
 
-	private List<AStar.Neighbour<Configuration>> getNeighbours(Configuration conf) {
-		List<AgentAction> actions = conf.getAllPhysicalActions();
-		List<AStar.Neighbour<Configuration>> neighbours = new ArrayList<>();
+	private List<AStar.Neighbour<AStarNode>> getNeighbours(AStarNode node) {
+		List<AgentAction> actions = node.conf.getAllPhysicalActions();
+		List<AStar.Neighbour<AStarNode>> neighbours = new ArrayList<>();
 		for (AgentAction a : actions) {
 			// FIXME: This is veeeeeeeeeeeeeeeeery memory inefficient...
-			if (conf.getAgent(a.agent.getIndex()).hasMoved()) continue;
-			Configuration neighbour = conf.copy();
+			if (node.conf.getAgent(a.index).hasMoved()) continue;
+			Configuration neighbour = node.conf.copy();
 			neighbour.applyPhysical(a);
 			neighbour = neighbour.copy();
 			neighbour.setSimulation(sim);
-			neighbour.resolveFalling();
-			neighbours.add(new AStar.Neighbour<Configuration>(neighbour, 1));
+			Simulation sim = new Simulation(this.sim.getTerrain(), neighbour, this.sim.getGoalConfiguration());
+			
+			sim.endTurn();
+			neighbours.add(new AStar.Neighbour<AStarNode>(new AStarNode(sim.getCurrentConfiguration(), a), 1));
 		}
 		return neighbours;
 	}

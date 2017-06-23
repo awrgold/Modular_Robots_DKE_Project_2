@@ -8,7 +8,7 @@ public class Ray {
 	
 	public Ray(Point3D origin, Point3D direction) {
 		if (direction.magnitude() == 0)
-			throw new RuntimeException("Direction may not be the zero vector");
+			throw new IllegalArgumentException("Direction may not be the zero vector");
 		this.origin = origin;
 		this.direction = direction.normalize();
 	}
