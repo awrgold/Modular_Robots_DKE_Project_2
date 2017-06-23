@@ -101,6 +101,8 @@ public class Pheromones extends ModuleAlgorithm {
             {
             	Agent agent = sim.getCurrentConfiguration().getAgent(action.index);
             	agent.addPath(getDestination(action, sim.getCurrentConfiguration()));
+            	if(DEBUG)
+            		System.out.println("agent velocity : "+agent.getVelocity());
             sim.applyPhysical(action);
             }
         }
@@ -230,7 +232,9 @@ public class Pheromones extends ModuleAlgorithm {
     	
     	Configuration configCopy = config.copy();
     	configCopy.applyPhysical(action);
-    	Agent agent = config.getAgent(action.index);
+    	Simulation sim2 = new Simulation(sim.getTerrain(), configCopy, sim.getGoalConfiguration());
+    	sim2.endTurn();
+    	Agent agent = configCopy.getAgent(action.index);
     	Vector3d pos = agent.getPosition();
     	return new Point3D(pos.x, pos.y, pos.z);
     }
