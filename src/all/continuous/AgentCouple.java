@@ -5,45 +5,49 @@ import javafx.geometry.Point3D;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static all.continuous.gfx.Display.sim;
+
 /**
  * Created by God on the 8th day, and it was good...
  */
 public class AgentCouple {
 
-    private Agent agent1;
-    private Agent agent2;
+    private int agent1Index;
+    private int agent2Index;
     private boolean pheromoneSwitch = false;
     private ArrayList<Agent> AgentPair;
     private ArrayList<Point3D> pheromones;
     private int pathNumber;
     private int positionInPath;
+    private boolean reachedGoal;
 
 
-    public AgentCouple(Agent agent1, Agent agent2) {
-        this.agent1 = agent1;
-        this.agent2 = agent2;
+    public AgentCouple(Simulation sim, int agent1Index, int agent2Index) {
+        this.agent1Index = agent1Index;
+        this.agent2Index = agent2Index;
+        reachedGoal=false;
         pathNumber = -1;
         positionInPath=-1;
     }
 
-    public Agent getAgent1() {
-        return agent1;
+    public Agent getAgent1(Simulation sim) {
+        return sim.getCurrentConfiguration().getAgent(agent1Index);
     }
 
-    public Agent getAgent2() {
-        return agent2;
+    public Agent getAgent2(Simulation sim) {
+        return sim.getCurrentConfiguration().getAgent(agent2Index);
     }
 
     public Point3D getAgentLoc(Agent agent){
         return agent.getPath().get(agent.getPath().size()-1);
     }
 
-    public void setPheromones(){
+    public void setPheromones(Simulation sim){
         int j = 0;
-        for (int i = 0; i < agent1.getPath().size() + agent2.getPath().size(); i++){
-            pheromones.add(agent1.getPath().get(i));
+        for (int i = 0; i < getAgent1(sim).getPath().size() + getAgent2(sim).getPath().size(); i++){
+            pheromones.add(getAgent1(sim).getPath().get(i));
             j++;
-            pheromones.add(agent2.getPath().get(i));
+            pheromones.add(getAgent2(sim).getPath().get(i));
             j++;
         }
     }
@@ -75,6 +79,21 @@ public class AgentCouple {
     public void setPositionInPath(int pos){
         positionInPath = pos;
     }
-
+    
+    public boolean hasReachedGoal(){
+    	return reachedGoal;
+    }
+    
+    public void setReachGoal(){
+    	reachedGoal = true;
+    }
+    
+    public int getIndex1(){
+    	return agent1Index;
+    }
+    
+    public int getIndex2(){
+    	return agent2Index; 
+    }
 
 }

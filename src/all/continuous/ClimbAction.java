@@ -10,8 +10,8 @@ public class ClimbAction extends AgentAction {
 	public final Point3D primaryDir;
 	public final Point3D secondaryDir;
 
-	public ClimbAction(Agent agent, Point3D primaryDir, Point3D secondaryDir) {
-		super(agent);
+	public ClimbAction(int index, Point3D primaryDir, Point3D secondaryDir) {
+		super(index);
 		if (Arrays.stream(Direction.DIRECTIONS).filter((dir) -> dir.equals(primaryDir) || dir.equals(secondaryDir)).count() != 2)
 			throw new IllegalArgumentException("primaryDir and secondaryDir must be two unique directions (unit vectors)");
 		
@@ -26,10 +26,15 @@ public class ClimbAction extends AgentAction {
 	}
 
 	@Override
-	public void apply() {
+	public void apply(Agent agent) {
 		Point3D loc = agent.getLocation();
 		Point3D dest = loc.add(primaryDir).add(secondaryDir);
 		agent.setPosition(new Vector3d(dest.getX(), dest.getY(), dest.getZ()));
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Moving agent %s %s and %s", index, primaryDir, secondaryDir);
 	}
 
 }

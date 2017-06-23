@@ -3,11 +3,11 @@ package all.continuous;
 import javafx.geometry.Point3D;
 
 public abstract class AgentAction {
-	public final Agent agent;
+	public final int index;
 	
-	public AgentAction(Agent agent) {
-		this.agent = agent;
+	public AgentAction(int index) {
+		this.index = index;
 	}
 
-	public abstract void apply();
+	public abstract void apply(Agent agent);
 }

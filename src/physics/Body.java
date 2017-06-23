@@ -10,7 +10,7 @@ public class Body {
 		return 1.0/this.mass;
 	}
 	
-	private double restitution = 0.5; // FIXME: Test value
+	private double restitution = 0.0; // FIXME: Test value
 	public double getRestitution() { return this.restitution; }
 	
 	private Geometry geometry;

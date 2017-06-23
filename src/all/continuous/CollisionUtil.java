@@ -4,6 +4,7 @@ import all.continuous.CollisionUtil.Collision;
 import javafx.geometry.Point3D;
 
 import java.util.ArrayList;
+import java.util.List;
 
 enum CollisionType {
 	NONE, 
@@ -26,15 +27,15 @@ public class CollisionUtil {
 			this.location = location;
 			this.collided = collided;
 		}
+
+		public Point3D getLocation(){
+			return location;
+		}
 	}
 
 	private static final double DEFAULT_DELTA = 0.05;
-<<<<<<< HEAD
 	private static final boolean DEBUG = false;
 	
-=======
-
->>>>>>> origin/master
 	public static Collision castRay(Configuration conf, Ray ray, Agent exclude) {
 		return castRay(conf, ray, DEFAULT_DELTA, 1.0, 0.0, exclude);
 	}
@@ -135,7 +136,6 @@ public class CollisionUtil {
 			if (isColliding(minA, maxA, minB, maxB))
 				return new Collision(CollisionType.AGENT, point);
 		}
-<<<<<<< HEAD
 		
 		if(DEBUG)
 		{
@@ -148,10 +148,7 @@ public class CollisionUtil {
 			if(conf.getSimulation().getTerrain().getObstacles() == null)
 				System.out.println("obstacles is null");
 		}
-		
-=======
 
->>>>>>> origin/master
 		for (Obstacle obs : conf.getSimulation().getTerrain().obstacles) {
 			Point3D minA = obs.location;
 			Point3D maxA = minA.add(vSize, vSize, vSize);
@@ -163,6 +160,61 @@ public class CollisionUtil {
 		}
 
 		return new Collision(CollisionType.NONE, null);
+	}
+	
+	private static final double epsilon2 = 0.15;
+	
+	public static List<Collision> isCollidingCubeMult(Configuration conf, Point3D point, Agent exclude) {
+		double vSize = World.VOXEL_SIZE;
+
+		Point3D minB = point;
+		Point3D maxB = minB.add(vSize, vSize, vSize);
+		minB.add(epsilon2, epsilon2, epsilon2);
+		maxB.subtract(epsilon2, epsilon2, epsilon2);
+		
+		List<Collision> result = new ArrayList<>();
+
+		if (minB.getY() < 0) {
+			result.add(new Collision(CollisionType.OBSTACLE, point));
+		}
+
+		// Check agent collision
+		for (Agent agent : conf.agents) {
+			if (agent.equals(exclude)) continue;
+
+			Point3D minA = agent.location;
+			Point3D maxA = minA.add(vSize, vSize, vSize);
+
+			minA.add(epsilon, epsilon, epsilon);
+			maxA.subtract(epsilon, epsilon, epsilon);
+
+			if (isColliding(minA, maxA, minB, maxB))
+				result.add(new Collision(CollisionType.AGENT, point));
+		}
+		
+		if(DEBUG)
+		{
+			if(conf == null)
+				System.out.println("conf is null");
+			if(conf.getSimulation() == null)
+				System.out.println("conf sim is null");
+			if(conf.getSimulation().getTerrain() == null)
+				System.out.println("terrain is ull");
+			if(conf.getSimulation().getTerrain().getObstacles() == null)
+				System.out.println("obstacles is null");
+		}
+
+		for (Obstacle obs : conf.getSimulation().getTerrain().obstacles) {
+			Point3D minA = obs.location;
+			Point3D maxA = minA.add(vSize, vSize, vSize);
+
+			minA.add(epsilon, epsilon, epsilon);
+			maxA.subtract(epsilon, epsilon, epsilon);
+
+			if (isColliding(minA, maxA, minB, maxB)) result.add(new Collision(CollisionType.OBSTACLE, point));
+		}
+		
+		return result;
 	}
 
 	private static boolean isColliding(Point3D min, Point3D max, Point3D point) {

@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+import org.joml.Vector3d;
+
 import all.continuous.Action;
 import all.continuous.Agent;
+import all.continuous.AgentAction;
+import all.continuous.Configuration;
 import all.continuous.ModuleAlgorithm;
 import all.continuous.Simulation;
 import javafx.geometry.Point3D;
@@ -114,11 +118,11 @@ public class SimpleAI extends ModuleAlgorithm
         {
         	if(DEBUG)
         		System.out.println("AGENTS STUCK");
-        	Action action = getSmallerActionWhenStuck(currentAgent, sim);
-        	if(!isAGoal(currentAgent.getLocation(), sim) && !currentAgent.getLocation().equals(currentAgent.getIntermediateGoal()) && !currentAgent.hasMoved() && action !=null)
+        	AgentAction action = getSmallerActionWhenStuck(currentAgent, sim);
+        	if(!isAGoal(currentAgent.getPointPosition(), sim) && !currentAgent.getPointPosition().equals(currentAgent.getIntermediateGoal()) && !currentAgent.hasMoved() && action !=null)
         	{
-        		sim.apply(action);
-        		currentAgent.addPath(action.getDestination());
+        		sim.applyPhysical(action);
+        		currentAgent.addPath(getDestination(action, sim.getCurrentConfiguration()));
             	unsuccessfulTurns=0;
             	if(PQ.size()==0)
             		sim.finish();
@@ -157,14 +161,14 @@ public class SimpleAI extends ModuleAlgorithm
 	        
 	    	//Check if there is an action that would bring it closer to its goal
 	    
-	        Action best = isCloser(currentAgent, sim);
+	        AgentAction best = isCloser(currentAgent, sim);
 	    	//if there is an action that brings the agent closer to the goal
 	    	if(!isAGoal(currentAgent.getLocation(), sim) &&!currentAgent.getLocation().equals(currentAgent.getIntermediateGoal()) && !currentAgent.hasMoved() && best != null)
 	    	{
 	    		if(DEBUG)
-	    			System.out.println("agent moves to "+best.getDestination());
-	    		sim.apply(best);
-	    		currentAgent.addPath(best.getDestination());
+	    			System.out.println("agent moves to "+getDestination(best, sim.getCurrentConfiguration()));
+	    		sim.applyPhysical(best);
+	    		currentAgent.addPath(getDestination(best, sim.getCurrentConfiguration()));
 	    		//we set the number of unsuccessful turns back to 0 
 	    		unsuccessfulTurns=0;
 	    		//add the position to the list of visited positions, so we can later update the weight of that move
@@ -204,11 +208,11 @@ public class SimpleAI extends ModuleAlgorithm
     		sim.finish();
     	
     	//if the agent we're working with finds its goal, we stop the simulation
-    	if(currentAgent.getLocation().equals(currentAgent.getIntermediateGoal()) || isAGoal(currentAgent.getLocation(), sim)){
-    		reachedGoals.add(currentAgent.getLocation());
+    	if(currentAgent.getPointPosition().equals(currentAgent.getIntermediateGoal()) || isAGoal(currentAgent.getPointPosition(), sim)){
+    		reachedGoals.add(currentAgent.getPointPosition());
     		for (int i = 0; i < agents.size(); i++)
     		{
-    			if(!reachedGoals.contains(agents.get(i).getLocation()))
+    			if(!reachedGoals.contains(agents.get(i).getPointPosition()))
     			agents.get(i).setIntermediateGoal(getFurthestGoal(sim));
 			}
 		}
@@ -257,7 +261,7 @@ public class SimpleAI extends ModuleAlgorithm
     	return false; 
     }
     // method that returns the valid move that reduces the distance to the intermediate goal the most, null if no such move
-    public static Action isCloser(Agent agent, Simulation simulation){
+    public static AgentAction isCloser(Agent agent, Simulation sim){
     	
     	/*if(DEBUG)
     	{
@@ -268,9 +272,9 @@ public class SimpleAI extends ModuleAlgorithm
     	System.out.println("current agent at pos : "+agent.getLocation());
     	
     	//get the valid moves
-        ArrayList<Action> moves = simulation.getCurrentConfiguration().getAllValidActions(agent);
+        ArrayList<AgentAction> moves = sim.getCurrentConfiguration().getPhysicalActions(agent);
         for(int  i=0; i<moves.size();i++)
-        {System.out.println("possible move : "+moves.get(i).getDestination());}
+        {System.out.println("possible move : "+getDestination(moves.get(i), sim.getCurrentConfiguration()));}
         /*if(DEBUG)
         	System.out.println("valid moves size "+moves.size());*/
         
@@ -278,14 +282,14 @@ public class SimpleAI extends ModuleAlgorithm
         double minDistance = agent.getManhattanDistanceTo(agent.getIntermediateGoal());
         if(DEBUG)
         	System.out.println("current distance : "+minDistance);
-        Action best = null;
+        AgentAction best = null;
 
         //check if one of the moves reduces that current minimal distance to goal
         for(int i = 0; i < moves.size(); i++){
-           double newDistance = getManhattanDistPoint3D(moves.get(i).getDestination() , agent.getIntermediateGoal());
+           double newDistance = getManhattanDistPoint3D(getDestination(moves.get(i), sim.getCurrentConfiguration()) , agent.getIntermediateGoal());
            
            //increase weight of distance if the agent has already visited that position
-           if(agentHasVisited(agent, moves.get(i).getDestination()))
+           if(agentHasVisited(agent,getDestination(moves.get(i), sim.getCurrentConfiguration())))
         	   newDistance = newDistance*20;
            
            /*if(agent.getLocation().equals(agent.getIntermediateGoal()))
@@ -301,6 +305,15 @@ public class SimpleAI extends ModuleAlgorithm
         }
         return best;
 
+    }
+    
+    public static Point3D getDestination(AgentAction action, Configuration config ){
+    	
+    	Configuration configCopy = config.copy();
+    	configCopy.applyPhysical(action);
+    	Agent agent = config.getAgent(action.index);
+    	Vector3d pos = agent.getPosition();
+    	return new Point3D(pos.x, pos.y, pos.z);
     }
     
     public static boolean agentHasVisited(Agent agent, Point3D location)
@@ -355,15 +368,15 @@ public class SimpleAI extends ModuleAlgorithm
     	return null;
     }
     
-    public static Action getSmallerActionWhenStuck(Agent agent, Simulation simulation)
+    public static AgentAction getSmallerActionWhenStuck(Agent agent, Simulation sim)
     {
     	if(DEBUG)
     	System.out.println("current agent at pos : "+agent.getLocation());
     	
     	//get the valid moves
-        ArrayList<Action> moves = simulation.getCurrentConfiguration().getAllValidActions(agent);
+        ArrayList<AgentAction> moves = sim.getCurrentConfiguration().getPhysicalActions(agent);
         for(int  i=0; i<moves.size();i++)
-        {System.out.println("possible move : "+moves.get(i).getDestination());}
+        {System.out.println("possible move : "+getDestination(moves.get(i), sim.getCurrentConfiguration()));}
         /*if(DEBUG)
         	System.out.println("valid moves size "+moves.size());*/
         
@@ -371,14 +384,14 @@ public class SimpleAI extends ModuleAlgorithm
         double minDistance = Double.MAX_VALUE;
         if(DEBUG)
         	System.out.println("current distance : "+minDistance);
-        Action best = null;
+        AgentAction best = null;
 
         //check if one of the moves reduces that current minimal distance to goal
         for(int i = 0; i < moves.size(); i++){
-           double newDistance = getManhattanDistPoint3D(moves.get(i).getDestination() , agent.getIntermediateGoal());
+           double newDistance = getManhattanDistPoint3D(getDestination(moves.get(i), sim.getCurrentConfiguration()) , agent.getIntermediateGoal());
            
            //increase weight of distance if the agent has already visited that position
-           if(agentHasVisited(agent, moves.get(i).getDestination()))
+           if(agentHasVisited(agent,getDestination(moves.get(i), sim.getCurrentConfiguration())))
         	   newDistance = newDistance*20;
            
            /*if(agent.getLocation().equals(agent.getIntermediateGoal()))
