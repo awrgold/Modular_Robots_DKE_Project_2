@@ -72,8 +72,8 @@ public class PhysicsSimulation {
 
 		Vector3d impulse = manifold.normal.mul(impulseMag, new Vector3d());
 
-		a.getVelocity().sub(impulse.mul(a.getInvMass(), new Vector3d()));
-		b.getVelocity().add(impulse.mul(b.getInvMass(), new Vector3d()));
+		if (a.getVelocity().length() > 0.01) a.getVelocity().sub(impulse.mul(a.getInvMass(), new Vector3d()));
+		if (b.getVelocity().length() > 0.01) b.getVelocity().add(impulse.mul(b.getInvMass(), new Vector3d()));
 
 		// Handle friction
 		Vector3d tangent = relVel.sub(manifold.normal.mul(relVel.dot(manifold.normal), new Vector3d()), new Vector3d());
@@ -94,8 +94,8 @@ public class PhysicsSimulation {
 			frictionImpulse = tangent.mul(-impulseMag * dynfric);
 		}
 
-		a.getVelocity().sub(frictionImpulse.mul(a.getInvMass(), new Vector3d()));
-		b.getVelocity().add(frictionImpulse.mul(b.getInvMass(), new Vector3d()));
+		if (a.getVelocity().length() > 0.01) a.getVelocity().sub(frictionImpulse.mul(a.getInvMass(), new Vector3d()));
+		if (b.getVelocity().length() > 0.01) b.getVelocity().add(frictionImpulse.mul(b.getInvMass(), new Vector3d()));
 	}
 
 	private void positionalCorrection(Body a, Body b, Manifold manifold) {

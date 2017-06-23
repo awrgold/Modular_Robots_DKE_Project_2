@@ -1,19 +1,12 @@
 package all.continuous;
 
-import all.continuous.CollisionUtil.Collision;
 import javafx.geometry.Point3D;
 
 import java.util.ArrayList;
 import java.util.List;
 
-enum CollisionType {
-	NONE, 
-	OBSTACLE, 
-	AGENT
-}
-
 public class CollisionUtil {
-	static class Collision {
+	public static class Collision {
 		public final CollisionType type;
 		public final Point3D location;
 		public final Cube collided;

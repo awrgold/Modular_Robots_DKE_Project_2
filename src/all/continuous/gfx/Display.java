@@ -17,6 +17,7 @@ import org.lwjgl.system.MemoryStack;
 
 import ai.AStarAlgorithm;
 import ai.AStarGreedyAlgorithm;
+import ai.AStarGroupedAlgorithm;
 import ai.CooperativeAStar;
 import ai.MCTS;
 import ai.SimpleAI;
@@ -400,6 +401,7 @@ public class Display {
             algWin.addAlgorithm(CooperativeAStar.class);
             algWin.addAlgorithm(RandomAlgorithm.class);
             algWin.addAlgorithm(SimpleAI.class);
+            algWin.addAlgorithm(AStarGroupedAlgorithm.class);
             cont.addWindow(algWin);
             
             // Add a window to the ui

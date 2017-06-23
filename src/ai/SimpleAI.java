@@ -125,11 +125,13 @@ public class SimpleAI extends ModuleAlgorithm
         	AgentAction action = getSmallerActionWhenStuck(currentAgent, sim);
         	if(!isAGoal(currentAgent.getPointPosition(), sim) && !currentAgent.getPointPosition().equals(currentAgent.getIntermediateGoal()) && !currentAgent.hasMoved() && action !=null)
         	{
-        		sim.applyPhysical(action);
         		currentAgent.addPath(getDestination(action, sim.getCurrentConfiguration()));
+        		sim.applyPhysical(action);
             	unsuccessfulTurns=0;
-            	if(PQ.size()==0)
+            	if(PQ.size()==0) {
             		sim.finish();
+            		return;
+            	}
             	currentAgent = PQ.poll();
 	    		currentAgentID = currentAgent.getId();
 	    		//unsuccessfulTurns++;
@@ -171,8 +173,9 @@ public class SimpleAI extends ModuleAlgorithm
 	    	{
 	    		if(DEBUG)
 	    			System.out.println("agent moves to "+getDestination(best, sim.getCurrentConfiguration()));
-	    		sim.applyPhysical(best);
 	    		currentAgent.addPath(getDestination(best, sim.getCurrentConfiguration()));
+	    		sim.applyPhysical(best);
+	    		
 	    		//we set the number of unsuccessful turns back to 0 
 	    		unsuccessfulTurns=0;
 	    		//add the position to the list of visited positions, so we can later update the weight of that move
