@@ -13,7 +13,7 @@ public class Pheromones extends ModuleAlgorithm {
 
     private ArrayList<AgentCouple> agentCouples = new ArrayList<>();
     SuperAgent superAgent;
-    private static boolean DEBUG = true; 
+    private static boolean DEBUG = false; 
     private static int iterations = 0; 
     private int agentCoupleToMove =0;
     private static final double EPSILON = 0.001;
@@ -82,13 +82,15 @@ public class Pheromones extends ModuleAlgorithm {
     public void moveCouple(AgentCouple couple){
     	
     	//print agents
-    	for(int i=0; i<sim.getCurrentConfiguration().getAgents().size();i++){
-    		System.out.println("agent : "+i+" "+printVector(sim.getCurrentConfiguration().getAgent(i).getPosition()));
-    	}
-    	//print agent couples
-    	for(int i=0; i<agentCouples.size(); i++){
-    		System.out.println("agent : "+agentCouples.get(i).getIndex1()+ " "+printVector(agentCouples.get(i).getAgent1(sim).getPosition()));
-    		System.out.println("agent : "+agentCouples.get(i).getIndex2()+ " "+printVector(agentCouples.get(i).getAgent2(sim).getPosition()));
+    	if(DEBUG){
+	    	for(int i=0; i<sim.getCurrentConfiguration().getAgents().size();i++){
+	    		System.out.println("agent : "+i+" "+printVector(sim.getCurrentConfiguration().getAgent(i).getPosition()));
+	    	}
+	    	//print agent couples
+	    	for(int i=0; i<agentCouples.size(); i++){
+	    		System.out.println("agent : "+agentCouples.get(i).getIndex1()+ " "+printVector(agentCouples.get(i).getAgent1(sim).getPosition()));
+	    		System.out.println("agent : "+agentCouples.get(i).getIndex2()+ " "+printVector(agentCouples.get(i).getAgent2(sim).getPosition()));
+	    	}
     	}
         //if the agent is on its own path, move randomly
         if (couple.getPathNumber() == -1){
@@ -387,7 +389,7 @@ public class Pheromones extends ModuleAlgorithm {
 
     @Override
     public void takeTurn(){
-    	if(iterations>100)
+    	if(iterations>1000)
            sim.finish();
 
         if(iterations==0){
