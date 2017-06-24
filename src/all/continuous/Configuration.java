@@ -38,7 +38,10 @@ public class Configuration {
 
 	public void applyPhysical(AgentAction action) {
 		Agent a = getAgent(action.index);
+		if (a.moved) 
+			throw new IllegalStateException("no cheating!");
 		action.apply(a);
+		a.moved = true;
 	}
 
 	public ArrayList<Action> getAllValidActions(){
@@ -199,7 +202,7 @@ public class Configuration {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void mainot(String[] args) {
 		ArrayList<Agent> agents = new ArrayList<>();
 		agents.add(new Agent(0, new Point3D(0, 0, 0)));
 		//agents.add(new Agent(1, new Point3D(World.VOXEL_SIZE, World.VOXEL_SIZE, 0)));
@@ -454,8 +457,12 @@ public class Configuration {
 			int[] hashes = new int[agents.size()];
 			for (int i=0; i<agents.size(); i++) {
 				Agent a = agents.get(i);
-				Point3D loc = a.getLocation();
-				hashes[i] = loc.hashCode();
+				if (a != null) {
+					Point3D loc = a.getLocation();
+					hashes[i] = loc.hashCode();
+				} else {
+					hashes[i] = 0;
+				}
 			}
 			hash = Arrays.hashCode(hashes);
 		}
@@ -472,6 +479,10 @@ public class Configuration {
 		Configuration b = (Configuration) obj;
 		if (b.agents.size() != this.agents.size()) return false;
 		for (Agent agent : agents) {
+//			if (((b.getAgent(agent.getIndex()) == null)) || 
+//					((b.getAgent(agent.getIndex()) != null) && (agent == null))) return false;
+//			if (((b.getAgent(agent.getIndex()) == null) && (agent == null))) continue;
+			if (agent == null || ((b.getAgent(agent.getIndex()) == null))) continue;
 			if (manhattan(b.getAgent(agent.getIndex()).getLocation(), agent.getLocation()) > 0.01) return false;
 		}
 		return true;

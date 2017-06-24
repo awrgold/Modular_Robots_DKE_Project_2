@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.joml.Vector3d;
 
+import javafx.geometry.Point3D;
 import physics.Body;
 import physics.FloorGeometry;
 import physics.Physics;
@@ -135,7 +136,33 @@ public class Simulation {
 //			}
 //		}
         
+        for (int i=0; i<getCurrentConfiguration().agents.size(); i++) {
+        	Agent a = getCurrentConfiguration().getAgent(i);
+        	Vector3d vec = a.getPosition();
+        	Point3D posNew = new Point3D(vec.x, vec.y, vec.z);	
+        	Point3D posOld = a.getLocation();
+//        	if (posOld.distance(posNew) > 0.1 && 
+//        			Math.abs(posOld.distance(posNew) - (
+//        					Math.abs(posNew.getX()-posOld.getX()) + 
+//        					Math.abs(posNew.getY()-posOld.getY()) + 
+//        					Math.abs(posNew.getZ()-posOld.getZ())))  < 0.1) {
+//        				System.out.println("wefewfefw");
+//        			}
+        	if (Math.abs(a.getVelocity().x) > 1.7061 ||
+        			Math.abs(a.getVelocity().z) > 1.7061)
+        		System.out.println("wefewfefw");
+        }
+        
         physSim.tick(1.0);
+        
+        for (int i=0; i<getCurrentConfiguration().agents.size(); i++) {
+        	Agent a = getCurrentConfiguration().getAgent(i);
+        	Vector3d vec = a.getPosition();
+        	Point3D posNew = new Point3D(vec.x, vec.y, vec.z);
+        	Point3D posOld = a.getLocation();
+//        	if (posOld.distance(posNew) > Math.sqrt(2))
+//        		System.out.println("noo");
+        }
         
 //        if(wasGood)
 //        {

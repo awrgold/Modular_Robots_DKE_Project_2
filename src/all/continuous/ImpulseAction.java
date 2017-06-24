@@ -17,6 +17,9 @@ public class ImpulseAction extends AgentAction {
 
 	@Override
 	public void apply(Agent agent) {
+	  	if (Math.abs(agent.getVelocity().x) > 0.1 ||
+    			Math.abs(agent.getVelocity().z) > 0.1)
+	  		throw new IllegalStateException("Can only apply one impulse to an agent every turn");
 		agent.applyImpulse(impulse);
 	}
 	

@@ -105,8 +105,6 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 			if (node.conf.getAgent(a.index).hasMoved()) continue;
 			Configuration neighbour = node.conf.copy();
 			neighbour.applyPhysical(a);
-			neighbour = neighbour.copy();
-			neighbour.setSimulation(sim);
 			Simulation sim = new Simulation(this.sim.getTerrain(), neighbour, this.sim.getGoalConfiguration());
 			
 			sim.endTurn();

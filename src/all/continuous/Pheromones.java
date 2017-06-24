@@ -13,7 +13,8 @@ public class Pheromones extends ModuleAlgorithm {
 
     private ArrayList<AgentCouple> agentCouples = new ArrayList<>();
     SuperAgent superAgent;
-    private static boolean DEBUG = true; 
+    private static boolean DEBUG = false; 
+    private static boolean DEBUG2=true;
     private static int iterations = 0; 
     private int agentCoupleToMove =0;
     private static final double EPSILON = 0.001;
@@ -82,13 +83,15 @@ public class Pheromones extends ModuleAlgorithm {
     public void moveCouple(AgentCouple couple){
     	
     	//print agents
-    	for(int i=0; i<sim.getCurrentConfiguration().getAgents().size();i++){
-    		System.out.println("agent : "+i+" "+printVector(sim.getCurrentConfiguration().getAgent(i).getPosition()));
-    	}
-    	//print agent couples
-    	for(int i=0; i<agentCouples.size(); i++){
-    		System.out.println("agent : "+agentCouples.get(i).getIndex1()+ " "+printVector(agentCouples.get(i).getAgent1(sim).getPosition()));
-    		System.out.println("agent : "+agentCouples.get(i).getIndex2()+ " "+printVector(agentCouples.get(i).getAgent2(sim).getPosition()));
+    	if(DEBUG2){
+	    	for(int i=0; i<sim.getCurrentConfiguration().getAgents().size();i++){
+	    		System.out.println("agent : "+i+" "+printVector(sim.getCurrentConfiguration().getAgent(i).getPosition()));
+	    	}
+	    	//print agent couples
+	    	for(int i=0; i<agentCouples.size(); i++){
+	    		System.out.println("agent : "+agentCouples.get(i).getIndex1()+ " "+printVector(agentCouples.get(i).getAgent1(sim).getPosition()));
+	    		System.out.println("agent : "+agentCouples.get(i).getIndex2()+ " "+printVector(agentCouples.get(i).getAgent2(sim).getPosition()));
+	    	}
     	}
         //if the agent is on its own path, move randomly
         if (couple.getPathNumber() == -1){
@@ -101,19 +104,21 @@ public class Pheromones extends ModuleAlgorithm {
             {
             	Agent agent = sim.getCurrentConfiguration().getAgent(action.index);
             	agent.addPath(getDestination(action, sim.getCurrentConfiguration()));
+            	if(DEBUG)
+            		System.out.println("agent velocity : "+agent.getVelocity());
             sim.applyPhysical(action);
             }
         }
 
         //else, follow path
         else{
-        	if(DEBUG)
+        	if(DEBUG2)
         		System.out.println("follow path!!");
         	
             ArrayList<AgentAction> validMoves1 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent1(sim));
-            deleteNotCoupleMoves(couple, validMoves1, sim);
+            deleteNotCoupleMoves(couple, 1, validMoves1, sim);
             ArrayList<AgentAction> validMoves2 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent2(sim));
-            deleteNotCoupleMoves(couple, validMoves2, sim);
+            deleteNotCoupleMoves(couple,2,  validMoves2, sim);
 
             Point3D nextLoc = superAgent.getActiveTrail(couple.getPathNumber()).get(couple.getPositionInPath()+1);
             Vector3d nextVect = new Vector3d(nextLoc.getX(), nextLoc.getY(), nextLoc.getZ());
@@ -175,12 +180,15 @@ public class Pheromones extends ModuleAlgorithm {
         }
         //get all valid moves for that agent
         ArrayList<AgentAction> validMoves = sim.getCurrentConfiguration().getPhysicalActions(agent);
-        for(int i=0; i<validMoves.size(); i++){
-        	System.out.println("move : "+getDestination(validMoves.get(i), sim.getCurrentConfiguration()));
-        }
+       if(DEBUG)
+       {
+	        for(int i=0; i<validMoves.size(); i++){
+	        	System.out.println("move : "+getDestination(validMoves.get(i), sim.getCurrentConfiguration()));
+	        }
+       }
 
 
-        deleteNotCoupleMoves(couple, validMoves, sim);
+        deleteNotCoupleMoves(couple,agentChoice, validMoves, sim);
         
         if(DEBUG)
             System.out.println("valid moves size : "+validMoves.size());
@@ -189,7 +197,7 @@ public class Pheromones extends ModuleAlgorithm {
         //if i can move the chosen agent
         if(validMoves.size() !=0) {
             AgentAction action = validMoves.get(rand2);
-            if(DEBUG)
+            if(DEBUG2)
             	System.out.println("chosen action : "+getDestination(action, sim.getCurrentConfiguration()));
             return action;
         }
@@ -197,17 +205,19 @@ public class Pheromones extends ModuleAlgorithm {
         else{
             if(agentChoice==1){
                 agent = couple.getAgent2(sim);
+                agentChoice=2;
                 if(DEBUG)
                 	System.out.println("from agent 1 to 2");}
             else{
             	agent = couple.getAgent1(sim);
+            	agentChoice=1;
             	if(DEBUG)
             		System.out.println("from agent 2 to 1");
             }
                 
 
             validMoves = sim.getCurrentConfiguration().getPhysicalActions(agent);
-            deleteNotCoupleMoves(couple, validMoves, sim);
+            deleteNotCoupleMoves(couple, agentChoice,  validMoves, sim);
             
             if(DEBUG)
             	System.out.println("new agent pos : "+printVector(agent.getPosition()));
@@ -230,7 +240,9 @@ public class Pheromones extends ModuleAlgorithm {
     	
     	Configuration configCopy = config.copy();
     	configCopy.applyPhysical(action);
-    	Agent agent = config.getAgent(action.index);
+    	Simulation sim2 = new Simulation(sim.getTerrain(), configCopy, sim.getGoalConfiguration());
+    	sim2.endTurn();
+    	Agent agent = configCopy.getAgent(action.index);
     	Vector3d pos = agent.getPosition();
     	return new Point3D(pos.x, pos.y, pos.z);
     }
@@ -252,7 +264,7 @@ public class Pheromones extends ModuleAlgorithm {
     	return false; 
     }
     
-    public void deleteNotCoupleMoves(AgentCouple ac, ArrayList<AgentAction> actions, Simulation sim){
+    public void deleteNotCoupleMoves(AgentCouple ac, int agentIndex,ArrayList<AgentAction> actions, Simulation sim){
     	if(DEBUG)
     		System.out.println("check for bumping into other couple moves");
     	ArrayList<AgentAction> toDelete = new ArrayList<>();
@@ -260,10 +272,10 @@ public class Pheromones extends ModuleAlgorithm {
     	for(int i=0; i<actions.size(); i++){ 
     		if(DEBUG)
     			System.out.println("action destination : "+getDestination(actions.get(i), sim.getCurrentConfiguration()));
-    		if(isOnTopOfNotCoupleAgent(ac, getDestination(actions.get(i), sim.getCurrentConfiguration()), sim))
+    		if(isOnTopOfNotCoupleAgent(ac, agentIndex, getDestination(actions.get(i), sim.getCurrentConfiguration()), sim))
     		{
     			toDelete.add(actions.get(i));
-    			if(DEBUG)
+    			if(DEBUG2)
     				System.out.println("remove action");
     		}
     	}
@@ -271,9 +283,9 @@ public class Pheromones extends ModuleAlgorithm {
     	actions.removeAll(toDelete);
     }
     
-    public boolean isOnTopOfNotCoupleAgent(AgentCouple ac, Point3D loc, Simulation sim){
+    public boolean isOnTopOfNotCoupleAgent(AgentCouple ac, int agentIndex,Point3D loc, Simulation sim){
     	//it's not on top on anything
-    	if(loc.getY()<0.9)
+    	/*if(loc.getY()<0.9)
     	{
     		if(DEBUG)
     			System.out.println("not a top position");
@@ -287,6 +299,8 @@ public class Pheromones extends ModuleAlgorithm {
     		Vector3d vector2 = ac.getAgent2(sim).getPosition();
     		Point3D locAgent2 = new Point3D(vector2.x, vector2.y, vector2.z);
     		
+    		//if(Math.abs(loc.getX()-locAgent1.getX())>1 ||  )
+    		
     		if((loc.getX() != locAgent1.getX() || loc.getZ() != locAgent1.getZ()) && (loc.getX() != locAgent2.getX() || loc.getZ()!=locAgent2.getZ()))
     		{
     			if(DEBUG)
@@ -295,7 +309,78 @@ public class Pheromones extends ModuleAlgorithm {
     		}
     		
     		return false; 
+    	}*/
+    	
+    	
+    	
+    	Agent notMovingAgent =null;
+    	if(agentIndex==1)
+    		notMovingAgent = ac.getAgent2(sim);
+    	else
+    		notMovingAgent = ac.getAgent1(sim);
+    	
+    	Point3D agentPos = notMovingAgent.getPointPosition();
+    	
+    	if(DEBUG2)
+    	{
+    		System.out.println("future loc : "+loc);
+    		System.out.println("not moving agent loc : "+agentPos);
     	}
+    	//check if the result position disconnects it from its pair (loc is new location, agentPos is the module taht doesn't move)
+    	if(Math.abs(loc.getX()-agentPos.getX()) >1 || Math.abs(loc.getY()-agentPos.getY())>1 || Math.abs(loc.getZ()-agentPos.getZ())>1){
+    		if(DEBUG2)
+    			System.out.println("one of the differences is bigger than 1");
+    		return true;
+    	}
+    	else if((Math.abs(loc.getX()-agentPos.getX()) >=0.9 && Math.abs(loc.getY()-agentPos.getY())>=0.9))
+    	{
+    		if(DEBUG2)
+    			System.out.println("x and y of 1 difference");
+    		return true;
+    	}
+    	else if(Math.abs(loc.getY()-agentPos.getY())>=0.9 && Math.abs(loc.getZ()-agentPos.getZ())>=0.9){
+    		if(DEBUG2)
+    			System.out.println("y and z of 1 difference");
+    		return true;
+    	}
+    		
+    	else if((Math.abs(loc.getX()-agentPos.getX()) >=0.9 && Math.abs(loc.getZ()-agentPos.getZ())>=0.9))
+    	{
+    		if(DEBUG2)
+    			System.out.println("x and z of 1 difference");
+    		return true;
+    	}
+    	
+    	//if not disconnect, if it's not somewhere high, it's not a problem
+    	/*else if(loc.getY()<1)
+			return false;
+    	
+    	//now check if it's on top of another agent
+		for(int i=0; i<agentCouples.size(); i++){
+			
+			
+			if(agentCouples.get(i).getIndex1()!=ac.getIndex1() && agentCouples.get(i).getIndex2()!=ac.getIndex2()){
+				Point3D agent1Loc = agentCouples.get(i).getAgent1(sim).getPointPosition();
+				Point3D agent2Loc = agentCouples.get(i).getAgent2(sim).getPointPosition();
+				//if it's on top of the first agent
+				if(Math.abs(agent1Loc.getX()-loc.getX())<EPSILON
+						&& Math.abs(agent1Loc.getZ()-loc.getZ())<EPSILON
+						&& Math.abs(agent1Loc.getY()-loc.getY())>0.9
+						&& Math.abs(agent1Loc.getY()-loc.getY())<1.1){
+				return true;	
+				}
+				if(Math.abs(agent2Loc.getX()-loc.getX())<EPSILON
+						&& Math.abs(agent2Loc.getZ()-loc.getZ())<EPSILON
+						&& Math.abs(agent2Loc.getY()-loc.getY())>0.9
+						&& Math.abs(agent2Loc.getY()-loc.getY())<1.1){
+				return true;	
+				}
+				
+			}
+		}*/
+    	
+    	
+    	return false;
     	//if it's on top of smth, check if it's an agent that is not in the couple
     	/*for(int i=0; i<agentCouples.size(); i++){
     		if(DEBUG)
@@ -337,7 +422,7 @@ public class Pheromones extends ModuleAlgorithm {
 
     @Override
     public void takeTurn(){
-    	if(iterations>30)
+    	if(iterations>200)
            sim.finish();
 
         if(iterations==0){
@@ -345,7 +430,7 @@ public class Pheromones extends ModuleAlgorithm {
         }
         
         
-        if(DEBUG)
+        if(DEBUG2)
         	System.out.println("TURN : "+iterations);
         if(DEBUG){
         	for(int i=0; i<agentCouples.size(); i++){

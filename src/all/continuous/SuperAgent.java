@@ -12,7 +12,7 @@ import org.joml.Vector3d;
  */
 public class SuperAgent {
 
-	private static boolean DEBUG = true; 
+	private static boolean DEBUG = false; 
 	private static double EPSILON = 0.001;
 	
     private int agentAmount;

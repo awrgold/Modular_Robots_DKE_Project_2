@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Agent extends Cube {
-    private boolean moved = false;
+    boolean moved = false;
     private double speed;
     private Point3D intermediateGoal;
     private ArrayList<Point3D> path;
@@ -30,7 +30,7 @@ public class Agent extends Cube {
         newAgent.index = this.index;
         newAgent.intermediateGoal = this.intermediateGoal;
         newAgent.path = this.path;
-        newAgent.setVelocity(getVelocity());
+        newAgent.setVelocity(new Vector3d(getVelocity()));
         return newAgent;
     }
 
