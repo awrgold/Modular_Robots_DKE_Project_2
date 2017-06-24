@@ -246,6 +246,8 @@ public class Pheromones extends ModuleAlgorithm {
     	Vector3d pos = agent.getPosition();
     	return new Point3D(pos.x, pos.y, pos.z);
     }
+
+
     public String printVector(Vector3d vector){
     	return "x : "+vector.x+", y: "+vector.y+", z: "+vector.z;
     }
