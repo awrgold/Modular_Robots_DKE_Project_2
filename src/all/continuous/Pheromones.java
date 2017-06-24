@@ -227,13 +227,18 @@ public class Pheromones extends ModuleAlgorithm {
 
     /*HELPER METHODS*/
     public Point3D getDestination(AgentAction action, Configuration config ){
-    	
-    	Configuration configCopy = config.copy();
-    	configCopy.applyPhysical(action);
-    	Agent agent = config.getAgent(action.index);
-    	Vector3d pos = agent.getPosition();
-    	return new Point3D(pos.x, pos.y, pos.z);
+
+        Configuration configCopy = config.copy();
+        configCopy.applyPhysical(action);
+        Simulation sim2 = new Simulation(sim.getTerrain(), configCopy, sim.getGoalConfiguration());
+        sim2.endTurn();
+        Agent agent = configCopy.getAgent(action.index);
+        Vector3d pos = agent.getPosition();
+        return new Point3D(pos.x, pos.y, pos.z);
+
     }
+
+
     public String printVector(Vector3d vector){
     	return "x : "+vector.x+", y: "+vector.y+", z: "+vector.z;
     }
