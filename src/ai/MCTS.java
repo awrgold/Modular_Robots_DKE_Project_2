@@ -8,11 +8,11 @@ import all.continuous.*;
 public class MCTS extends ModuleAlgorithm{
 
 	//SETTINGS
-	private final double GREEDY_SIMULATION_CHANCE = 0.6;
+	private final double GREEDY_SIMULATION_CHANCE = 0;
 	private final int MAX_ITERATIONS = 20000;
 	private final int MINIMUM_VISITS = 20;
 	private final double EXPLORATION = Math.sqrt(2);
-	private final int SIMULATION_DEPTH = 5;
+	private final int SIMULATION_DEPTH = 20;
 
 	private final boolean VERBOSE_DEBUG = false;
 
@@ -46,7 +46,7 @@ public class MCTS extends ModuleAlgorithm{
 		while(continueLooping){
 			if(iterationCounter==MAX_ITERATIONS) continueLooping = false;
 
-			if(iterationCounter%500==0) System.out.println("MCTS iteration: "+iterationCounter);
+			if(iterationCounter%1000==0) System.out.println("MCTS iteration: "+iterationCounter);
 			iterationCounter++;
 
 			MCTSNode workingNode = root;
@@ -189,9 +189,9 @@ public class MCTS extends ModuleAlgorithm{
 
 				origin.addChild(child);
 
-				if(isSameAsAParent(origin) && !(origin.getAction().getAgent() == -1 && origin.getAction().getDestination() == null)) origin.getParent().getChildren().remove(origin);
-				else nodeCount++;
-
+				if(!(action.getAgent()==-1 && action.getDestination()==null) && isSameAsAParent(child)){ //config already exists, and action is NOT end-turn
+					origin.getChildren().remove(child);
+				} else nodeCount++;
 
 				if(configCopy.equals(sim.getGoalConfiguration())){
 					System.out.println("Found goal config!");
@@ -199,11 +199,21 @@ public class MCTS extends ModuleAlgorithm{
 					finalNode = child;
 				}
 			}
+			if(origin.getChildren().size()==0) {
+				Action endTurn = new Action(-1,null);
+				Configuration configCopy = origin.getConfiguration().copy();
+				configCopy.apply(endTurn);
+
+				MCTSNode child = new MCTSNode(configCopy);
+				child.setAction(endTurn);
+
+				origin.addChild(child);
+			}
 		}
 	}
 
 	public double simulate(MCTSNode origin) {
-		Configuration currentConfig = origin.getConfiguration();
+		Configuration currentConfig = origin.getConfiguration().copy();
 		if (currentConfig.equals(sim.getGoalConfiguration())) {
 			System.out.println("Found goal config!");
 			continueLooping = false;
@@ -215,9 +225,6 @@ public class MCTS extends ModuleAlgorithm{
 			while (moveCounter < SIMULATION_DEPTH) {
 				moveCounter++;
 				simCounter++;
-
-				Configuration nextConfig = currentConfig.copy();
-				currentConfig = nextConfig;
 
 				ArrayList<Action> validActions = currentConfig.getAllValidActions();
 

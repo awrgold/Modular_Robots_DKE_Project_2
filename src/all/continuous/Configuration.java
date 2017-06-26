@@ -37,7 +37,6 @@ public class Configuration {
     public ArrayList<Action> getAllValidActions(){
         ArrayList<Action> actions = new ArrayList<>();
 
-        actions.add(new Action(-1,null));
 
         for (Agent agent: this.getAgents()) {
         	if(DEBUG)
@@ -50,6 +49,8 @@ public class Configuration {
         	}
             actions.addAll(getAllValidActions(agent));
         }
+
+        if(actions.size()==0) actions.add(new Action(-1,null));
 
         return actions;
     }
