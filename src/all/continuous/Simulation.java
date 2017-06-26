@@ -52,6 +52,10 @@ public class Simulation {
 
     public void apply(Action action){
         //applies an action to the current simulation timestep
+        if(action.getAgent() == -1 && action.getDestination() == null){
+            endTurn();
+            getCurrentConfiguration().endTurn();
+        }
         getCurrentConfiguration().apply(action);
     }
 
@@ -74,9 +78,10 @@ public class Simulation {
     	endTurn();
         while(!complete){
             algorithm.takeTurn();
-            endTurn();
             if (hasGoalBeenReached()) finish();
         }
+
+        this.algorithm=null;
         return timeStep;
     }
 
@@ -103,7 +108,7 @@ public class Simulation {
         if(VALIDATE_EVERYTHING) timeStep.get(timeStep.size()-1).validate();
 
         Configuration newTimeStep = timeStep.get(timeStep.size()-1).copy();
-        newTimeStep.setSimulation(this);
+        newTimeStep.endTurn();
         timeStep.add(newTimeStep);
 
         newTimeStep.resolveFalling();
