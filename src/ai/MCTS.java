@@ -9,7 +9,7 @@ public class MCTS extends ModuleAlgorithm{
 
 	//SETTINGS
 	private final double GREEDY_SIMULATION_CHANCE = 0;
-	private final int MAX_ITERATIONS = 20000;
+	private final int MAX_ITERATIONS = 50000;
 	private final int MINIMUM_VISITS = 20;
 	private final double EXPLORATION = Math.sqrt(2);
 	private final int SIMULATION_DEPTH = 20;
@@ -24,6 +24,7 @@ public class MCTS extends ModuleAlgorithm{
 	private int height = 0;
 	private int nodeCount = 0;
 	private long startTime;
+	private int moveCounter = 0;
 
 	private boolean continueLooping = true;
 	private int iterationCounter = 0;
@@ -32,10 +33,13 @@ public class MCTS extends ModuleAlgorithm{
 
 	public MCTS(Simulation sim) {
 		super(sim);
-		System.out.println("Initializing MCTS");
 	}
 
 	public void mainMCTS(Simulation sim){
+		System.out.println("Initializing MCTS with settings: max iterations - " + MAX_ITERATIONS +
+				"; greedy simulation chance - " + GREEDY_SIMULATION_CHANCE + "; minimum visits - " + MINIMUM_VISITS +
+				"; exploration - " + EXPLORATION + "; simulation depth: " + SIMULATION_DEPTH + ";");
+
 		MCTSNode root = new MCTSNode(sim.getCurrentConfiguration());
 		root.addVisit();
 		expand(root);
@@ -46,7 +50,7 @@ public class MCTS extends ModuleAlgorithm{
 		while(continueLooping){
 			if(iterationCounter==MAX_ITERATIONS) continueLooping = false;
 
-			if(iterationCounter%1000==0) System.out.println("MCTS iteration: "+iterationCounter);
+			if(iterationCounter%(Math.max((MAX_ITERATIONS/10),1000))==0) System.out.println(" MCTS iteration: "+iterationCounter);
 			iterationCounter++;
 
 			MCTSNode workingNode = root;
@@ -101,7 +105,7 @@ public class MCTS extends ModuleAlgorithm{
 			if(node.getAction().getAgent() == -1 && node.getAction().getDestination()==null) {
 				path.add(actions);
 				actions = new ArrayList<>();
-			}
+			} else moveCounter++;
 
 			if(VERBOSE_DEBUG) System.out.println("  Frame " + i + ": " + estimateScore(node.getConfiguration()));
 			i++;
@@ -109,7 +113,7 @@ public class MCTS extends ModuleAlgorithm{
 		path.add(actions);
 
 		long time = System.nanoTime() - startTime;
-		System.out.println("Time: " + time/(Math.pow(10,9)) + "; node count: " + nodeCount + "; move count: " + nodePath.size() + "; simulation count: " + simCounter + "; iterations: " + iterationCounter);
+		System.out.println("Time: " + (int) (time/(Math.pow(10,9))) + " seconds; node count: " + nodeCount + "; timestep count: " + path.size() + "; move count: " + moveCounter + "; simulation count: " + simCounter + "; iterations: " + iterationCounter);
 
 	}
 
