@@ -23,7 +23,7 @@ public class RandomAlgorithm extends ModuleAlgorithm {
 		}
 		sim.applyPhysical(actions.get(rand.nextInt(actionCount)));
 		
-		if (rand.nextFloat() < 0.01f) {
+		if (rand.nextFloat() < 0.0001f) {
 			sim.finish();
 		}
 	}

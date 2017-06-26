@@ -2,6 +2,7 @@ package ai;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -24,6 +25,7 @@ import all.continuous.PositionUtil;
 import all.continuous.Ray;
 import all.continuous.Simulation;
 import javafx.geometry.Point3D;
+import sun.misc.Contended;
 
 public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 	
@@ -39,6 +41,8 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 	
 	private Set<Integer> movingGroup;
 	private List<AStarNode> currentPath;
+	
+	private Configuration lastConfig;
 
 	@Override
 	public void takeTurn() {
@@ -48,44 +52,84 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 			int agentCount = conf.getAgents().size();
 			Set<Integer> availableAgents = IntStream.range(0, agentCount).boxed().collect(Collectors.toSet());
 			
-			int currentAgentIndex = rand.nextInt(agentCount);
-			availableAgents.remove(currentAgentIndex);
+			Configuration goal = sim.getGoalConfiguration();
+			int agentIndex = sim.getCurrentConfiguration().getAgents()
+					.stream()
+					.reduce((a, b) -> calculateAgentScore(a.getIndex(), sim.getCurrentConfiguration(), goal) > 
+										calculateAgentScore(b.getIndex(), sim.getCurrentConfiguration(), goal) ? a : b).get().getIndex();
+			availableAgents.remove(agentIndex);
 			
 			Set<Integer> currentGroup = new HashSet<>();
-			currentGroup.add(currentAgentIndex);
+			currentGroup.add(agentIndex);
 			
 			while (!availableAgents.isEmpty()) {
-				if (currentGroup.size() == GROUP_SIZE) {
-					groups.add(currentGroup);
-					if (availableAgents.size() < GROUP_SIZE) {
-						groups.add(new HashSet<>(availableAgents));
-						availableAgents.clear();
-						break;
-					}
-					currentGroup = new HashSet<>();
-					currentAgentIndex = new ArrayList<Integer>(availableAgents).get(rand.nextInt(availableAgents.size()));
-					availableAgents.remove(currentAgentIndex);
-					currentGroup.add(currentAgentIndex);
-				}
+//				if (currentGroup.size() == GROUP_SIZE) {
+//					groups.add(currentGroup);
+//					if (availableAgents.size() <= GROUP_SIZE) {
+//						break;
+//					}
+//					currentGroup = new HashSet<>();
+//					currentAgentIndex = new ArrayList<Integer>(availableAgents).get(rand.nextInt(availableAgents.size()));
+//					availableAgents.remove(currentAgentIndex);
+//					currentGroup.add(currentAgentIndex);
+//				}
 				
-				Agent currentAgent =  conf.getAgent(currentAgentIndex);
-				Point3D currentAgentPos = currentAgent.getLocation();
-				for (Point3D dir : Direction.DIRECTIONS) {
-					Collision col = CollisionUtil.castRay(conf, new Ray(PositionUtil.center(currentAgentPos), dir), currentAgent);
-					if (col.type == CollisionType.AGENT && availableAgents.contains(((Agent)col.collided).getIndex())) {
-						currentGroup.add(((Agent)col.collided).getIndex());
-						availableAgents.remove(((Agent) col.collided).getIndex());
-						
-						if (currentGroup.size() == GROUP_SIZE) {
-							break;
+				int groupSize = currentGroup.size();
+				
+				Set<Integer> newGroup = new HashSet<>(currentGroup);
+				
+				for (Integer currentAgentIndex : currentGroup) {
+					Agent currentAgent =  conf.getAgent(currentAgentIndex);
+					Point3D currentAgentPos = currentAgent.getLocation();
+					for (Point3D dir : Direction.DIRECTIONS) {
+						Collision col = CollisionUtil.castRay(conf, new Ray(PositionUtil.center(currentAgentPos), dir), currentAgent);
+						if (col.type == CollisionType.AGENT && availableAgents.contains(((Agent)col.collided).getIndex())) {
+							newGroup.add(((Agent)col.collided).getIndex());
+							availableAgents.remove(((Agent) col.collided).getIndex());
+							
+							if (currentGroup.size() == GROUP_SIZE) {
+								break;
+							}
 						}
 					}
 				}
 				
-				currentAgentIndex = new ArrayList<Integer>(currentGroup).get(rand.nextInt(currentGroup.size()));
+				currentGroup = newGroup;
+				
+				if (currentGroup.size() == groupSize || currentGroup.size() >= GROUP_SIZE) {
+					groups.add(currentGroup);
+					if (availableAgents.size() == 0) break;
+					agentIndex = availableAgents.stream()
+							.reduce((a, b) -> calculateAgentScore(a, sim.getCurrentConfiguration(), goal) > 
+												calculateAgentScore(b, sim.getCurrentConfiguration(), goal) ? a : b).get();
+					availableAgents.remove(agentIndex);
+					
+					currentGroup = new HashSet<>();
+					currentGroup.add(agentIndex);
+				}
 			}
 			
-			groups.add(currentGroup);
+			Set<Set<Integer>> finalGroups = new HashSet<>();
+			
+			for (Set<Integer> group : groups) {
+				Set<Integer> finalGroup = new HashSet<>();
+				for (Integer groupAgentID : group) {
+					finalGroup.add(groupAgentID);
+					Agent currentAgent =  conf.getAgent(groupAgentID);
+					Point3D currentAgentPos = currentAgent.getLocation();
+					for (Point3D dir : Direction.DIRECTIONS) {
+						Collision col = CollisionUtil.castRay(conf, new Ray(PositionUtil.center(currentAgentPos), dir), currentAgent);
+						if (col.type == CollisionType.AGENT && availableAgents.contains(((Agent)col.collided).getIndex())) {
+							finalGroup.add(((Agent) col.collided).getIndex());
+							availableAgents.remove(((Agent) col.collided).getIndex());
+						}
+					}
+				}
+				finalGroups.add(finalGroup);
+			}
+			
+			this.groups = finalGroups;
+			
 			System.out.println(groups);
 			
 			this.movingGroup = new ArrayList<Set<Integer>>(groups).get(rand.nextInt(groups.size()));
@@ -116,7 +160,26 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 		AgentAction action = currentPath.get(0).action;
 		if (action != null) {
 			System.out.println("ITER: " + action.toString());
-			sim.applyPhysical(action);
+			ArrayList<AgentAction> possibleActions = sim.getAllPhysicalActions();
+			AgentAction actualAction = null;
+			for (AgentAction posAction : possibleActions) {
+				Configuration neighbour = sim.getCurrentConfiguration().copy();
+				neighbour.applyPhysical(posAction);
+				Simulation simNew = new Simulation(this.sim.getTerrain(), neighbour, this.sim.getGoalConfiguration());
+				
+				simNew.endTurn();
+				if (simNew.getCurrentConfiguration().equals(currentPath.get(0).conf)) {
+					actualAction = posAction;
+					break;
+				}
+			}
+			
+			if (lastConfig != null && !lastConfig.equals(sim.getCurrentConfiguration())) {
+				System.out.println("error");
+			}
+			lastConfig = currentPath.get(0).conf;
+			if (actualAction != null)
+				sim.applyPhysical(actualAction);
 		}
 		currentPath.remove(0);
 		
@@ -186,7 +249,6 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 			List<AgentAction> actions = node.conf.getPhysicalActions(node.conf.getAgent(agentIndex));
 			
 			for (AgentAction a : actions) {
-				// FIXME: This is veeeeeeeeeeeeeeeeery memory inefficient...
 				if (node.conf.getAgent(a.index).hasMoved()) continue;
 				Configuration neighbour = node.conf.copy();
 				neighbour.applyPhysical(a);

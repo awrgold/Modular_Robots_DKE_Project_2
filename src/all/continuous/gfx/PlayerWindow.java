@@ -78,7 +78,7 @@ public class PlayerWindow implements UIWindow {
 				}
 				nk_label(ctx, " Frame: " + slider, NK_TEXT_LEFT);
 				if (nk_button_text(ctx, "Next")) {
-					if (slider < max-1) slider++;
+					if (slider < max) slider++;
 				}
 				nk_layout_row_dynamic(ctx, 10, 1);
 				nk_layout_row_dynamic(ctx, 30, 3);

@@ -38,8 +38,22 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 
 		AgentAction action = currentPath.get(0).action;
 		if (action != null) {
-			System.out.println("ITER: " + action.toString());
-			sim.applyPhysical(action);
+			System.out.println("ITER: " + iter + " " + action.toString());
+			ArrayList<AgentAction> possibleActions = sim.getAllPhysicalActions();
+			AgentAction actualAction = null;
+			for (AgentAction posAction : possibleActions) {
+				Configuration neighbour = sim.getCurrentConfiguration().copy();
+				neighbour.applyPhysical(posAction);
+				Simulation simNew = new Simulation(this.sim.getTerrain(), neighbour, this.sim.getGoalConfiguration());
+				
+				simNew.endTurn();
+				if (simNew.getCurrentConfiguration().equals(currentPath.get(0).conf)) {
+					actualAction = posAction;
+					break;
+				}
+			}
+			if (actualAction != null)
+				sim.applyPhysical(actualAction);
 		}
 		
 		currentPath.remove(0);
