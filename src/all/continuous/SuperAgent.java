@@ -12,11 +12,12 @@ import org.joml.Vector3d;
  */
 public class SuperAgent {
 
-	private static boolean DEBUG = true; 
+	private static boolean DEBUG = false; 
+	private static boolean DEBUG2=false;
 	private static double EPSILON = 0.001;
 	
     private int agentAmount;
-    private int counter;
+    private  int counter;
     private ArrayList<AgentCouple> allAgents;
     private ArrayList<Point3D> activePheromoneTrail;
     private ArrayList<Point3D>[] activeTrails;
@@ -28,6 +29,10 @@ public class SuperAgent {
     }
 
     public void addActiveTrail(ArrayList<Point3D> trail){
+    	if(DEBUG2){
+    		System.out.println("counter : "+counter);
+    		System.out.println("agent amount : "+agentAmount);
+    	}
         if(counter <= agentAmount){
             activeTrails[counter] = trail;
             counter++;
@@ -41,15 +46,20 @@ public class SuperAgent {
     	if(DEBUG)
     		System.out.println("check if goal reached");
     	for(int i = 0; i < agents.size(); i++){
-              for(int j = 0; j < goals.size(); j++){
-                  if(isSameLocation(agents.get(i).getAgent1(sim).getPosition(), goals.get(j)) || isSameLocation(agents.get(i).getAgent2(sim).getPosition(), goals.get(j))){
-                      agents.get(i).setPheromoneSwitch();
-                      agents.get(i).setReachGoal();
-                      if(DEBUG)
-                    	  System.out.println("goal reached!!!");
-                      return true;
-                  }
-              }
+    		{
+    			if(!agents.get(i).hasReachedGoal()){
+	              for(int j = 0; j < goals.size(); j++){
+	                  if(isSameLocation(agents.get(i).getAgent1(sim).getPosition(), goals.get(j)) || isSameLocation(agents.get(i).getAgent2(sim).getPosition(), goals.get(j))){
+	                      agents.get(i).setPheromoneSwitch();
+	                      agents.get(i).setReachGoal();
+	                      addActiveTrail(agents.get(i).getPheromones());
+	                      if(DEBUG2)
+	                    	  System.out.println("goal reached!!!");
+	                      return true;
+	                  }
+	              }
+	           }
+    		}
           }
 
           return false;
@@ -121,6 +131,7 @@ public class SuperAgent {
         }
         return null;
     }
+  
 
 
 
@@ -133,10 +144,11 @@ public class SuperAgent {
     		}
     	}
     	
-    	return false; 
-    		
-    		
-    	
+    	return false; 	
+    }
+    
+    public ArrayList<Point3D>[] getActiveTrails(){
+    	return activeTrails;
     }
 
 
