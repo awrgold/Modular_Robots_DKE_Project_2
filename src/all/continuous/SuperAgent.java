@@ -151,6 +151,9 @@ public class SuperAgent {
     	return activeTrails;
     }
 
+    public ArrayList<AgentCouple> getAgentCouples(){
+    	return allAgents;
+    }
 
 
 

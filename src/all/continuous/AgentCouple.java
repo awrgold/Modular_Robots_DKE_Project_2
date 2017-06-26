@@ -22,6 +22,7 @@ public class AgentCouple {
     private boolean reachedGoal;
     //private AgentSenses sense;
     private ArrayList<Point3D> couplePath;
+    private static boolean DEBUG =false;
 
 
     public AgentCouple(Simulation sim, int agent1Index, int agent2Index) {
@@ -106,7 +107,33 @@ public class AgentCouple {
     }
     
     public void addCouplePath(Point3D loc){
-    	couplePath.add(loc);
+    	//make the point3D with whole numbers
+    	Point3D newPoint = new Point3D(Math.round((float)loc.getX()), Math.round((float)loc.getY()), Math.round((float)loc.getZ()));
+    	couplePath.add(newPoint);
+    }
+    
+    public ArrayList<Point3D> getCouplePath(){
+    	return couplePath;
+    }
+    public boolean hasVisited(Point3D point){
+    	
+    	//make the point a whole number
+    	Point3D newPoint = new Point3D(Math.round((float)point.getX()), Math.round((float)point.getY()), Math.round((float)point.getZ()));
+    	if(DEBUG)
+    		System.out.println("path size : "+couplePath.size());
+    	
+    
+    	if(DEBUG)
+    		System.out.println("point to analyse : "+point);
+    	
+    	for(int i=0; i<couplePath.size(); i++){
+    		if(DEBUG)
+    			System.out.println("path point : "+couplePath.get(i));
+    		if(couplePath.get(i).equals(newPoint))
+    			return true;
+    	}
+    	
+    	return false;
     }
     
     
