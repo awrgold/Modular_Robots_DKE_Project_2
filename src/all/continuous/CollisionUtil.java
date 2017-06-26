@@ -182,7 +182,7 @@ public class CollisionUtil {
 			maxA.subtract(epsilon, epsilon, epsilon);
 
 			if (isColliding(minA, maxA, minB, maxB))
-				result.add(new Collision(CollisionType.AGENT, point));
+				result.add(new Collision(CollisionType.AGENT, point, agent));
 		}
 		
 		if(DEBUG)
@@ -204,7 +204,7 @@ public class CollisionUtil {
 			minA.add(epsilon, epsilon, epsilon);
 			maxA.subtract(epsilon, epsilon, epsilon);
 
-			if (isColliding(minA, maxA, minB, maxB)) result.add(new Collision(CollisionType.OBSTACLE, point));
+			if (isColliding(minA, maxA, minB, maxB)) result.add(new Collision(CollisionType.OBSTACLE, point, obs));
 		}
 		
 		return result;

@@ -6,6 +6,8 @@ import java.util.List;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
+import all.continuous.Obstacle;
+
 public class PhysicsSimulation {
 	private static final double STEP_SIZE = 0.005;
 
@@ -44,6 +46,7 @@ public class PhysicsSimulation {
 			for (int j=0; j<bodies.size(); j++) {
 				if (i == j) continue;
 				Body b = bodies.get(j);
+				if (a instanceof Obstacle && b instanceof Obstacle) continue;
 				Manifold manifold = new Manifold(a, b);
 
 				if (PhysicsUtil.bodyVsBody(manifold)) {
