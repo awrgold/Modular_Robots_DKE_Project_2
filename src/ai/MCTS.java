@@ -9,7 +9,7 @@ public class MCTS extends ModuleAlgorithm{
 
 	//SETTINGS
 	private final double GREEDY_SIMULATION_CHANCE = 0;
-	private final int MAX_ITERATIONS = 50000;
+	private final int MAX_ITERATIONS = 100000;
 	private final int MINIMUM_VISITS = 20;
 	private final double EXPLORATION = Math.sqrt(2);
 	private final int SIMULATION_DEPTH = 20;
@@ -179,85 +179,74 @@ public class MCTS extends ModuleAlgorithm{
 	public void expand(MCTSNode origin){
 		ArrayList<Action> validActions = origin.getConfiguration().getAllValidActions();
 
-		if (origin.getConfiguration().equals(sim.getGoalConfiguration())) {
-			System.out.println("Found goal config!");
-			continueLooping = false;
-			finalNode = origin;
-		} else {
-			for (Action action:validActions) {
-				Configuration configCopy = origin.getConfiguration().copy();
-				configCopy.apply(action);
+		for (Action action:validActions) {
+			Configuration configCopy = origin.getConfiguration().copy();
+			configCopy.apply(action);
 
-				MCTSNode child = new MCTSNode(configCopy);
-				child.setAction(action);
+			MCTSNode child = new MCTSNode(configCopy);
+			child.setAction(action);
 
-				origin.addChild(child);
+			origin.addChild(child);
 
-				if(!(action.getAgent()==-1 && action.getDestination()==null) && isSameAsAParent(child)){ //config already exists, and action is NOT end-turn
-					origin.getChildren().remove(child);
-				} else nodeCount++;
+			if(!(action.getAgent()==-1 && action.getDestination()==null) && isSameAsAParent(child)){ //config already exists, and action is NOT end-turn
+				origin.getChildren().remove(child);
+			} else nodeCount++;
 
-				if(configCopy.equals(sim.getGoalConfiguration())){
-					System.out.println("Found goal config!");
-					continueLooping = false;
-					finalNode = child;
-				}
+			if(configCopy.equals(sim.getGoalConfiguration())){
+				System.out.println(" Found goal config!");
+				continueLooping = false;
+				finalNode = child;
 			}
-			if(origin.getChildren().size()==0) {
-				Action endTurn = new Action(-1,null);
-				Configuration configCopy = origin.getConfiguration().copy();
-				configCopy.apply(endTurn);
+		}
+		if(origin.getChildren().size()==0) {
+			Action endTurn = new Action(-1,null);
+			Configuration configCopy = origin.getConfiguration().copy();
+			configCopy.apply(endTurn);
 
-				MCTSNode child = new MCTSNode(configCopy);
-				child.setAction(endTurn);
+			MCTSNode child = new MCTSNode(configCopy);
+			child.setAction(endTurn);
 
-				origin.addChild(child);
-			}
+			origin.addChild(child);
 		}
 	}
 
 	public double simulate(MCTSNode origin) {
 		Configuration currentConfig = origin.getConfiguration().copy();
-		if (currentConfig.equals(sim.getGoalConfiguration())) {
-			System.out.println("Found goal config!");
-			continueLooping = false;
-			finalNode = origin;
-		} else {
 
-			int moveCounter = 0;
+		int moveCounter = 0;
 
-			while (moveCounter < SIMULATION_DEPTH) {
-				moveCounter++;
-				simCounter++;
+		while (moveCounter < SIMULATION_DEPTH) {
+			moveCounter++;
+			simCounter++;
 
-				ArrayList<Action> validActions = currentConfig.getAllValidActions();
+			ArrayList<Action> validActions = currentConfig.getAllValidActions();
 
-				double chance = Math.random();
+			double chance = Math.random();
 
-				if (chance > GREEDY_SIMULATION_CHANCE) { //random
-					int size = validActions.size();
-					int random = (int) (Math.random() * size);
+			if (chance > GREEDY_SIMULATION_CHANCE) { //random
+				int size = validActions.size();
+				int random = (int) (Math.random() * size);
 
-					currentConfig.apply(validActions.get(random));
-				} else { //greedy
-					double bestScore = Integer.MAX_VALUE;
-					Action bestAction = null;
-					for (Action action : validActions) {
-						Configuration testConfig = currentConfig.copy();
-						testConfig.apply(action);
+				currentConfig.apply(validActions.get(random));
+			} else { //greedy
+				double bestScore = Integer.MAX_VALUE;
+				Action bestAction = null;
+				for (Action action : validActions) {
+					Configuration testConfig = currentConfig.copy();
+					testConfig.apply(action);
 
-						double currentScore = estimateScore(testConfig);
+					double currentScore = estimateScore(testConfig);
 
-						if (currentScore < bestScore) {
-							bestAction = action;
-							bestScore = currentScore;
-						}
+					if (currentScore < bestScore) {
+						bestAction = action;
+						bestScore = currentScore;
 					}
-
-					currentConfig.apply(bestAction);
 				}
+
+				currentConfig.apply(bestAction);
 			}
 		}
+
 		return estimateScore(currentConfig);
 	}
 
