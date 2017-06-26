@@ -16,6 +16,8 @@ public class Pheromones extends ModuleAlgorithm {
     private static boolean DEBUG = false; 
     private static boolean DEBUG2=false;
     private static boolean DEBUG3=false;
+    private static boolean DEBUG4=false;
+    private static boolean DEBUG5 = true;
     private static int iterations = 0; 
     private int agentCoupleToMove =0;
     private static final double EPSILON = 0.001;
@@ -101,7 +103,7 @@ public class Pheromones extends ModuleAlgorithm {
 
         //else, follow path
         if(couple.getPathNumber()!=-1){
-        	if(DEBUG3)
+        	if(DEBUG5)
         		System.out.println("follow path!!");
         	
             ArrayList<AgentAction> validMoves1 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent1(sim));
@@ -110,7 +112,7 @@ public class Pheromones extends ModuleAlgorithm {
             deleteNotCoupleMoves(couple,2,  validMoves2, sim);
 
             Point3D nextLoc = superAgent.getActiveTrail(couple.getPathNumber()).get(couple.getPositionInPath()+1);
-            if(DEBUG3)
+            if(DEBUG4)
             	System.out.println("next pos :"+nextLoc);
             Vector3d nextVect = new Vector3d(nextLoc.getX(), nextLoc.getY(), nextLoc.getZ());
 
@@ -143,7 +145,7 @@ public class Pheromones extends ModuleAlgorithm {
         }
         
         else if(couple.getSense().smell(superAgent, sim) != null){
-        	if(DEBUG3)
+        	if(DEBUG5)
         		System.out.println("smell activated");
         	AgentAction action = couple.getSense().smell(superAgent, sim);
         	couple.addCouplePath(getDestination(action, sim.getCurrentConfiguration()));
@@ -151,7 +153,7 @@ public class Pheromones extends ModuleAlgorithm {
         }
         
         else if(visualAction != null){
-        	if(DEBUG3)
+        	if(DEBUG5)
         		System.out.println("visual search activated");
     		
         	couple.addCouplePath(getDestination(visualAction, sim.getCurrentConfiguration()));
@@ -162,7 +164,7 @@ public class Pheromones extends ModuleAlgorithm {
     	}
         
         else{
-        	if(DEBUG2)
+        	if(DEBUG5)
         		System.out.println("random movement");
         	
             AgentAction action = randomMove(couple);
@@ -181,6 +183,68 @@ public class Pheromones extends ModuleAlgorithm {
     }
 
     public AgentAction randomMove(AgentCouple couple){
+    	//if one of the agents cannot move, choose the other one
+    	/*ArrayList<AgentAction> validMoves1 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent1(sim));
+    	ArrayList<AgentAction> validMoves2 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent1(sim));
+    	int agentChoice=0;
+    	//if agent 1 cannot move, move agent 2
+    	if(validMoves1.size()==0){
+    		agentChoice=2;
+    		deleteNotCoupleMoves(couple, 2, validMoves2, sim);
+    		applyMovesWeight(validMoves2, couple);
+    		
+    		if(validMoves2.size()!=0)
+	    	{
+    			int rand = (int)(Math.random()*validMoves2.size());
+	            AgentAction action = validMoves2.get(rand);
+	            if(DEBUG4)
+	            	System.out.println("chosen action : "+getDestination(action, sim.getCurrentConfiguration()));
+	            return action;
+    		}
+    		else
+    			return null;
+    	}
+    	//if agent 2 cannot move, move agent 1
+    	else if(validMoves2.size()==0){
+    		agentChoice=1;
+    		deleteNotCoupleMoves(couple, 1, validMoves1, sim);
+    		applyMovesWeight(validMoves1, couple);
+    		
+    		if(validMoves1.size()!=0){
+	    		int rand = (int)(Math.random()*validMoves1.size());
+	            AgentAction action = validMoves1.get(rand);
+	            if(DEBUG4)
+	            	System.out.println("chosen action : "+getDestination(action, sim.getCurrentConfiguration()));
+	            return action;
+    		}
+    		else
+    			return null; 
+    	}
+    	
+    	else{
+    		ArrayList<AgentAction> allValidMoves = new ArrayList<>();
+    		//delete wrong moves
+    		deleteNotCoupleMoves(couple, 1, validMoves1, sim);
+    		deleteNotCoupleMoves(couple, 2, validMoves2, sim);
+    		//merge the 2 lists
+    		allValidMoves.addAll(validMoves1);
+    		allValidMoves.addAll(validMoves2);
+    		//apply weights
+    		applyMovesWeight(allValidMoves, couple);
+    		if(allValidMoves.size()!=0){
+    		//choose action
+    		int rand = (int)(Math.random()*allValidMoves.size());
+            AgentAction action = allValidMoves.get(rand);
+            if(DEBUG4)
+            	System.out.println("chosen action : "+getDestination(action, sim.getCurrentConfiguration()));
+            return action;}
+    		else
+    			return null;
+    		
+    	}
+    	//if both can move, chose at random between all their moves
+    	*/
+    	
 
     	//randomly choose which agent to choose
 
@@ -209,15 +273,21 @@ public class Pheromones extends ModuleAlgorithm {
         }
         //get all valid moves for that agent
         ArrayList<AgentAction> validMoves = sim.getCurrentConfiguration().getPhysicalActions(agent);
-       if(DEBUG)
+       if(DEBUG4)
        {
 	        for(int i=0; i<validMoves.size(); i++){
 	        	System.out.println("move : "+getDestination(validMoves.get(i), sim.getCurrentConfiguration()));
 	        }
        }
-
-
         deleteNotCoupleMoves(couple,agentChoice, validMoves, sim);
+        applyMovesWeight(validMoves, couple);
+        if(DEBUG4)
+        {
+        	System.out.println("moves after deletion and addition");
+ 	        for(int i=0; i<validMoves.size(); i++){
+ 	        	System.out.println("move : "+getDestination(validMoves.get(i), sim.getCurrentConfiguration()));
+ 	        }
+        }
         
         if(DEBUG)
             System.out.println("valid moves size : "+validMoves.size());
@@ -226,7 +296,7 @@ public class Pheromones extends ModuleAlgorithm {
         //if i can move the chosen agent
         if(validMoves.size() !=0) {
             AgentAction action = validMoves.get(rand2);
-            if(DEBUG2)
+            if(DEBUG4)
             	System.out.println("chosen action : "+getDestination(action, sim.getCurrentConfiguration()));
             return action;
         }
@@ -246,7 +316,21 @@ public class Pheromones extends ModuleAlgorithm {
                 
 
             validMoves = sim.getCurrentConfiguration().getPhysicalActions(agent);
+            if(DEBUG4)
+            {
+     	        for(int i=0; i<validMoves.size(); i++){
+     	        	System.out.println("move : "+getDestination(validMoves.get(i), sim.getCurrentConfiguration()));
+     	        }
+            }
             deleteNotCoupleMoves(couple, agentChoice,  validMoves, sim);
+            applyMovesWeight(validMoves, couple);
+            if(DEBUG4)
+            {
+            	System.out.println("moves after deletion and addition");
+     	        for(int i=0; i<validMoves.size(); i++){
+     	        	System.out.println("move : "+getDestination(validMoves.get(i), sim.getCurrentConfiguration()));
+     	        }
+            }
             
             if(DEBUG)
             	System.out.println("new agent pos : "+printVector(agent.getPosition()));
@@ -335,7 +419,7 @@ public class Pheromones extends ModuleAlgorithm {
     	
     	if(DEBUG2)
     	{
-    		System.out.println("future loc : "+loc);
+    		System.out.println("future loc : "+loc); 
     		System.out.println("not moving agent loc : "+agentPos);
     	}
     	//check if the result position disconnects it from its pair (loc is new location, agentPos is the module taht doesn't move)
@@ -367,12 +451,45 @@ public class Pheromones extends ModuleAlgorithm {
     	return false;
     	
     }
+    
+    public void applyMovesWeight(ArrayList<AgentAction> validMoves, AgentCouple couple){
+    	if(DEBUG4)
+    		System.out.println("moves weight apply");
+    	ArrayList<AgentAction> toAdd = new ArrayList<>();  
+    	int nonVisitedWeight=0;
+    	if(couple.getCouplePath().size()<5)
+    	 nonVisitedWeight = 3;
+    	else
+    		nonVisitedWeight = (int) couple.getCouplePath().size()*1/3;
+
+    	//go through valid moves
+    	for(int i=0; i<validMoves.size(); i++){
+    		
+    		//if a move has never been explored by the agent, add it some more times to the list to tweek the randomness
+    		if(!couple.hasVisited(getDestination(validMoves.get(i), sim.getCurrentConfiguration()))){
+    			
+    			if(DEBUG4){
+    				System.out.println("non visited move : "+getDestination(validMoves.get(i), sim.getCurrentConfiguration()));
+    				System.out.println("add "+nonVisitedWeight+ "times");}
+    			for(int j=0; j<nonVisitedWeight; j++){
+    				/*if(DEBUG4)
+    					System.out.println("validMoves added");*/
+    				toAdd.add(validMoves.get(i));
+    			}
+    		}
+    		//else don't do anything
+    	}
+    	
+    	//add all the validMoves
+    	validMoves.addAll(toAdd);
+    	//Valid Moves are now updated based on the weights
+    }
 
     /*END OF HELPER METHODS*/
 
     @Override
     public void takeTurn(){
-    	if(iterations>300)
+    	if(iterations>500)
            sim.finish();
 
         if(iterations==0){
@@ -380,7 +497,7 @@ public class Pheromones extends ModuleAlgorithm {
         }
         
         
-        if(DEBUG3)
+        if(DEBUG5)
         	System.out.println("TURN : "+iterations);
         if(DEBUG){
         	for(int i=0; i<agentCouples.size(); i++){

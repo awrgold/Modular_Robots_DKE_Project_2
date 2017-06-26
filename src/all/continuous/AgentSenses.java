@@ -18,6 +18,7 @@ public class AgentSenses {
     private Point3D agent2Loc;
     private static boolean DEBUG = false;
     private static boolean DEBUG2=false;
+    private static boolean DEBUG3=true;
 
     public AgentSenses(AgentCouple couple){
         //this.sim = sim;
@@ -389,10 +390,18 @@ public class AgentSenses {
     	AgentAction bestAction=null;
     	if(DEBUG2)
 			System.out.println(neighbours.size());
+    	
+    	//PRIORITY CHECK
+    	//1) GOAL CHECK
+    	//2) ACTIVE TRAIL CHECK
+    	//3) AGENT CHECK
+    	//4) INACTIVE TRAIL CHECK
+    	
+    	//go through neighbours to find if one of them is a goal
     	for(int i=0; i<neighbours.size(); i++){
     		
     		if(isAGoal(neighbours.get(i), sim)){
-    			if(DEBUG2)
+    			if(DEBUG3)
     				System.out.println("neighbour is a goal");
     			bestAction = findClosestAction(neighbours.get(i), sim);
     			if(DEBUG2)
@@ -402,17 +411,43 @@ public class AgentSenses {
     				else
     					System.out.println("agent to move : "+bestAction.index);
     			}
-    			
-    				
     			return bestAction;
     		}
-    		else if(isInActiveTrail(superAgent, neighbours.get(i))){
-    			if(DEBUG2)
+    	}
+    	
+    	//go through neighbours to find if on eof them is an active trail
+    	for(int i=0; i<neighbours.size(); i++){
+    		
+    		if(isInActiveTrail(superAgent, neighbours.get(i))){
+    			if(DEBUG3)
     				System.out.println("neighbour is on an active trail");
     			bestAction = findClosestAction(neighbours.get(i), sim);
     			return bestAction;
     		}
     	}
+    	
+    	//go through neighbours to find if one of them is an agent
+    	for(int i=0; i<neighbours.size(); i++){
+    		if(isAnAgent(neighbours.get(i), sim)){
+    			if(DEBUG3)
+    				System.out.println("neighbour is an agent");
+    			//go opposite direction
+    			bestAction=findFurthestAction(neighbours.get(i), sim);
+    			return bestAction;
+    		}
+    	}
+    	
+    	for(int i=0; i<neighbours.size(); i++){
+    		if(isOnInactiveTrail(superAgent, neighbours.get(i))){
+    			if(DEBUG3)
+    				System.out.println("neighbour is on an inactive trail");
+    			//go opposite direction
+    			bestAction=findFurthestAction(neighbours.get(i), sim);
+    			return bestAction;
+    		}
+    	}
+    	
+    	
     	
     	return null;
     	//if yes, move toward that point
@@ -457,7 +492,7 @@ public class AgentSenses {
         
         for (int i = 0; i < validMoves2.size(); i++){
             // bestDist=Double.MAX_VALUE;
-            if (getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal) <= bestDist){
+            if (getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal) < bestDist){
                 bestAction = validMoves2.get(i);
                 bestDist = getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal);
             }
@@ -473,9 +508,62 @@ public class AgentSenses {
         }
         
         return bestAction;
-        
-        
+    }
+    
+    public AgentAction findFurthestAction(Point3D goal, Simulation sim){
+    	double maxDistance = 0;
+    	int agentChoice = 0;
     	
+        ArrayList<AgentAction>validMoves1 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent1(sim));
+        ArrayList<AgentAction> validMoves2 = sim.getCurrentConfiguration().getPhysicalActions(couple.getAgent2(sim));
+
+        if(DEBUG2){
+        	System.out.println("valid moves 1 size : "+validMoves1.size());
+        	System.out.println("valid moves 2 size : "+validMoves2.size());
+        }
+        Pheromones pher = new Pheromones(sim);
+        pher.deleteNotCoupleMoves(couple, 1, validMoves1, sim);
+        pher.deleteNotCoupleMoves(couple, 2, validMoves2, sim);
+        if(DEBUG2){
+        	System.out.println("valid moves 1 size : "+validMoves1.size());
+        	System.out.println("valid moves 2 size : "+validMoves2.size());
+        }
+        AgentAction bestAction = null;
+        double bestDist=0;
+        for (int i = 0; i < validMoves1.size(); i++){
+            //double bestDist=Double.MAX_VALUE;
+            if (getManhattanDistanceBetween(getDestination(validMoves1.get(i), sim), goal) > bestDist){
+                bestAction = validMoves1.get(i);
+                bestDist = getManhattanDistanceBetween(getDestination(validMoves1.get(i), sim), goal);
+            }
+            else if(getManhattanDistanceBetween(getDestination(validMoves1.get(i), sim), goal)==bestDist){
+            	double coin = Math.random();
+            	if(coin<0.5){
+            		bestAction = validMoves1.get(i);
+            		bestDist=getManhattanDistanceBetween(getDestination(validMoves1.get(i), sim), goal);
+            	}
+            		
+            }
+        }
+        
+        for (int i = 0; i < validMoves2.size(); i++){
+            // bestDist=Double.MAX_VALUE;
+            if (getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal) > bestDist){
+                bestAction = validMoves2.get(i);
+                bestDist = getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal);
+            }
+            
+            else if(getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal)==bestDist){
+            	double coin = Math.random();
+            	if(coin<0.5){
+            		bestAction = validMoves2.get(i);
+            		bestDist=getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal);
+            	}
+            		
+            }
+        }
+        
+        return bestAction;
     }
     
     public boolean isAGoal(Point3D loc, Simulation sim){
@@ -487,8 +575,15 @@ public class AgentSenses {
     		}
     	}
     	return false;
-    	
-    	
+    }
+    
+    public boolean isAnAgent(Point3D loc, Simulation sim){
+    	ArrayList<Agent> agents = sim.getCurrentConfiguration().getAgents();
+    	for(int i=0; i<agents.size(); i++){
+    		if(agents.get(i).getPointPosition().equals(loc))
+    			return true;
+    	}
+    	return false; 
     }
     
     
@@ -508,6 +603,18 @@ public class AgentSenses {
     		}
     	}
     	return neighbours;
+    }
+    
+    public boolean isOnInactiveTrail(SuperAgent superAgent,Point3D loc){
+    	ArrayList<AgentCouple> agents = superAgent.getAgentCouples();
+    	
+    	for(int i=0; i<agents.size(); i++){
+    		for(int j=0; j<agents.get(i).getCouplePath().size(); j++){
+    			if(agents.get(i).getCouplePath().get(j).equals(loc))
+    				return true;
+    		}
+    	}
+    	return false;
     }
     
     public boolean isInActiveTrail(SuperAgent superAgent, Point3D loc){
