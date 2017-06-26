@@ -8,19 +8,22 @@ import all.continuous.*;
 public class MCTS extends ModuleAlgorithm{
 
 	//SETTINGS
-	private final double GREEDY_SIMULATION_CHANCE = 1;
-	private final int MAX_ITERATIONS = 10000;
+	private final double GREEDY_SIMULATION_CHANCE = 0.6;
+	private final int MAX_ITERATIONS = 20000;
 	private final int MINIMUM_VISITS = 20;
 	private final double EXPLORATION = Math.sqrt(2);
-	private final int SIMULATION_DEPTH = 3;
+	private final int SIMULATION_DEPTH = 5;
 
 	private final boolean VERBOSE_DEBUG = false;
 
-	ArrayList<Action> path = new ArrayList<Action>();
+	ArrayList<ArrayList<Action>> path = new ArrayList<>();
 	ArrayList<MCTSNode> nodePath = new ArrayList<MCTSNode>();
 
-	private static int turnCounter=0;
-	private static int height=0;
+	private int turnCounter = 0;
+	private int simCounter = 0;
+	private int height = 0;
+	private int nodeCount = 0;
+	private long startTime;
 
 	private boolean continueLooping = true;
 	private int iterationCounter = 0;
@@ -36,7 +39,8 @@ public class MCTS extends ModuleAlgorithm{
 		MCTSNode root = new MCTSNode(sim.getCurrentConfiguration());
 		root.addVisit();
 		expand(root);
-		for(int i = 0; i < root.getChildren().size(); i++) simulate(root.getChildren().get(i));
+
+		startTime = System.nanoTime();
 
 		//Build tree
 		while(continueLooping){
@@ -76,13 +80,6 @@ public class MCTS extends ModuleAlgorithm{
 			}
 
 			Collections.reverse(nodePath);
-
-			for (MCTSNode node: nodePath) {
-				path.add(node.getAction());
-
-				if(VERBOSE_DEBUG) System.out.println("  Frame " + i + ": " + estimateScore(node.getConfiguration()));
-				i++;
-			}
 		} else {
 			System.out.println(" Reconstructing best path");
 			while(root.getChildren().size()>0){
@@ -93,12 +90,27 @@ public class MCTS extends ModuleAlgorithm{
 
 				nodePath.add(next);
 
-				Action a = next.getAction();
-				path.add(a);
-
 				root = next;
 			}
 		}
+
+		ArrayList<Action> actions = new ArrayList<>();
+
+		for (MCTSNode node: nodePath) {
+			actions.add(node.getAction());
+			if(node.getAction().getAgent() == -1 && node.getAction().getDestination()==null) {
+				path.add(actions);
+				actions = new ArrayList<>();
+			}
+
+			if(VERBOSE_DEBUG) System.out.println("  Frame " + i + ": " + estimateScore(node.getConfiguration()));
+			i++;
+		}
+		path.add(actions);
+
+		long time = System.nanoTime() - startTime;
+		System.out.println("Time: " + time/(Math.pow(10,9)) + "; node count: " + nodeCount + "; move count: " + nodePath.size() + "; simulation count: " + simCounter + "; iterations: " + iterationCounter);
+
 	}
 
 	private void backPropagate(double score, MCTSNode workingNode) {
@@ -127,18 +139,28 @@ public class MCTS extends ModuleAlgorithm{
 	}
 
 	public double selectPolicy(MCTSNode node){
-		double selectScore = node.getAverageScore() - Math.sqrt(EXPLORATION)*Math.sqrt(Math.log(node.getParent().getVisits())/node.getVisits());
+		double selectScore = node.getAverageScore() - EXPLORATION*Math.sqrt(Math.log(node.getParent().getVisits())/node.getVisits());
 
 		return selectScore;
 	}
 
 	public MCTSNode select(MCTSNode origin){
+		int minVisits = MINIMUM_VISITS;
+		MCTSNode minVisitsNode = null;
+
+		for(MCTSNode child: origin.getChildren()){
+			if(child.getVisits() < minVisits) {
+				minVisits = child.getVisits();
+				minVisitsNode = child;
+			}
+		}
+
+		if(minVisitsNode != null) return minVisitsNode;
+
 		double min = Double.MAX_VALUE;
 		MCTSNode minNode = null;
 
 		for (MCTSNode child: origin.getChildren()) {
-			if(child.getVisits() < MINIMUM_VISITS) return child;
-
 			double selectScore = selectPolicy(child);
 
 			if(selectScore < min){
@@ -167,7 +189,15 @@ public class MCTS extends ModuleAlgorithm{
 
 				origin.addChild(child);
 
-				if(isSameAsAParent(origin)) origin.getParent().getChildren().remove(origin);
+				if(isSameAsAParent(origin) && !(origin.getAction().getAgent() == -1 && origin.getAction().getDestination() == null)) origin.getParent().getChildren().remove(origin);
+				else nodeCount++;
+
+
+				if(configCopy.equals(sim.getGoalConfiguration())){
+					System.out.println("Found goal config!");
+					continueLooping = false;
+					finalNode = child;
+				}
 			}
 		}
 	}
@@ -184,6 +214,7 @@ public class MCTS extends ModuleAlgorithm{
 
 			while (moveCounter < SIMULATION_DEPTH) {
 				moveCounter++;
+				simCounter++;
 
 				Configuration nextConfig = currentConfig.copy();
 				currentConfig = nextConfig;
@@ -226,7 +257,9 @@ public class MCTS extends ModuleAlgorithm{
 
 		for(int i = 0; i < agents.size() ; i++) totalManhattanDistance += Math.pow(agents.get(i).getManhattanDistanceTo(goals.get(i).getLocation()),2);
 
-		totalManhattanDistance = totalManhattanDistance/agents.size();
+		totalManhattanDistance = 1 + totalManhattanDistance/agents.size();
+
+		totalManhattanDistance = totalManhattanDistance * config.getTurns();
 
 		return totalManhattanDistance;
 	}
@@ -251,7 +284,8 @@ public class MCTS extends ModuleAlgorithm{
 		}
 
 		if(turnCounter < path.size()){
-			sim.apply(path.get(turnCounter));
+			for(Action action: path.get(turnCounter)) sim.apply(action);
+
 			turnCounter++;
 		} else sim.finish();
 	}

@@ -16,6 +16,7 @@ public class Configuration {
     private static final boolean DEBUG = false;
 	Simulation simulation;
     ArrayList<Agent> agents;
+    private int turns = 1;
 
     public Configuration(ArrayList<Agent> agents) {
         this.agents = agents;
@@ -26,12 +27,17 @@ public class Configuration {
     }
 
     public void apply(Action action){
-    	Agent agent = agents.get(action.getAgent());
-    	agent.move(action.getDestination());
+        if(action.getAgent() == -1 && action.getDestination()==null) endTurn();
+        else {
+            Agent agent = agents.get(action.getAgent());
+            agent.move(action.getDestination());
+        }
     }
 
     public ArrayList<Action> getAllValidActions(){
         ArrayList<Action> actions = new ArrayList<>();
+
+        actions.add(new Action(-1,null));
 
         for (Agent agent: this.getAgents()) {
         	if(DEBUG)
@@ -51,8 +57,10 @@ public class Configuration {
     // TODO: Separate grounded method to simplify code
     public ArrayList<Action> getAllValidActions(Agent agent){
         ArrayList<Action> actions = new ArrayList<>();
+
+        if(agent.hasMoved()) return actions;
         
-        if (CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), Direction.UP), 
+        if (CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), Direction.UP),
         		0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent).type == CollisionType.AGENT)
         	return actions;
         
@@ -256,9 +264,24 @@ public class Configuration {
         }
         Configuration newConfig = new Configuration(newAgents);
         newConfig.setSimulation(this.getSimulation());
+
+        newConfig.turns = this.turns;
         
         return newConfig;
     }
+
+    public void endTurn(){
+        for(Agent agent: this.getAgents()) agent.setMoved(false);
+        turns++;
+
+        for(Agent agent: this.getAgents()) {
+            Collision coll = CollisionUtil.castRay(this, new Ray(PositionUtil.center(agent.location), Direction.UP),
+                    0.01, 0.1+World.VOXEL_SIZE/2.0, 0.01+World.VOXEL_SIZE/2.0, agent);
+            if(coll.type == CollisionType.AGENT) agent.setMoved(true);
+        }
+    }
+
+    public int getTurns() { return turns;}
 
     public Simulation getSimulation(){
         return simulation;
@@ -289,9 +312,24 @@ public class Configuration {
     	if (!(obj instanceof Configuration)) return false;
     	Configuration b = (Configuration) obj;
     	if (b.agents.size() != this.agents.size()) return false;
-    	for (Agent agent : agents) {
-    		if (manhattan(b.getAgent(agent.getIndex()).getLocation(), agent.getLocation()) > 0.01) return false;
-    	}
+
+    	ArrayList<Agent> aAgents = this.getAgents();
+        ArrayList<Agent> bAgents = b.getAgents();
+
+        for (int i = 0; i < b.getAgents().size(); i++) {
+            Agent bAgent = bAgents.get(i);
+            if(bAgent.getId() == -1234){ //non-specific goal
+                boolean filled = false;
+                for (Agent aAgent: aAgents) {
+                    if(manhattan(aAgent.getLocation(), bAgent.getLocation()) <= 0.01)  filled = true;
+                }
+                if(!filled) return false;
+            } else { //specific goal or general checking whether 2 configurations are equal
+                Agent aAgent = aAgents.get(i);
+                if(manhattan(aAgent.getLocation(),bAgent.getLocation()) > 0.01) return false;
+            }
+        }
+
     	return true;
     }
 

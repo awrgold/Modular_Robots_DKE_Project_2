@@ -189,7 +189,8 @@ public class WorldRenderer {
 				obstacles.add(new Obstacle((float) Math.random(), obj.getTransform().toPoint3D()));
 				break;
 			case GOAL:
-				goal.add(new Agent(modules.get(Math.min(i, modules.size()-1)).id, obj.getTransform().toPoint3D()));
+				//goal.add(new Agent(modules.get(Math.min(i, modules.size()-1)).id, obj.getTransform().toPoint3D()));
+				goal.add(new Agent(-1234, obj.getTransform().toPoint3D()));
 				i++;
 				break;
 			case INIT:

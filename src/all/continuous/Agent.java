@@ -25,14 +25,20 @@ public class Agent extends Cube {
         newAgent.index = this.index;
         newAgent.intermediateGoal = this.intermediateGoal;
         newAgent.path = this.path;
+        newAgent.moved = this.moved;
         return newAgent;
     }
+
+    public void setMoved(boolean moved){
+    	this.moved = moved;
+	}
 
     public void move(Point3D location) throws InvalidMoveException{
     	if(location == null) throw new InvalidMoveException("Moving into 'null', somehow");
         if(!moved){
             this.location = location;
             this.moved = true;
+
         } else throw new InvalidMoveException("Tried to move an agent that has already moved this turn!");
 
     }
