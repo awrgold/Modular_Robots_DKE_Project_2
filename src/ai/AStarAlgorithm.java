@@ -13,7 +13,6 @@ import all.continuous.Simulation;
 import javafx.geometry.Point3D;
 
 public class AStarAlgorithm extends ModuleAlgorithm {
-
 	private List<AStarNode> currentPath;
 
 	private Random rand = new Random();
@@ -124,6 +123,11 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 			sim.endTurn();
 			neighbours.add(new AStar.Neighbour<AStarNode>(new AStarNode(sim.getCurrentConfiguration(), a), 1));
 		}
+		Configuration neighbour = node.conf.copy();
+		Simulation sim = new Simulation(this.sim.getTerrain(), neighbour, this.sim.getGoalConfiguration());
+		
+		sim.endTurn();
+		neighbours.add(new AStar.Neighbour<AStarNode>(new AStarNode(sim.getCurrentConfiguration(), null), 1));
 		return neighbours;
 	}
 
