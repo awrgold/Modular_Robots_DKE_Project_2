@@ -48,7 +48,7 @@ public class AStar {
 		int iter = 0;
 		while (!visible.isEmpty()) {
 			T current = visible.poll();
-			if (current.equals(goal))
+			if (current.equals(goal) || heuristic.calculate(current, goal) < 0.0001)
 				break;
 
 			visibleSet.remove(current);
@@ -82,7 +82,7 @@ public class AStar {
 
 			iter++;
 
-						if (iter > 9000)
+						if (iter > 10000)
 							break;
 
 			System.out.println(iter);

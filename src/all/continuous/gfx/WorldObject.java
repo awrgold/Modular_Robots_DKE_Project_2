@@ -32,7 +32,12 @@ public class WorldObject {
 	private ObjectType type;
 	public ObjectType getType() { return this.type; }
 	
-	private Mesh mesh;
+	static {
+		mesh = ShapeFactory.genBox(0, 0, 0, 
+				OBJECT_SIZE, OBJECT_SIZE, OBJECT_SIZE);
+	}
+	
+	private static Mesh mesh;
 	
 	private static float currentId = 0;
 	
@@ -47,16 +52,6 @@ public class WorldObject {
 		
 		this.id = currentId;
 		currentId++;
-	}
-	
-	public void addMesh() {
-		if (this.mesh != null) return;
-		this.mesh = ShapeFactory.genBox(0, 0, 0, 
-				OBJECT_SIZE, OBJECT_SIZE, OBJECT_SIZE);
-	}
-	
-	public WorldObject(Mesh mesh) {
-		this.mesh = mesh;
 	}
 	
 	public void setPosition(float x, float y, float z) {

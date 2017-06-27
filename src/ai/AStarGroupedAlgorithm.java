@@ -2,16 +2,11 @@ package ai;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import com.sun.jmx.remote.internal.ArrayQueue;
 
 import all.continuous.Agent;
 import all.continuous.AgentAction;
@@ -25,7 +20,6 @@ import all.continuous.PositionUtil;
 import all.continuous.Ray;
 import all.continuous.Simulation;
 import javafx.geometry.Point3D;
-import sun.misc.Contended;
 
 public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 	
@@ -37,12 +31,9 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 	}
 	
 	private Set<Set<Integer>> groups;
-	private Queue<AgentAction> actions = new LinkedList<>();
 	
 	private Set<Integer> movingGroup;
 	private List<AStarNode> currentPath;
-	
-	private Configuration lastConfig;
 
 	@Override
 	public void takeTurn() {
@@ -174,10 +165,6 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 				}
 			}
 			
-			if (lastConfig != null && !lastConfig.equals(sim.getCurrentConfiguration())) {
-				System.out.println("error");
-			}
-			lastConfig = currentPath.get(0).conf;
 			if (actualAction != null)
 				sim.applyPhysical(actualAction);
 		}
@@ -200,18 +187,22 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
     }
 
 	private float calculateAgentScore(int agentIndex, Configuration current, Configuration goal) {
-//		double dist = Double.MAX_VALUE;
-//		boolean lonelyAgent = false;
-//		for (Agent a : goal.getAgents()) {
-//			double agentDist = a.getManhattanDistanceTo(current.getAgent(agentIndex).getLocation());
-//			dist = Math.min(agentDist, dist);
-//			//if (current.getAllValidActions(a).size() == 0) lonelyAgent = true;
-//		}
-//		return (float) (dist + (lonelyAgent ? 20 : 0));
-		float score = (float) manhattan(current.getAgent(agentIndex).getLocation(), goal.getAgent(agentIndex).getLocation()) * 2.2f;
-		if (score > 0.001f) score += 1.2f;
-		score += current.getAgent(agentIndex).isConnected(current) ? 0 : 8.5f;
+		double dist = Double.MAX_VALUE;
+		boolean lonelyAgent = false;
+		for (Agent a : sim.getGoalConfiguration().getAgents()) {
+			if (CollisionUtil.isCollidingCubeMult(current, a.getLocation(), current.getAgent(agentIndex)).stream().anyMatch((col) -> col.type == CollisionType.AGENT))
+				continue;
+			double agentDist = a.getManhattanDistanceTo(current.getAgent(agentIndex).getLocation());
+			dist = Math.min(agentDist, dist);
+			//if (current.getAllValidActions(a).size() == 0) lonelyAgent = true;
+		}
+		float score = (float) (dist + (lonelyAgent ? 20 : 0));
+		score *= current.getAgent(agentIndex).isConnected(current) ? 1 : 3f;
 		return score;
+//		float score = (float) manhattan(current.getAgent(agentIndex).getLocation(), goal.getAgent(agentIndex).getLocation()) * 2.2f;
+//		if (score > 0.001f) score += 1.2f;
+//		score += current.getAgent(agentIndex).isConnected(current) ? 0 : 8.5f;
+//		return score;
 	}
 
 	private float calculateScore(AStarNode node, AStarNode goal) {
@@ -219,6 +210,7 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 		for (Integer agentIndex : movingGroup) {
 			score += calculateAgentScore(agentIndex, node.conf, goal.conf);
 		}
+		if (score < movingGroup.size()*0.1) return 0;
 		return score;
 	}
 	

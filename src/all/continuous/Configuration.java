@@ -110,7 +110,7 @@ public class Configuration {
 					if (cols.stream().anyMatch((col) -> col.type == CollisionType.AGENT)) {
 						remainsGrounded = true;
 					} else if ((dir == Direction.UP || perpDir == Direction.UP || perpDir == Direction.DOWN) && agent.getVelocity().length() < 0.05) {
-						if (groundedCollisions.stream().anyMatch((col) -> col.location.distance(agent.getLocation()) < 1.0001))
+						//if (groundedCollisions.stream().anyMatch((col) -> col.location.distance(agent.getLocation()) < 1.0001))
 							determineDiagPhysicalAction(actions, agent, max.location, perpDir, dir);
 					}
 				}
@@ -169,7 +169,7 @@ public class Configuration {
 //			List<Collision> cols =  CollisionUtil.isCollidingCubeMult(this, max.location.add(perpDir.multiply(0.01)), agent);
 //			if (cols.stream().anyMatch((col) -> col.type == CollisionType.AGENT)) grounded = true;
 			Collision c =  CollisionUtil.castRay(this, new Ray(PositionUtil.center(max.location), perpDir), 0.01, 0.1+World.VOXEL_SIZE/2.0, 0.05+World.VOXEL_SIZE/2.0, agent);
-			if (c.type == CollisionType.AGENT && c.location.distance(max.location) < 1.001) {
+			if (c.type == CollisionType.AGENT) {
 				grounded = true;
 				break;
 			}

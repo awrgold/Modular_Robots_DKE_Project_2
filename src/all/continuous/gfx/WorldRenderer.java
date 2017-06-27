@@ -62,7 +62,6 @@ public class WorldRenderer {
 		lastTime = System.nanoTime();
 		
 		for (WorldObject obj : this.adding) {
-			obj.addMesh();
 			this.objects.add(obj);
 		}
 		for (WorldObject obj : this.removing) {
