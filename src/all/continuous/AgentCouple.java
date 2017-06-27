@@ -20,6 +20,7 @@ public class AgentCouple {
     private int pathNumber;
     private int positionInPath;
     private boolean reachedGoal;
+    
     //private AgentSenses sense;
     private ArrayList<Point3D> couplePath;
     private static boolean DEBUG =false;
@@ -119,7 +120,7 @@ public class AgentCouple {
     	
     	//make the point a whole number
     	Point3D newPoint = new Point3D(Math.round((float)point.getX()), Math.round((float)point.getY()), Math.round((float)point.getZ()));
-    	if(DEBUG)
+    	 if(DEBUG)
     		System.out.println("path size : "+couplePath.size());
     	
     

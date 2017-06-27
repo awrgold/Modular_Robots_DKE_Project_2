@@ -18,7 +18,7 @@ public class AgentSenses {
     private Point3D agent2Loc;
     private static boolean DEBUG = false;
     private static boolean DEBUG2=false;
-    private static boolean DEBUG3=true;
+    private static boolean DEBUG3=false;
 
     public AgentSenses(AgentCouple couple){
         //this.sim = sim;
@@ -49,10 +49,10 @@ public class AgentSenses {
         //20% of the time, follow the collision
         //otherwise agents just gather together too much
         double rand = Math.random();
-        if(rand<0.8)
-        	return null;
-        else
-        {
+       // if(rand<0.8)
+        //	return null;
+       // else
+        //{
 	        if(DEBUG)
 	        	System.out.println("collision size : "+collisions.size());
 	        // add the locations of each collision it finds
@@ -61,9 +61,10 @@ public class AgentSenses {
 	        	if(DEBUG)
 	        		System.out.println(collisions.get(i).type);
 	            if (collisions != null){
-	                if (collisions.get(i).type == CollisionType.AGENT || collisions.get(i).type == CollisionType.OBSTACLE) {
+	                if (collisions.get(i).type == CollisionType.AGENT) {
 	                    seenObjects.add(collisions.get(i).getLocation());
 	                }
+	               // || collisions.get(i).type == CollisionType.OBSTACLE
 	            }
 	            else{
 	                System.out.println("No collisions detected");
@@ -136,6 +137,7 @@ public class AgentSenses {
 	
 	        Pheromones pher = new Pheromones(sim);
 	        pher.deleteNotCoupleMoves(couple, agentChoice, validMoves, sim);
+	        pher.applyMovesWeight(validMoves, couple);
 	        AgentAction bestAction = null;
 	        for (int i = 0; i < validMoves.size(); i++){
 	            double bestDist=Double.MAX_VALUE;
@@ -156,12 +158,13 @@ public class AgentSenses {
 	        return bestAction;
     }
 
-    }
+    //}
 
 
     public AgentAction visualSearch(Simulation sim){
     	updateAgentsLoc(sim);
     	Configuration conf = sim.getCurrentConfiguration();
+    	double sightDist=10;
         // Cast Ray in Left/Right/Forward search field from front agent in "agents"
 
         // if Agent 1 is in front of Agent 2, cast rays from Agent 1 to L/R/F
@@ -170,27 +173,28 @@ public class AgentSenses {
         	
             // Store all collisions in an arraylist to loop through
             ArrayList<CollisionUtil.Collision> collisions = new ArrayList<>();
+            
 
             Point3D forwardDirOne = new Point3D(agent1Loc.getX() + 1.0, agent1Loc.getY(), agent1Loc.getZ());
             Point3D forwardDirTwo = new Point3D(agent2Loc.getX() - 1.0, agent2Loc.getY(), agent2Loc.getZ());
             Ray forwardRayOne = new Ray(agent1Loc, forwardDirOne);
             Ray forwardRayTwo = new Ray(agent2Loc, forwardDirTwo);
-            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
             Point3D leftDirOne = new Point3D(agent1Loc.getX(), agent1Loc.getY(), agent1Loc.getZ() - 1.0);
             Point3D leftDirTwo = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() - 1.0);
             Ray leftRayOne = new Ray(agent1Loc, leftDirOne);
             Ray leftRayTwo = new Ray(agent1Loc, leftDirTwo);
-            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
             Point3D rightDirOne = new Point3D(agent1Loc.getX(), agent1Loc.getY(), agent1Loc.getZ() + 1.0);
             Point3D rightDirTwo = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() + 1.0);
             Ray rightRayOne = new Ray(agent1Loc, rightDirOne);
             Ray rightRayTwo = new Ray(agent1Loc, rightDirTwo);
-            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25, 20.0, 1.0, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, 20.0, 1.0, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25, sightDist, 1.0, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, sightDist, 1.0, couple.getAgent1(sim));
 
             collisions.add(agent1ColForward);
             collisions.add(agent2ColForward);
@@ -212,22 +216,22 @@ public class AgentSenses {
             Point3D forwardDirTwo = new Point3D(agent2Loc.getX() + 1.0, agent2Loc.getY(), agent2Loc.getZ());
             Ray forwardRayOne = new Ray(agent1Loc, forwardDirOne);
             Ray forwardRayTwo = new Ray(agent2Loc, forwardDirTwo);
-            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
             Point3D leftDirOne = new Point3D(agent1Loc.getX(), agent1Loc.getY(), agent1Loc.getZ() - 1);
             Point3D leftDirTwo = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() - 1);
             Ray leftRayOne = new Ray(agent1Loc, leftDirOne);
             Ray leftRayTwo = new Ray(agent1Loc, leftDirTwo);
-            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
             Point3D rightDirOne = new Point3D(agent1Loc.getX(), agent1Loc.getY(), agent1Loc.getZ() + 1);
             Point3D rightDirTwo = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() + 1);
             Ray rightRayOne = new Ray(agent1Loc, rightDirOne);
             Ray rightRayTwo = new Ray(agent1Loc, rightDirTwo);
-            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
 
             collisions.add(agent1ColForward);
@@ -251,22 +255,22 @@ public class AgentSenses {
             Point3D forwardDirTwo = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() - 1);
             Ray forwardRayOne = new Ray(agent1Loc, forwardDirOne);
             Ray forwardRayTwo = new Ray(agent2Loc, forwardDirTwo);
-            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
             Point3D leftDirOne = new Point3D(agent1Loc.getX() + 1, agent1Loc.getY(), agent1Loc.getZ());
             Point3D leftDirTwo = new Point3D(agent2Loc.getX() + 1, agent2Loc.getY(), agent2Loc.getZ());
             Ray leftRayOne = new Ray(agent1Loc, leftDirOne);
             Ray leftRayTwo = new Ray(agent1Loc, leftDirTwo);
-            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
             Point3D rightDirOne = new Point3D(agent1Loc.getX() - 1, agent1Loc.getY(), agent1Loc.getZ());
             Point3D rightDirTwo = new Point3D(agent2Loc.getX() - 1, agent2Loc.getY(), agent2Loc.getZ());
             Ray rightRayOne = new Ray(agent1Loc, rightDirOne);
             Ray rightRayTwo = new Ray(agent1Loc, rightDirTwo);
-            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
 
             collisions.add(agent1ColForward);
@@ -291,22 +295,22 @@ public class AgentSenses {
             Point3D forwardDirTwo = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() + 1);
             Ray forwardRayOne = new Ray(agent1Loc, forwardDirOne);
             Ray forwardRayTwo = new Ray(agent2Loc, forwardDirTwo);
-            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColForward = CollisionUtil.castRay(conf, forwardRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColForward = CollisionUtil.castRay(conf, forwardRayTwo, 0.25,sightDist, 1, couple.getAgent1(sim));
 
             Point3D leftDirOne = new Point3D(agent1Loc.getX() + 1, agent1Loc.getY(), agent1Loc.getZ());
             Point3D leftDirTwo = new Point3D(agent2Loc.getX() + 1, agent2Loc.getY(), agent2Loc.getZ());
             Ray leftRayOne = new Ray(agent1Loc, leftDirOne);
             Ray leftRayTwo = new Ray(agent1Loc, leftDirTwo);
-            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColLeft = CollisionUtil.castRay(conf, leftRayOne, 0.25, sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColLeft = CollisionUtil.castRay(conf, leftRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
             Point3D rightDirOne = new Point3D(agent1Loc.getX() - 1, agent1Loc.getY(), agent1Loc.getZ());
             Point3D rightDirTwo = new Point3D(agent2Loc.getX() - 1, agent2Loc.getY(), agent2Loc.getZ());
             Ray rightRayOne = new Ray(agent1Loc, rightDirOne);
             Ray rightRayTwo = new Ray(agent1Loc, rightDirTwo);
-            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25, 20.0, 1, couple.getAgent1(sim));
-            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, 20.0, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent1ColRight = CollisionUtil.castRay(conf, rightRayOne, 0.25,sightDist, 1, couple.getAgent1(sim));
+            CollisionUtil.Collision agent2ColRight = CollisionUtil.castRay(conf, rightRayTwo, 0.25, sightDist, 1, couple.getAgent1(sim));
 
 
             collisions.add(agent1ColForward);
@@ -327,19 +331,19 @@ public class AgentSenses {
 
                 Point3D forwardDir = new Point3D(agent1Loc.getX() + 1, agent1Loc.getY(), agent1Loc.getZ());
                 Ray forwardRay = new Ray(agent1Loc, forwardDir);
-                CollisionUtil.Collision colForward = CollisionUtil.castRay(conf, forwardRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colForward = CollisionUtil.castRay(conf, forwardRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
                 Point3D leftDir = new Point3D(agent1Loc.getX(), agent1Loc.getY(), agent1Loc.getZ() - 1);
                 Ray leftRay = new Ray(agent1Loc, leftDir);
-                CollisionUtil.Collision colLeft = CollisionUtil.castRay(conf, leftRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colLeft = CollisionUtil.castRay(conf, leftRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
                 Point3D rightDir = new Point3D(agent1Loc.getX(), agent1Loc.getY(), agent1Loc.getZ() + 1);
                 Ray rightRay = new Ray(agent1Loc, rightDir);
-                CollisionUtil.Collision colRight = CollisionUtil.castRay(conf, rightRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colRight = CollisionUtil.castRay(conf, rightRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
                 Point3D backDir = new Point3D(agent1Loc.getX() - 1, agent1Loc.getY(), agent1Loc.getZ());
                 Ray backRay = new Ray(agent1Loc, backDir);
-                CollisionUtil.Collision colBack = CollisionUtil.castRay(conf, backRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colBack = CollisionUtil.castRay(conf, backRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
 
                 collisions.add(colForward);
@@ -356,19 +360,19 @@ public class AgentSenses {
 
                 Point3D forwardDir = new Point3D(agent2Loc.getX() + 1, agent2Loc.getY(), agent2Loc.getZ());
                 Ray forwardRay = new Ray(agent2Loc, forwardDir);
-                CollisionUtil.Collision colForward = CollisionUtil.castRay(conf, forwardRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colForward = CollisionUtil.castRay(conf, forwardRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
                 Point3D leftDir = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() - 1);
                 Ray leftRay = new Ray(agent2Loc, leftDir);
-                CollisionUtil.Collision colLeft = CollisionUtil.castRay(conf, leftRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colLeft = CollisionUtil.castRay(conf, leftRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
                 Point3D rightDir = new Point3D(agent2Loc.getX(), agent2Loc.getY(), agent2Loc.getZ() + 1);
                 Ray rightRay = new Ray(agent2Loc, rightDir);
-                CollisionUtil.Collision colRight = CollisionUtil.castRay(conf, rightRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colRight = CollisionUtil.castRay(conf, rightRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
                 Point3D backDir = new Point3D(agent2Loc.getX() - 1, agent2Loc.getY(), agent2Loc.getZ());
                 Ray backRay = new Ray(agent2Loc, backDir);
-                CollisionUtil.Collision colBack = CollisionUtil.castRay(conf, backRay, 0.25, 20.0, 1, couple.getAgent1(sim));
+                CollisionUtil.Collision colBack = CollisionUtil.castRay(conf, backRay, 0.25, sightDist, 1, couple.getAgent1(sim));
 
 
                 collisions.add(colForward);
@@ -432,7 +436,7 @@ public class AgentSenses {
     			if(DEBUG3)
     				System.out.println("neighbour is an agent");
     			//go opposite direction
-    			bestAction=findFurthestAction(neighbours.get(i), sim);
+    			bestAction=findNotCloserAction(neighbours.get(i), sim);
     			return bestAction;
     		}
     	}
@@ -442,7 +446,7 @@ public class AgentSenses {
     			if(DEBUG3)
     				System.out.println("neighbour is on an inactive trail");
     			//go opposite direction
-    			bestAction=findFurthestAction(neighbours.get(i), sim);
+    			bestAction=findNotCloserAction(neighbours.get(i), sim);
     			return bestAction;
     		}
     	}
@@ -468,6 +472,8 @@ public class AgentSenses {
         Pheromones pher = new Pheromones(sim);
         pher.deleteNotCoupleMoves(couple, 1, validMoves1, sim);
         pher.deleteNotCoupleMoves(couple, 2, validMoves2, sim);
+        pher.applyMovesWeight(validMoves1, couple);
+        pher.applyMovesWeight(validMoves2, couple);
         if(DEBUG2){
         	System.out.println("valid moves 1 size : "+validMoves1.size());
         	System.out.println("valid moves 2 size : "+validMoves2.size());
@@ -510,7 +516,7 @@ public class AgentSenses {
         return bestAction;
     }
     
-    public AgentAction findFurthestAction(Point3D goal, Simulation sim){
+    public AgentAction findNotCloserAction(Point3D goal, Simulation sim){
     	double maxDistance = 0;
     	int agentChoice = 0;
     	
@@ -521,13 +527,7 @@ public class AgentSenses {
         	System.out.println("valid moves 1 size : "+validMoves1.size());
         	System.out.println("valid moves 2 size : "+validMoves2.size());
         }
-        Pheromones pher = new Pheromones(sim);
-        pher.deleteNotCoupleMoves(couple, 1, validMoves1, sim);
-        pher.deleteNotCoupleMoves(couple, 2, validMoves2, sim);
-        if(DEBUG2){
-        	System.out.println("valid moves 1 size : "+validMoves1.size());
-        	System.out.println("valid moves 2 size : "+validMoves2.size());
-        }
+       
         AgentAction bestAction = null;
         double bestDist=0;
         for (int i = 0; i < validMoves1.size(); i++){
@@ -546,6 +546,7 @@ public class AgentSenses {
             }
         }
         
+        
         for (int i = 0; i < validMoves2.size(); i++){
             // bestDist=Double.MAX_VALUE;
             if (getManhattanDistanceBetween(getDestination(validMoves2.get(i), sim), goal) > bestDist){
@@ -563,7 +564,41 @@ public class AgentSenses {
             }
         }
         
-        return bestAction;
+        if(bestAction.index==1)
+        	validMoves1.remove(bestAction);
+        else
+        validMoves2.remove(bestAction);
+        
+        Pheromones pher = new Pheromones(sim);
+        pher.deleteNotCoupleMoves(couple, 1, validMoves1, sim);
+        pher.deleteNotCoupleMoves(couple, 2, validMoves2, sim);
+        pher.applyMovesWeight(validMoves1, couple);
+        pher.applyMovesWeight(validMoves2, couple);
+        if(DEBUG2){
+        	System.out.println("valid moves 1 size : "+validMoves1.size());
+        	System.out.println("valid moves 2 size : "+validMoves2.size());
+        }
+        double rand1 = Math.random();
+        ArrayList<AgentAction> validMoves = null;
+        if(validMoves1.size()==0)
+        	validMoves=validMoves2;
+        else if(validMoves2.size()==0)
+        	validMoves=validMoves1; 
+        else
+        {
+		    if(rand1<0.5)
+		    	validMoves = validMoves1; 
+		    else
+		    	validMoves = validMoves2; 
+        }
+		    
+		int rand2 = (int)(Math.random()*validMoves.size());
+        	
+        if(validMoves.size()!=0)
+        	return validMoves.get(rand2);
+        else
+        	return null;
+        
     }
     
     public boolean isAGoal(Point3D loc, Simulation sim){
@@ -609,9 +644,12 @@ public class AgentSenses {
     	ArrayList<AgentCouple> agents = superAgent.getAgentCouples();
     	
     	for(int i=0; i<agents.size(); i++){
-    		for(int j=0; j<agents.get(i).getCouplePath().size(); j++){
-    			if(agents.get(i).getCouplePath().get(j).equals(loc))
-    				return true;
+    		if(agents.get(i).getIndex1()!=couple.getIndex1() && agents.get(i).getIndex2()!=couple.getIndex2())
+    		{	
+    			for(int j=0; j<agents.get(i).getCouplePath().size(); j++){
+	    			if(agents.get(i).getCouplePath().get(j).equals(loc))
+	    				return true;
+	    		}
     		}
     	}
     	return false;
