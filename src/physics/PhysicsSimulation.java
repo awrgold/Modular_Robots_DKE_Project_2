@@ -9,7 +9,7 @@ import org.joml.Vector3dc;
 import all.continuous.Obstacle;
 
 public class PhysicsSimulation {
-	private static final double STEP_SIZE = 0.005;
+	private static final double STEP_SIZE = 0.009;
 
 	private static final Vector3dc GRAVITY = new Vector3d(0, -1, 0).toImmutable();
 
@@ -18,18 +18,30 @@ public class PhysicsSimulation {
 	private double accumulator;
 
 	public PhysicsSimulation() {}
+	
+	private boolean dirty = false;
+	private List<Body> movableBodies = new ArrayList<>();
 
 	public Body addBody(Body b) {
 		this.bodies.add(b);
 		b.attach(this);
+		dirty = true;
 		return b;
 	}
 
 	public void removeBody(Body b) {
 		this.bodies.remove(b);
+		dirty = true;
 	}
 
 	public void tick(double trueDelta) {
+		if (dirty) {
+			movableBodies.clear();
+			for (Body b : bodies) {
+				if (b.getMass() > 0.000001) movableBodies.add(b);
+			}
+			dirty = false;
+		}
 		accumulator += trueDelta;
 
 		while (accumulator > STEP_SIZE) {
@@ -42,21 +54,38 @@ public class PhysicsSimulation {
 		// Handle collision
 		for (int i=0; i<bodies.size(); i++) {
 			Body a = bodies.get(i);
-			for (int j=0; j<bodies.size(); j++) {
-				if (i == j) continue;
-				Body b = bodies.get(j);
-				if (a instanceof Obstacle && b instanceof Obstacle) continue;
-				Manifold manifold = new Manifold(a, b);
-
-				if (PhysicsUtil.bodyVsBody(manifold)) {
-					resolveCollision(a, b, manifold);
-					positionalCorrection(a, b, manifold);
+			if (a.getMass() < 0.000001) {
+				for (int j=0; j<movableBodies.size(); j++) {
+					Body b = movableBodies.get(j);
+					if (a == b) continue;
+					if (a.getVelocity().length() < 0.0001 && b.getVelocity().length() < 0.001)
+						continue;
+					Manifold manifold = new Manifold(a, b);
+	
+					if (PhysicsUtil.bodyVsBody(manifold)) {
+						resolveCollision(a, b, manifold);
+						positionalCorrection(a, b, manifold);
+					}
+				}
+			} else {
+				for (int j=0; j<bodies.size(); j++) {
+					Body b = bodies.get(j);
+					if (a == b) continue;
+					if (a.getVelocity().length() < 0.0001 && b.getVelocity().length() < 0.001)
+						continue;
+					Manifold manifold = new Manifold(a, b);
+	
+					if (PhysicsUtil.bodyVsBody(manifold)) {
+						resolveCollision(a, b, manifold);
+						positionalCorrection(a, b, manifold);
+					}
 				}
 			}
 		}
 
 		// Update bodies
 		for (Body b : bodies) {
+			if (b.getInvMass() == 0) continue;
 			b.applyForce(GRAVITY);
 			b.update(delta);
 		}
@@ -102,7 +131,7 @@ public class PhysicsSimulation {
 
 	private void positionalCorrection(Body a, Body b, Manifold manifold) {
 		final double percent = 0.2;
-		final double slop = 0.01;
+		final double slop = 0.0001;
 
 		Vector3d correction = manifold.normal.mul(Math.max(manifold.penetration - slop, 0.0) / (a.getInvMass() + b.getInvMass()) * percent, new Vector3d());
 

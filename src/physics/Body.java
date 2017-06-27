@@ -5,6 +5,7 @@ import org.joml.Vector3dc;
 
 public class Body {
 	private double mass;
+	public double getMass() { return this.mass; }
 	public double getInvMass() {
 		if (this.mass == 0) return 0;
 		return 1.0/this.mass;
