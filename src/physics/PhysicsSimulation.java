@@ -17,9 +17,7 @@ public class PhysicsSimulation {
 
 	private double accumulator;
 
-	public PhysicsSimulation() {
-		
-	}
+	public PhysicsSimulation() {}
 
 	public Body addBody(Body b) {
 		this.bodies.add(b);
@@ -41,6 +39,7 @@ public class PhysicsSimulation {
 	}
 
 	private void update(double delta) {
+		// Handle collision
 		for (int i=0; i<bodies.size(); i++) {
 			Body a = bodies.get(i);
 			for (int j=0; j<bodies.size(); j++) {
@@ -83,7 +82,7 @@ public class PhysicsSimulation {
 		if (tangent.length() < 0.00001) return;
 		tangent.normalize();
 
-		double frictionImpulseMag = -(relVel.dot(tangent)); // FIXME: Could I not just not normalize the tangent...
+		double frictionImpulseMag = -(relVel.dot(tangent));
 		frictionImpulseMag /= a.getInvMass() + b.getInvMass();
 
 		double mu = Math.sqrt(Math.pow(a.getStaticFrictionCoeff(), 2) + Math.pow(b.getStaticFrictionCoeff(), 2));
