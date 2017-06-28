@@ -190,8 +190,8 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 		double dist = Double.MAX_VALUE;
 		boolean lonelyAgent = false;
 		for (Agent a : sim.getGoalConfiguration().getAgents()) {
-			if (CollisionUtil.isCollidingCubeMult(current, a.getLocation(), current.getAgent(agentIndex)).stream().anyMatch((col) -> col.type == CollisionType.AGENT))
-				continue;
+//			if (CollisionUtil.isCollidingCubeMult(current, a.getLocation(), current.getAgent(agentIndex)).stream().anyMatch((col) -> col.type == CollisionType.AGENT))
+//				continue;
 			double agentDist = a.getManhattanDistanceTo(current.getAgent(agentIndex).getLocation());
 			dist = Math.min(agentDist, dist);
 			//if (current.getAllValidActions(a).size() == 0) lonelyAgent = true;
