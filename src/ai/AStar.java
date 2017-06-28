@@ -82,7 +82,7 @@ public class AStar {
 
 			iter++;
 
-						if (iter > 10000)
+						if (iter > 25000)
 							break;
 
 			System.out.println(iter);
