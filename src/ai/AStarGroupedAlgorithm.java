@@ -197,10 +197,11 @@ public class AStarGroupedAlgorithm extends ModuleAlgorithm {
 			//if (current.getAllValidActions(a).size() == 0) lonelyAgent = true;
 		}
 		float score = (float) (dist + (lonelyAgent ? 20 : 0));
-		score *= current.getAgent(agentIndex).isConnected(current) ? 1 : 3f;
+		//score *= current.getAgent(agentIndex).isConnected(current) ? 1 : 3f;
+		score += current.getAgent(agentIndex).isConnected(current) ? 0 : 8.5f;
 		return score;
 //		float score = (float) manhattan(current.getAgent(agentIndex).getLocation(), goal.getAgent(agentIndex).getLocation()) * 2.2f;
-//		if (score > 0.001f) score += 1.2f;
+//		//if (score > 0.001f) score += 1.2f;
 //		score += current.getAgent(agentIndex).isConnected(current) ? 0 : 8.5f;
 //		return score;
 	}

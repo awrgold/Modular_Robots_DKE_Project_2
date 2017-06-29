@@ -104,7 +104,7 @@ public class AStarAlgorithm extends ModuleAlgorithm {
 			return ((AStarNode) obj).conf.equals(this.conf);
 		}
 		
-		@Override
+		@Override	
 		public int hashCode() {
 			return this.conf.hashCode();
 		}

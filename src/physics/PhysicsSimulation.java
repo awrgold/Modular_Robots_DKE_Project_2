@@ -84,8 +84,7 @@ public class PhysicsSimulation {
 		}
 
 		// Update bodies
-		for (Body b : bodies) {
-			if (b.getInvMass() == 0) continue;
+		for (Body b : movableBodies) {
 			b.applyForce(GRAVITY);
 			b.update(delta);
 		}
