@@ -128,10 +128,10 @@ public class SimpleAI extends ModuleAlgorithm
         		currentAgent.addPath(getDestination(action, sim.getCurrentConfiguration()));
         		sim.applyPhysical(action);
             	unsuccessfulTurns=0;
-            	if(PQ.size()==0) {
+            	/*if(PQ.size()==0) {
             		sim.finish();
             		return;
-            	}
+            	}*/
             	currentAgent = PQ.poll();
 	    		currentAgentID = currentAgent.getId();
 	    		//unsuccessfulTurns++;
@@ -146,8 +146,8 @@ public class SimpleAI extends ModuleAlgorithm
         		if(DEBUG)
         			System.out.println("PQ size : "+PQ.size());
         		
-        		if(PQ.size()==0)
-        			sim.finish();
+        		//if(PQ.size()==0)
+        			//sim.finish();
         		else
         		{
 	    		currentAgent = PQ.poll();
@@ -188,16 +188,16 @@ public class SimpleAI extends ModuleAlgorithm
 	    		
 	    		//Agent previous = currentAgent;
 	    		//new furthest agent
-	    		if(PQ.size()==0)
-	    			sim.finish();
-	    		else
-	    		{
+	    		/*if(PQ.size()==0)
+	    			sim.finish();*/
+	    		//else
+	    		//{
 	    		currentAgent = PQ.poll();
 	    		currentAgentID = currentAgent.getId();
 	    		unsuccessfulTurns++;
 	    		if(DEBUG)
 	    			System.out.println("next agent : "+currentAgentID);
-	    		}
+	    		//}
 	    		//put the agent we just moved back in the PQ
 	    		//PQ.add(previous);
 	    		
@@ -211,7 +211,7 @@ public class SimpleAI extends ModuleAlgorithm
     		System.out.println("iterations : "+iterations);
     	
     	//this is just for stopping my infinite for loop
-    	if(iterations>200)
+    	if(iterations>300)
     		sim.finish();
     	
     	//if the agent we're working with finds its goal, we stop the simulation
@@ -223,9 +223,6 @@ public class SimpleAI extends ModuleAlgorithm
     			agents.get(i).setIntermediateGoal(getFurthestGoal(sim));
 			}
 		}
-    	
-    	
-        
 		
 	}
 

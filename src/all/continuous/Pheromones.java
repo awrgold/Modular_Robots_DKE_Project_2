@@ -20,6 +20,9 @@ public class Pheromones extends ModuleAlgorithm {
     private static boolean DEBUG5 = false;
     private static boolean DEBUG6=false;
     
+    private long startTime;
+    
+    
     private static int iterations = 0; 
     private int agentCoupleToMove =0;
     private static final double EPSILON = 0.001;
@@ -441,12 +444,19 @@ public class Pheromones extends ModuleAlgorithm {
 
     @Override
     public void takeTurn(){
-    	if(iterations>700)
-           sim.finish();
+    	
+    
+    	
+    	/*if(iterations>700)
+           sim.finish();*/
 
         if(iterations==0){
+        	startTime=System.nanoTime();
             pheromoneAlgorithm();
         }
+        
+    	if((System.nanoTime() - startTime) > 9*60*(Math.pow(10, 9)))
+    		sim.finish();
         
         
         //if(DEBUG6)
