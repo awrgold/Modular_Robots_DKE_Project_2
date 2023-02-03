@@ -5,9 +5,7 @@ The robots were simulated as "cubes" that could attach themselves to other cubes
 ## Project Details
 Pathfinding algorithms such as A*, MCTS, and pheromone-based swarm search techniques were used to guide the robots throughout the environment towards their goal. The realistic simulation of physical phenomena such as friction, gravity, and impulses is included. 
 
+
 ## Project Report
 Please see the file "Project Report" for a detailed report regarding the simulation and our results.
-
-## Grades
-This project received a grade of 8.5/10, the highest in our class. This is the equivalent of a >4.0 (A+) on the American scale. For more information regarding the translation of Dutch grades to American or U.K. grades, please see: https://www.studyinholland.nl/documentation/grading-systems-in-the-netherlands-the-united-states-and-the-united-kingdom.pdf
 
